@@ -19,7 +19,7 @@ def save_log(result):
 		f.flush()
 		f.close()
 	except Exception as err:
-		return err
+		print(err)
 
 
 def NMEA_GPGGA(sentence):
