@@ -21,7 +21,7 @@ def NMEA_GPGGA(sentence):
 			lon=float(parts[4])
 			lat_dir=parts[3]
 			lon_dir=parts[5]
-			altitude=float(parts[9]) #NMEA协议海拔数据单位米/NMEA protocol altitude data in meters​⬤
+			altitude=float(parts[9]) #NMEA协议海拔数据单位米/NMEA protocol altitude data in meters​.
 			altitude=altitude*3.28 #APRS报文海拔数据单位英尺，米转英尺/APRS message altitude data is in feet; convert meters to feet.
 			lat_dd="%.2f"%lat
 			lon_dd="%.2f"%lon
