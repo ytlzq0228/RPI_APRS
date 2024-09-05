@@ -26,7 +26,7 @@ def NMEA_GPGGA(sentence):
 	match=re.match(r'^\$..GGA,.*', sentence)  # 匹配GPGGA语句
 	if match:
 		parts=sentence.split(',')
-		print(parts)
+		#print(parts)
 		if len(parts) > 9 and parts[2] and parts[4] and parts[9]:
 			lat=float(parts[2])
 			lon=float(parts[4])
@@ -38,6 +38,7 @@ def NMEA_GPGGA(sentence):
 			lon_dd="%.2f"%lon
 			altitude="%06.0f"%altitude
 			timestamp=parts[1]
+			save_log(sentence)
 			return lat_dd,lat_dir,lon_dd,lon_dir,altitude,timestamp
 		else:
 			print("No %s Signal. Waiting....."%parts[0])
@@ -52,9 +53,11 @@ def NMEA_GPRMC(sentence):
 		if len(parts) > 8 and parts[7] and parts[8]:
 			speed="%03.0f"%float(parts[7]) #NMEA APRS速度数据单位均为海里每小时/The speed data unit for both NMEA and APRS is knots, no conversion needed.
 			course="%03.0f"%float(parts[8]) #NMEA APRS航向数据单位均为度/The course data unit for both NMEA and APRS is degrees, no conversion needed.
+			save_log(sentence)
 			return speed,course
 		else:
 			print("No %s Signal. Waiting....."%parts[0])
+			save_log("No %s Signal. Waiting....."%parts[0])
 	return None,None
 
 def get_gnss_position():
@@ -84,7 +87,7 @@ def get_gnss_position():
 			i+=1
 		return lat,lat_dir,lon,lon_dir,altitude,timestamp,speed,course
 	except Exception as err:
-		print(err)
+		save_log(err)
 
 
 if __name__ == '__main__':
@@ -97,7 +100,7 @@ if __name__ == '__main__':
 			print(a.send(frame_text))
 			time.sleep(15)
 		except Exception as err:
-			print(err)
+			save_log(err)
 
 
 
