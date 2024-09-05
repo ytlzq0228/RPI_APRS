@@ -73,9 +73,8 @@ def get_gnss_position():
 					break
 				if altitude==0:
 					i+=1
-			#time.sleep(0.1)
-			if i%60==1:
-				save_log('No GPS Signal. Waiting.....')
+				if i%60==1:
+					save_log('No GPS Signal. Waiting.....')
 			
 		i=0
 		speed='000'
