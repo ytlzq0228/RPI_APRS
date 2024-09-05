@@ -56,7 +56,7 @@ def get_gnss_position():
 				if lat is not None and lon is not None and altitude is not None:
 					print(f"GNSS GPGGA: lat={lat}, lon={lon}, altitude/feet={altitude}")
 					break
-			time.sleep(0.1)
+			#time.sleep(0.1)
 		i=0
 		speed='000'
 		course='000'
