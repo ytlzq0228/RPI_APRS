@@ -4,6 +4,7 @@ import time
 import re
 import serial
 import aprs
+import datetime
 
 # 串口配置部分/COM port config params
 com_port='/dev/ttyUSB0'  
