@@ -42,7 +42,7 @@ def NMEA_GPGGA(sentence):
 			save_log(sentence)
 			return lat_dd,lat_dir,lon_dd,lon_dir,altitude,timestamp
 		else:
-			save_log("No %s Signal. Waiting....."%parts[0])
+			print("No %s Signal. Waiting....."%parts[0])
 	return None,None,None,None,None,None
 
 def NMEA_GPRMC(sentence):
@@ -56,12 +56,13 @@ def NMEA_GPRMC(sentence):
 			save_log(sentence)
 			return speed,course
 		else:
-			save_log("No %s Signal. Waiting....."%parts[0])
+			print("No %s Signal. Waiting....."%parts[0])
 	return None,None
 
 def get_gnss_position():
 	try:
 		ser.reset_input_buffer()
+		i=0
 		while True:
 			if ser.in_waiting > 0:  
 				line=ser.readline().decode('ascii', errors='replace').strip()  # 读取一行NMEA数据
@@ -71,6 +72,9 @@ def get_gnss_position():
 					save_log(f"GNSS GPGGA: lat={lat}, lon={lon}, altitude/feet={altitude}")
 					break
 			#time.sleep(0.1)
+			if i%60==0:
+				save_log('No GPS Signal. Waiting.....')
+			i+=1
 		i=0
 		speed='000'
 		course='000'
