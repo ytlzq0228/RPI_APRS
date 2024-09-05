@@ -97,7 +97,7 @@ if __name__ == '__main__':
 			frame_text=('BI1FQO-P>APDG03,TCPIP*,qAC,BI1FQO-RS:!%s%s/%s%s>%s/%s/A=%s Auto Report by RPI with GPS module at UTC %s on 逗老师的Xiaomi Su7 Max'%(lat,lat_dir,lon,lon_dir,course,speed,altitude,timestamp)).encode()
 			a=aprs.TCP(b'BI1FQO', b'20898')
 			print(a.start())
-			print(a.send(frame_text))
+			save_log(a.send(frame_text))
 			time.sleep(15)
 		except Exception as err:
 			save_log(err)
