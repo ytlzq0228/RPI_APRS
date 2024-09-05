@@ -1,8 +1,9 @@
-# 使用串口GPS模块上报APRS信息
+# Raspberry使用串口GPS模块上报APRS信息
+关键内容：
 ## NMEA读取GPGGS获取位置信息
 ## NMEA读取GPRMA获取航向和航速信息
 ## Python aprs模块上报GPS信息
-技术指导参考：
+#技术指导参考：
 [【逗老师的无线电】骚活，GPS热点盒子自动上报APRS位置](https://blog.csdn.net/ytlzq0228/article/details/130228867)
 # 三、上报APRS数据
 ## 1、APRS基本上报方式
