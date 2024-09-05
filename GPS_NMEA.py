@@ -43,7 +43,8 @@ def NMEA_GPGGA(sentence):
 			return lat_dd,lat_dir,lon_dd,lon_dir,altitude,timestamp
 		else:
 			print("No %s Signal. Waiting....."%parts[0])
-	return None,None,None,None,0,None
+			return None,None,None,None,0,None
+	return None,None,None,None,None,None
 
 def NMEA_GPRMC(sentence):
 	match=re.match(r'^\$GPRMC,.*', sentence)  # 匹配GPRMC语句
