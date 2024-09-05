@@ -97,7 +97,7 @@ if __name__ == '__main__':
 			a=aprs.TCP(b'BI1FQO', b'20898')
 			a.start()
 			save_log(a.send(frame_text))
-			time.sleep(20)
+			time.sleep(30)
 		except Exception as err:
 			save_log(err)
 
