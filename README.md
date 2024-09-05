@@ -18,12 +18,16 @@ passcode的生成方式google一下，就有好多在线工具可以帮忙生成
 下面的网站就是一个可以生成passcode的站点
 
 [https://apps.magicbug.co.uk/passcode/index.php](https://apps.magicbug.co.uk/passcode/index.php)
+
 ![在这里插入图片描述](https://i-blog.csdnimg.cn/blog_migrate/e5cb7c8ddc8d28bbef41d2295da14b7f.png)
+
 ![在这里插入图片描述](https://i-blog.csdnimg.cn/blog_migrate/a210b145ce89e574491287a1b5468fea.png)
+
 哎，这玩意就是这样，明文生成密码，还没有鉴权，所以，大家自觉遵守道德规范就好。
 
 输入user和pass之后，等待几秒（我设置是等待5秒），收到验证通过的反馈后
 ![在这里插入图片描述](https://i-blog.csdnimg.cn/blog_migrate/a84c2a66baac2ed24f8a35a662ecc347.png)
+
 
 之后再发送符合APRS的数据帧字符串即可。
 例如：
@@ -33,8 +37,10 @@ BI1FQO-13>APDG03,TCPIP*,qAC,BI1FQO-CS:!4008.22ND11632.89E&/A=000000440 HelloWorl
 `
 
 ![在这里插入图片描述](https://i-blog.csdnimg.cn/blog_migrate/e6ef0a20563d83e1df967917e1c805cc.png)
+
 之后再去APRS网站上查一下，诶嘿，这不就出来啦
 ![在这里插入图片描述](https://i-blog.csdnimg.cn/blog_migrate/4962ce2335d7f7216333bf755c756ef2.png)
+
 
 
 ## 2、脚本上报
