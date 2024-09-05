@@ -64,17 +64,18 @@ def get_gnss_position():
 		ser.reset_input_buffer()
 		i=0
 		while True:
-			if ser.in_waiting > 0:  
+			if ser.in_waiting > 0:
 				line=ser.readline().decode('ascii', errors='replace').strip()  # 读取一行NMEA数据
 				#line='$GPGGA,041824.00,4004.6300,N,11618.2178,E,01,07,10.3,20.05,M,-15.40,M,1.1,1023*63<CR><LF>'
 				lat,lat_dir,lon,lon_dir,altitude,timestamp=NMEA_GPGGA(line)
 				if lat is not None and lon is not None and altitude is not None:
 					save_log(f"GNSS GPGGA: lat={lat}, lon={lon}, altitude/feet={altitude}")
 					break
+				i+=1
 			#time.sleep(0.1)
 			if i%60==0:
 				save_log('No GPS Signal. Waiting.....')
-			i+=1
+			
 		i=0
 		speed='000'
 		course='000'
