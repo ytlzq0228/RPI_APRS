@@ -83,7 +83,7 @@ if __name__ == '__main__':
 			a=aprs.TCP(b'BI1FQO', b'20898')
 			print(a.start())
 			print(a.send(frame_text))
-			time.sleep(60)
+			time.sleep(15)
 		except Exception as err:
 			print(err)
 
