@@ -73,7 +73,7 @@ def get_gnss_position():
 					break
 				i+=1
 			#time.sleep(0.1)
-			if i%60==0:
+			if i%60==1:
 				save_log('No GPS Signal. Waiting.....')
 			
 		i=0
