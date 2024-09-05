@@ -6,7 +6,7 @@ import serial
 import aprs
 from datetime import datetime
 
-# 串口配置部分/COM port config params part
+# 串口配置部分/COM port config params
 com_port='/dev/ttyUSB0'  
 baud_rate=9600
 ser=serial.Serial(com_port, baud_rate, bytesize=serial.EIGHTBITS, parity=serial.PARITY_NONE, stopbits=serial.STOPBITS_ONE)
