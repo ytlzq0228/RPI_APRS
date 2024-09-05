@@ -93,7 +93,7 @@ if __name__ == '__main__':
 	while True:
 		try:
 			lat,lat_dir,lon,lon_dir,altitude,timestamp,speed,course=get_gnss_position()
-			frame_text=('BI1FQO-P>APDG03,TCPIP*,qAC,BI1FQO-RS:!%s%s/%s%s>%s/%s/A=%s Auto Report by RPI with GPS module at UTC %s on 逗老师的Xiaomi Su7 Max'%(lat,lat_dir,lon,lon_dir,course,speed,altitude,timestamp)).encode()
+			frame_text=('BI1FQO-P>APDG03,TCPIP*,qAC,BI1FQO-SU:!%s%s/%s%s>%s/%s/A=%s Auto Report by RPI with GPS module at UTC %s on 逗老师的Xiaomi Su7 Max'%(lat,lat_dir,lon,lon_dir,course,speed,altitude,timestamp)).encode()
 			a=aprs.TCP(b'BI1FQO', b'20898')
 			a.start()
 			save_log(a.send(frame_text))
