@@ -65,7 +65,7 @@ def get_gnss_position():
 		while True:
 			if ser.in_waiting > 0:  
 				line=ser.readline().decode('ascii', errors='replace').strip()  # 读取一行NMEA数据
-				line='$GPGGA,024438.00,4004.6300,N,11618.2178,E,01,07,10.3,20.05,M,-15.40,M,1.1,1023*63<CR><LF>'
+				line='$GPGGA,041838.00,4004.6300,N,11618.2178,E,01,07,10.3,20.05,M,-15.40,M,1.1,1023*63<CR><LF>'
 				lat,lat_dir,lon,lon_dir,altitude,timestamp=NMEA_GPGGA(line)
 				if lat is not None and lon is not None and altitude is not None:
 					save_log(f"GNSS GPGGA: lat={lat}, lon={lon}, altitude/feet={altitude}")
