@@ -65,7 +65,7 @@ def get_gnss_position():
 		while True:
 			if ser.in_waiting > 0:  
 				line=ser.readline().decode('ascii', errors='replace').strip()  # 读取一行NMEA数据
-				#line='$GPGGA,024438.00,4004.6300,N,11618.2178,E,01,07,10.3,20.05,M,-15.40,M,1.1,1023*63<CR><LF>'
+				line='$GPGGA,024438.00,4004.6300,N,11618.2178,E,01,07,10.3,20.05,M,-15.40,M,1.1,1023*63<CR><LF>'
 				lat,lat_dir,lon,lon_dir,altitude,timestamp=NMEA_GPGGA(line)
 				if lat is not None and lon is not None and altitude is not None:
 					save_log(f"GNSS GPGGA: lat={lat}, lon={lon}, altitude/feet={altitude}")
@@ -77,7 +77,7 @@ def get_gnss_position():
 		while i<60:
 			if ser.in_waiting > 0:  
 				line=ser.readline().decode('ascii', errors='replace').strip()  # 读取一行NMEA数据
-				#line='$GPRMC,123519,A,4807.038,N,01131.000,E,010.4,084.4,230394,003.1,W*6A'
+				line='$GPRMC,123519,A,4807.038,N,01131.000,E,010.4,084.4,230394,003.1,W*6A'
 				speed,course=NMEA_GPRMC(line)
 				if speed is not None and course is not None:
 					save_log(f"GNSS GPRMC: speed/knots={speed}, course={course}")
@@ -93,7 +93,7 @@ if __name__ == '__main__':
 	while True:
 		try:
 			lat,lat_dir,lon,lon_dir,altitude,timestamp,speed,course=get_gnss_position()
-			frame_text=('BI1FQO-P>APDG03,TCPIP*,qAC,BI1FQO-RS:!%s%s/%s%s>%s/%s/A=%s Auto Report by RPI with GPS module at UTC %s on 逗老师的Xiaomi Su7 Max'%(lat,lat_dir,lon,lon_dir,course,speed,altitude,timestamp)).encode()
+			frame_text=('BI1FQO-P>APDG03,TCPIP*,qAC,BI1FQO-RS:!%sz%s%s/%s%s>%s/%s/A=%s Auto Report by RPI with GPS module at UTC %s on 逗老师的Xiaomi Su7 Max'%(timestamp[6:],lat,lat_dir,lon,lon_dir,course,speed,altitude,timestamp)).encode()
 			a=aprs.TCP(b'BI1FQO', b'20898')
 			a.start()
 			save_log(a.send(frame_text))
