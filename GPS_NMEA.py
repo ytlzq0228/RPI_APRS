@@ -10,6 +10,16 @@ com_port='/dev/ttyUSB0'
 baud_rate=9600
 ser=serial.Serial(com_port, baud_rate, bytesize=serial.EIGHTBITS, parity=serial.PARITY_NONE, stopbits=serial.STOPBITS_ONE)
 
+def save_log(result):
+	try:
+		now = datetime.now().strftime('%d-%m-%Y %H:%M:%S')
+		f = open("/var/log/GPS_NMEA.log",'a')
+		f.writelines("\n%s:log:%s" %(now,result))
+		f.flush()
+		f.close()
+	except Exception as err:
+		return err
+
 
 def NMEA_GPGGA(sentence):
 	match=re.match(r'^\$..GGA,.*', sentence)  # 匹配GPGGA语句
@@ -30,6 +40,7 @@ def NMEA_GPGGA(sentence):
 			return lat_dd,lat_dir,lon_dd,lon_dir,altitude,timestamp
 		else:
 			print("No %s Signal. Waiting....."%parts[0])
+			save_log("No %s Signal. Waiting....."%parts[0])
 	return None,None,None,None,None,None
 
 def NMEA_GPRMC(sentence):
