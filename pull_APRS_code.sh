@@ -3,7 +3,7 @@
 #alias rpi-ro='sudo sync ; sudo sync ; sudo sync ; sudo mount -o remount,ro / ; sudo mount -o remount,ro /boot'
 #alias rpi-rw='sudo mount -o remount,rw / ; sudo mount -o remount,rw /boot'
 
-# 等待直到 ifconfig 中发现 tun0
+# 等待直到 ifconfig 中发现 tun0,否则git拉不到
 while true; do
     if ifconfig | grep -q "tun0"; then
         echo "tun0 接口已找到，继续执行后续操作..."
