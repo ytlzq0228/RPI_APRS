@@ -12,6 +12,7 @@ PROJECT_DIR="/home/pi-star/RPI_APRS"
 
 cd "$PROJECT_DIR" || exit
 
+git reset --hard
 git pull origin main
 
 echo "Code pulled on $(date)" >> /var/log/git_pull.log
