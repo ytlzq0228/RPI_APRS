@@ -50,7 +50,7 @@ def NMEA_GPRMC(sentence):
 	match=re.match(r'^\$GPRMC,.*', sentence)  # 匹配GPRMC语句
 	if match:
 		parts=sentence.split(',')
-		#print(parts)
+		save_log(parts)
 		if len(parts) > 8 and parts[7] and parts[8]:
 			speed="%03.0f"%float(parts[7]) #NMEA APRS速度数据单位均为海里每小时/The speed data unit for both NMEA and APRS is knots, no conversion needed.
 			course="%03.0f"%float(parts[8]) #NMEA APRS航向数据单位均为度/The course data unit for both NMEA and APRS is degrees, no conversion needed.
@@ -90,7 +90,7 @@ def get_gnss_position():
 			i+=1
 		return lat,lat_dir,lon,lon_dir,altitude,timestamp,speed,course
 	except Exception as err:
-		save_log(err)
+		save_log(f"get_gnss_position: {err}")
 		raise
 
 
@@ -110,7 +110,7 @@ if __name__ == '__main__':
 			save_log(a.send(frame_text))
 			time.sleep(30)
 		except Exception as err:
-			save_log(err)
+			save_log(f"main: {err}")
 
 
 
