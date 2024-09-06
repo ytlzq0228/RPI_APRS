@@ -78,8 +78,6 @@ def get_gnss_position():
 					save_log('No GPS Signal. Waiting.....')
 			
 		i=0
-		speed='000'
-		course='000'
 		while i<60:
 			if ser.in_waiting > 0:  
 				line=ser.readline().decode('ascii', errors='replace').strip()  # 读取一行NMEA数据
@@ -93,12 +91,19 @@ def get_gnss_position():
 		return lat,lat_dir,lon,lon_dir,altitude,timestamp,speed,course
 	except Exception as err:
 		save_log(err)
+		raise
 
 
 if __name__ == '__main__':
 	while True:
 		try:
-			lat,lat_dir,lon,lon_dir,altitude,timestamp,speed,course=get_gnss_position()
+			while True:
+				try:
+					lat,lat_dir,lon,lon_dir,altitude,timestamp,speed,course = get_gnss_position()
+					break  # 成功获取GNSS数据时退出循环
+				except Exception as err:
+					save_log(f"Retrying get_gnss_position due to error: {err}")
+					time.sleep(1)  # 等待1秒后重试
 			frame_text=('BI1FQO-M>APDG03,TCPIP*,qAC,BI1FQO-MI:!%s%s/%s%s>%s/%s/A=%s Auto Report by RPI with GPS module at UTC %s on 逗老师的Xiaomi Su7 Max'%(lat,lat_dir,lon,lon_dir,course,speed,altitude,timestamp)).encode()
 			a=aprs.TCP(b'BI1FQO', b'20898')
 			a.start()
