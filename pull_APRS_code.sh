@@ -3,7 +3,16 @@
 #alias rpi-ro='sudo sync ; sudo sync ; sudo sync ; sudo mount -o remount,ro / ; sudo mount -o remount,ro /boot'
 #alias rpi-rw='sudo mount -o remount,rw / ; sudo mount -o remount,rw /boot'
 
-sleep  30
+# 等待直到 ifconfig 中发现 tun0
+while true; do
+    if ifconfig | grep -q "tun0"; then
+        echo "tun0 接口已找到，继续执行后续操作..."
+        break
+    else
+        echo "等待 tun0 接口..."
+        sleep 5  # 每5秒检查一次
+    fi
+done
 
 sudo mount -o remount,rw / ; sudo mount -o remount,rw /boot
 
