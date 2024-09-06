@@ -78,7 +78,7 @@ def get_gnss_position():
 					save_log('No GPS Signal. Waiting.....')
 			
 		i=0
-		while i<60:
+		while i<120:
 			if ser.in_waiting > 0:  
 				line=ser.readline().decode('ascii', errors='replace').strip()  # 读取一行NMEA数据
 				#line='$GPRMC,123519,A,4807.038,N,01131.000,E,010.4,084.4,230394,003.1,W*6A'
