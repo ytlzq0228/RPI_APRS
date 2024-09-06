@@ -88,8 +88,8 @@ def get_gnss_position():
 				if speed is not None and course is not None:
 					save_log(f"GNSS GPRMC: speed/knots={speed}, course={course}")
 					break
-			#time.sleep(0.1)
-			i+=1
+				#time.sleep(0.1)
+				i+=1
 		return lat,lat_dir,lon,lon_dir,altitude,timestamp,speed,course
 	except Exception as err:
 		save_log(f"get_gnss_position: {err}")
