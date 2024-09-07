@@ -4,7 +4,7 @@
 #alias rpi-rw='sudo mount -o remount,rw / ; sudo mount -o remount,rw /boot'
 
 
-sleep 30 
+#sleep 30 
 
 sudo mount -o remount,rw / ; sudo mount -o remount,rw /boot
 
