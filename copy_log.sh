@@ -11,7 +11,7 @@ ping -c 3 -W 2 $TARGET_IP > /dev/null 2>&1
 if [ $? -ne 0 ]; then
     echo "$(date): Ping $TARGET_IP 失败，正在重启openvpn服务..."
     # 重启openvpn服务
-    sudo systemctl restart openvpn
+    sudo systemctl restart openvpn.service@ctsdn
     sleep 30
 else
     echo "$(date): Ping $TARGET_IP 成功。"
