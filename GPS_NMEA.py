@@ -47,7 +47,7 @@ def NMEA_GPGGA(sentence):
 	return None,None,None,None,None,None
 
 def NMEA_GPRMC(sentence):
-	match=re.match(r'^\$GPRMC,.*', sentence)  # 匹配GPRMC语句
+	match=re.match(r'^\$..RMC,.*', sentence)  # 匹配GPRMC语句
 	if match:
 		parts=sentence.split(',')
 		save_log(parts)
