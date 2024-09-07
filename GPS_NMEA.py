@@ -8,7 +8,7 @@ from datetime import datetime
 
 # 串口配置部分/COM port config params
 com_port='/dev/ttyUSB0'  
-baud_rate=9600
+baud_rate=115200
 ser=serial.Serial(com_port, baud_rate, bytesize=serial.EIGHTBITS, parity=serial.PARITY_NONE, stopbits=serial.STOPBITS_ONE)
 
 def save_log(result):
