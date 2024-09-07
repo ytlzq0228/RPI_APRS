@@ -32,7 +32,7 @@ def NMEA_GPGGA(sentence):
 			lon=float(parts[4])
 			lat_dir=parts[3]
 			lon_dir=parts[5]
-			altitude=float(parts[9]) #NMEA协议海拔数据单位米/NMEA protocol altitude data in meters​.
+			altitude=float(parts[9]) #NMEA协议海拔数据单位米/NMEA protocol altitude data in meters.
 			altitude=altitude*3.28 #APRS报文海拔数据单位英尺，米转英尺/APRS message altitude data is in feet; convert meters to feet.
 			lat_dd="%.2f"%lat
 			lon_dd="%.2f"%lon
@@ -56,7 +56,7 @@ def NMEA_GPRMC(sentence):
 			return speed,course
 		else:
 			print("No %s Signal. Waiting....."%parts[0])
-	return None,None
+	return '000','000'
 
 def get_gnss_position():
 	try:
@@ -65,7 +65,7 @@ def get_gnss_position():
 		while True:
 			if ser.in_waiting > 0:
 				line=ser.readline().decode('ascii', errors='replace').strip()  # 读取一行NMEA数据
-				#line='$GPGGA,041824.00,4004.6300,N,11618.2178,E,01,07,10.3,20.05,M,-15.40,M,1.1,1023*63<CR><LF>'
+				#line='$GPGGA,041824.00,4004.6300,N,11618.2178,E,01,07,10.3,20.05,M,-15.40,M,1.1,1023*63<CR><LF>' #for testing
 				#save_log(f"GPGGA Line:{line}")
 				lat,lat_dir,lon,lon_dir,altitude,timestamp=NMEA_GPGGA(line)
 				if lat is not None and lon is not None and altitude is not None:
@@ -80,13 +80,12 @@ def get_gnss_position():
 		while i<120:
 			if ser.in_waiting > 0:  
 				line=ser.readline().decode('ascii', errors='replace').strip()  # 读取一行NMEA数据
-				#line='$GPRMC,123519,A,4807.038,N,01131.000,E,010.4,084.4,230394,003.1,W*6A'
+				#line='$GPRMC,123519,A,4807.038,N,01131.000,E,010.4,084.4,230394,003.1,W*6A' #for testing
 				#save_log(f"GPRMC Line:{line}")
 				speed,course=NMEA_GPRMC(line)
-				if speed is not None and course is not None:
+				if speed is not '000' and course is not '000':
 					save_log(f"GNSS GPRMC: speed/knots={speed}, course={course}")
 					break
-				#time.sleep(0.1)
 				i+=1
 		return lat,lat_dir,lon,lon_dir,altitude,timestamp,speed,course
 	except Exception as err:
