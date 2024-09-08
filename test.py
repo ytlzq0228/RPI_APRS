@@ -78,7 +78,7 @@ def get_gnss_position():
 		while i<120:
 			
 			#line=ser.readline().decode('ascii', errors='replace').strip()  # 读取一行NMEA数据
-			line='$GPRMC,123519,A,4807.038,N,01131.000,E,010.4,084.4,230394,003.1,W*6A' #for testing
+			line='$GNRMC,085943.000,A,4004.809114,N,11619.391916,E,0.01,235.78,080924,,,D,V*0F' #for testing
 			#save_log(f"GPRMC Line:{line}")
 			speed,course=NMEA_GPRMC(line)
 			if speed!='000' and course!='000':
