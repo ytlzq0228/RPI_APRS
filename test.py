@@ -63,30 +63,29 @@ def get_gnss_position():
 		ser.reset_input_buffer()
 		i=0
 		while True:
-			if ser.in_waiting > 0:
-				#line=ser.readline().decode('ascii', errors='replace').strip()  # 读取一行NMEA数据
-				line='$GPGGA,041824.00,4004.6300,N,11618.2178,E,01,07,10.3,20.05,M,-15.40,M,1.1,1023*63<CR><LF>' #for testing
-				#save_log(f"GPGGA Line:{line}")
-				lat,lat_dir,lon,lon_dir,altitude,timestamp=NMEA_GPGGA(line)
-				if lat is not None and lon is not None and altitude is not None:
-					save_log(f"GNSS GPGGA: lat={lat}, lon={lon}, altitude/feet={altitude}")
-					break
-				if altitude==0:
-					i+=1
-				if altitude==0 and i%60==1:
-					save_log('No GPS Signal. Waiting.....')
+			#line=ser.readline().decode('ascii', errors='replace').strip()  # 读取一行NMEA数据
+			line='$GPGGA,041824.00,4004.6300,N,11618.2178,E,01,07,10.3,20.05,M,-15.40,M,1.1,1023*63<CR><LF>' #for testing
+			#save_log(f"GPGGA Line:{line}")
+			lat,lat_dir,lon,lon_dir,altitude,timestamp=NMEA_GPGGA(line)
+			if lat is not None and lon is not None and altitude is not None:
+				save_log(f"GNSS GPGGA: lat={lat}, lon={lon}, altitude/feet={altitude}")
+				break
+			if altitude==0:
+				i+=1
+			if altitude==0 and i%60==1:
+				save_log('No GPS Signal. Waiting.....')
 			
 		i=0
 		while i<120:
-			if ser.in_waiting > 0:  
-				#line=ser.readline().decode('ascii', errors='replace').strip()  # 读取一行NMEA数据
-				line='$GPRMC,123519,A,4807.038,N,01131.000,E,010.4,084.4,230394,003.1,W*6A' #for testing
-				#save_log(f"GPRMC Line:{line}")
-				speed,course=NMEA_GPRMC(line)
-				if speed!='000' and course!='000':
-					save_log(f"GNSS GPRMC: speed/knots={speed}, course={course}")
-					break
-				i+=1
+			
+			#line=ser.readline().decode('ascii', errors='replace').strip()  # 读取一行NMEA数据
+			line='$GPRMC,123519,A,4807.038,N,01131.000,E,010.4,084.4,230394,003.1,W*6A' #for testing
+			#save_log(f"GPRMC Line:{line}")
+			speed,course=NMEA_GPRMC(line)
+			if speed!='000' and course!='000':
+				save_log(f"GNSS GPRMC: speed/knots={speed}, course={course}")
+				break
+			i+=1
 		return lat,lat_dir,lon,lon_dir,altitude,timestamp,speed,course
 	except Exception as err:
 		save_log(f"get_gnss_position: {err}")
