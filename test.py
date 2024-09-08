@@ -108,6 +108,7 @@ if __name__ == '__main__':
 			time.sleep(30)
 		except Exception as err:
 			save_log(f"main: {err}")
+			raise err
 
 
 
