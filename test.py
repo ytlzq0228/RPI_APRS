@@ -60,7 +60,6 @@ def NMEA_GPRMC(sentence):
 
 def get_gnss_position():
 	try:
-		ser.reset_input_buffer()
 		i=0
 		while True:
 			#line=ser.readline().decode('ascii', errors='replace').strip()  # 读取一行NMEA数据
