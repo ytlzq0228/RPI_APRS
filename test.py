@@ -81,7 +81,7 @@ def get_gnss_position():
 			line='$GNRMC,085943.000,A,4004.809114,N,11619.391916,E,0.01,235.78,080924,,,D,V*0F' #for testing
 			#save_log(f"GPRMC Line:{line}")
 			speed,course=NMEA_GPRMC(line)
-			if speed!='000' and course!='000':
+			if speed!='000' or course!='000':
 				save_log(f"GNSS GPRMC: speed/knots={speed}, course={course}")
 				break
 			i+=1
