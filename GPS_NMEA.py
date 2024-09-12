@@ -106,7 +106,9 @@ if __name__ == '__main__':
 			frame_text=('BI1FQO-MI>PYTHON,TCPIP*,qAC,BI1FQO-MI:!%s%s/%s%s>%s/%s/A=%s APRS by RPI with GPS at UTC %s on 逗老师的Xiaomi Su7 Max,see more https://ctsdn.blog.csdn.net/article/details/130228867'%(lat,lat_dir,lon,lon_dir,course,speed,altitude,timestamp)).encode()
 			a=aprs.TCP(b'BI1FQO', b'20898')
 			a.start()
-			save_log(a.send(frame_text))
+			print(len(frame_text))
+			aprs_return=a.send(frame_text)
+			save_log(aprs_return)
 			time.sleep(30)
 		except Exception as err:
 			save_log(f"main: {err}")
