@@ -5,6 +5,10 @@ import re
 import serial
 import aprs
 from datetime import datetime
+import socket
+
+# 设置全局的socket超时时间，例如10秒
+socket.setdefaulttimeout(10)
 
 # 串口配置部分/COM port config params part
 com_port='/dev/ttyAMA0'  
@@ -106,10 +110,12 @@ if __name__ == '__main__':
 			frame_text=('BI1FQO-MI>PYTHON,TCPIP*,qAC,BI1FQO-MI:!%s%s/%s%s>%s/%s/A=%s APRS by RPI with GPS at UTC %s on 逗老师的Xiaomi Su7 Max,see more https://ctsdn.blog.csdn.net/article/details/130228867'%(lat,lat_dir,lon,lon_dir,course,speed,altitude,timestamp)).encode()
 			a=aprs.TCP(b'BI1FQO', b'20898')
 			a.start()
-			print(len(frame_text))
 			aprs_return=a.send(frame_text)
-			save_log(aprs_return)
-			time.sleep(30)
+			if aprs_return==len(frame_text)+2:
+				save_log(aprs_return)
+				time.sleep(30)
+			else:
+				save_log('APRS Report Return:%s Frame Lenth: %s Retrying..'%(aprs_return,frame_text))
 		except Exception as err:
 			save_log(f"main: {err}")
 
