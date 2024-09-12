@@ -112,10 +112,10 @@ if __name__ == '__main__':
 			a.start()
 			aprs_return=a.send(frame_text)
 			if aprs_return==len(frame_text)+2:
-				save_log(aprs_return)
+				save_log('APRS Report Good Length:%s'%aprs_return)
 				time.sleep(30)
 			else:
-				save_log('APRS Report Return:%s Frame Lenth: %s Retrying..'%(aprs_return,frame_text))
+				save_log('APRS Report Return:%s Frame Length: %s Retrying..'%(aprs_return,frame_text))
 		except Exception as err:
 			save_log(f"main: {err}")
 
