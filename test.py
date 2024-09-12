@@ -113,7 +113,7 @@ if __name__ == '__main__':
 				save_log('APRS Report Good Length:%s'%aprs_return)
 				time.sleep(10)
 			else:
-				save_log('APRS Report Return:%s Frame Lenth: %s Retrying..'%(aprs_return,frame_text))
+				save_log('APRS Report Return:%s Frame Length: %s Retrying..'%(aprs_return,frame_text))
 		except Exception as err:
 			save_log(f"main: {err}")
 
