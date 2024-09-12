@@ -8,7 +8,7 @@ from datetime import datetime
 import socket
 
 # 设置全局的socket超时时间，例如10秒
-socket.setdefaulttimeout(10)
+socket.setdefaulttimeout(5)
 
 # 串口配置部分/COM port config params part
 com_port='/dev/ttyAMA0'  

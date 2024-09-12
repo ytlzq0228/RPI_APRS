@@ -9,7 +9,7 @@ from datetime import datetime
 import socket
 
 # 设置全局的socket超时时间，例如10秒
-socket.setdefaulttimeout(10)
+socket.setdefaulttimeout(5)
 
 ## 串口配置部分/COM port config params part
 #com_port='/dev/ttyu0'  
@@ -19,11 +19,11 @@ socket.setdefaulttimeout(10)
 def save_log(result):
 	try:
 		print(result)
-		#now = datetime.now().strftime('%d-%m-%Y %H:%M:%S')
-		#f = open("/var/log/GPS_NMEA.log",'a')
-		#f.writelines("\n%s:log:%s" %(now,result))
-		#f.flush()
-		#f.close()
+		now = datetime.now().strftime('%d-%m-%Y %H:%M:%S')
+		f = open("./GPS_NMEA.log",'a')
+		f.writelines("\n%s:log:%s" %(now,result))
+		f.flush()
+		f.close()
 	except Exception as err:
 		print(err)
 
@@ -111,7 +111,7 @@ if __name__ == '__main__':
 			aprs_return=a.send(frame_text)
 			if aprs_return==len(frame_text)+2:
 				save_log(aprs_return)
-				time.sleep(30)
+				time.sleep(10)
 			else:
 				save_log('APRS Report Return:%s Frame Lenth: %s Retrying..'%(aprs_return,frame_text))
 		except Exception as err:
