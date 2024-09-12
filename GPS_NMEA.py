@@ -20,14 +20,13 @@ VERSION='0912.01'
 def save_log(result):
 	try:
 		print(result)
-		now = datetime.now().strftime('%d-%m-%Y %H:%M:%S')
+		now = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
 		f = open(LOG_FILE,'a')
-		f.writelines("\n%s:log:%s" %(now,result))
+		f.writelines("\n%s ver %s log:%s" %(now,VERSION,result))
 		f.flush()
 		f.close()
 	except Exception as err:
 		print(err)
-
 
 def NMEA_GPGGA(sentence):
 	match=re.match(r'^\$..GGA,.*', sentence)  # 匹配GPGGA语句
