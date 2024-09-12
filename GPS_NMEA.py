@@ -14,12 +14,14 @@ socket.setdefaulttimeout(5)
 com_port='/dev/ttyAMA0'  
 baud_rate=115200
 ser=serial.Serial(com_port, baud_rate, bytesize=serial.EIGHTBITS, parity=serial.PARITY_NONE, stopbits=serial.STOPBITS_ONE)
+LOG_FILE='/var/log/GPS_NMEA.log'
+VERSION='0912.01'
 
 def save_log(result):
 	try:
 		print(result)
 		now = datetime.now().strftime('%d-%m-%Y %H:%M:%S')
-		f = open("/var/log/GPS_NMEA.log",'a')
+		f = open(LOG_FILE,'a')
 		f.writelines("\n%s:log:%s" %(now,result))
 		f.flush()
 		f.close()
