@@ -80,6 +80,7 @@ def get_gnss_position():
 					i+=1
 				if altitude==0 and i%60==1:
 					save_log('No GPS Signal. Waiting.....')
+				i=i%3600
 			
 		i=0
 		while i<120:
