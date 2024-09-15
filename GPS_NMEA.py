@@ -74,7 +74,7 @@ def get_gnss_position():
 				#save_log(f"GPGGA Line:{line}")
 				lat,lat_dir,lon,lon_dir,altitude,timestamp=NMEA_GPGGA(line)
 				if lat is not None and lon is not None and altitude is not None:
-					save_log(f"GNSS GPGGA: lat={lat}, lon={lon}, altitude/feet={altitude}")
+					save_log(f"GNSS GGA: lat={lat}, lon={lon}, altitude/feet={altitude}")
 					break
 				if altitude==0:
 					i+=1
@@ -90,7 +90,7 @@ def get_gnss_position():
 				#save_log(f"GPRMC Line:{line}")
 				speed,course=NMEA_GPRMC(line)
 				if speed!='000' or course!='000':
-					save_log(f"GNSS GPRMC: speed/knots={speed}, course={course}")
+					save_log(f"GNSS RMC: speed/knots={speed}, course={course}")
 					break
 				i+=1
 		return lat,lat_dir,lon,lon_dir,altitude,timestamp,speed,course
