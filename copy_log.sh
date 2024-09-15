@@ -43,6 +43,36 @@ echo "$(date): 继续执行脚本的后续部分。"
 
 
 
+# 获取树莓派当前温度
+get_cpu_temp() {
+  # vcgencmd 命令获取树莓派的CPU温度
+  temp=$(vcgencmd measure_temp | awk -F "=" '{print $2}')
+  echo "$temp"
+}
+
+# 获取系统运行时间
+get_uptime() {
+  # 从 /proc/uptime 获取系统开机时间
+  uptime_seconds=$(cut -d. -f1 /proc/uptime)
+  uptime_formatted=$(printf '%02d:%02d:%02d\n' $((uptime_seconds/3600)) $((uptime_seconds%3600/60)) $((uptime_seconds%60)))
+  echo "$uptime_formatted"
+}
+
+# 将信息追加到日志文件
+log_system_info() {
+  log_file="/var/log/GPS_NMEA.log"
+  current_time=$(date '+%Y-%m-%d %H:%M:%S')
+  cpu_temp=$(get_cpu_temp)
+  uptime=$(get_uptime)
+  
+  log_message="$current_time: CPU Temperature: $cpu_temp, Uptime: $uptime"
+  
+  echo "$log_message" >> "$log_file"
+  echo "Logged: $log_message"
+}
+
+# 执行记录信息
+log_system_info
 
 
 # 设置日志文件路径
