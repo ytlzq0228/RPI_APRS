@@ -1,6 +1,8 @@
 #!/bin/bash
 
 
+
+
 # 目标IP地址
 TARGET_IP="10.1.9.1"
 
@@ -40,6 +42,21 @@ fi
 # 如果ping成功，或者尝试重启VPN之后Ping成功，继续执行后续代码
 echo "$(date): 继续执行脚本的后续部分。"
 # 在这里继续添加后续的命令
+
+
+
+
+# 检查 python3 GPS_NMEA.py 是否在运行
+if ! pgrep -f "python3 GPS_NMEA.py" > /dev/null; then
+    echo "GPS_NMEA.py 未运行，正在执行 pull_APRS_code.sh"
+    # 执行命令
+    /home/pi-star/RPI_APRS/pull_APRS_code.sh
+else
+    echo "GPS_NMEA.py 正在运行。"
+fi
+
+
+
 
 
 
@@ -111,3 +128,5 @@ if [ $? -eq 0 ]; then
 else
   echo "Failed to copy file to remote server."
 fi
+
+
