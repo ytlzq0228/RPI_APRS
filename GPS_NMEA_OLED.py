@@ -94,7 +94,7 @@ def get_gnss_position():
 			if ser.in_waiting > 0:  
 				line=ser.readline().decode('ascii', errors='replace').strip()  # 读取一行NMEA数据
 				#line='$GPRMC,123519,A,4807.038,N,01131.000,E,010.4,084.4,230394,003.1,W*6A' #for testing
-				save_log(f"GPRMC Line:{line}")
+				#save_log(f"GPRMC Line:{line}")
 				speed,course=NMEA_GPRMC(line)
 				if speed!='000' or course!='000':
 					save_log(f"GNSS RMC: speed/knots={speed}, course={course}")
