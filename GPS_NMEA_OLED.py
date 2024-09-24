@@ -125,4 +125,11 @@ if __name__ == '__main__':
 
 
 
+#sudo apt-get update
+#sudo apt-get -y upgrade
+#sudo apt-get -y install i2c-tools python3-smbus python-smbus
+#sudo apt-get -y install python3-pip python3-pil
+#sudo pip3 install --upgrade setuptools
+#sudo pip3 install --upgrade adafruit-python-shell
+#sudo pip3 install adafruit-circuitpython-ssd1306
 
