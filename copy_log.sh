@@ -104,6 +104,7 @@ REMOTE_FILE="${DATE_PREFIX}_GPS_NMEA.log"
 # 设置远程服务器信息
 REMOTE_USER="root"
 REMOTE_HOST="nas.ctsdn.com"
+#重要！！！请自行替换成你的SFTP服务器信息，或者删除
 REMOTE_DIR="/volume1/Storage/Su7-GPS-PATH"
 
 
@@ -112,7 +113,7 @@ REMOTE_DIR="/volume1/Storage/Su7-GPS-PATH"
 
 # 拷贝文件到远程服务器
 scp -P 10223 $LOG_FILE ${REMOTE_USER}@${REMOTE_HOST}:${REMOTE_DIR}/${REMOTE_FILE}
-
+#已经启用auth_key免密认证
 # 检查拷贝是否成功
 if [ $? -eq 0 ]; then
   echo "File copied successfully to ${REMOTE_USER}@${REMOTE_HOST}:${REMOTE_DIR}/${REMOTE_FILE}"
