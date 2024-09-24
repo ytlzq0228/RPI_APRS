@@ -14,8 +14,8 @@ socket.setdefaulttimeout(5)
 com_port='/dev/ttyAMA0'  
 baud_rate=115200
 ser=serial.Serial(com_port, baud_rate, bytesize=serial.EIGHTBITS, parity=serial.PARITY_NONE, stopbits=serial.STOPBITS_ONE)
-LOG_FILE='/var/log/GPS_NMEA.log'
-VERSION='0912.01'
+LOG_FILE='/var/log/GPS_NMEA_OLED.log'
+VERSION='0924.01'
 
 def save_log(result):
 	try:
@@ -109,7 +109,7 @@ if __name__ == '__main__':
 				except Exception as err:
 					save_log(f"Retrying get_gnss_position due to error: {err}")
 					time.sleep(1)  # 等待1秒后重试
-			frame_text=('BI1FQO-MI>PYTHON,TCPIP*,qAC,BI1FQO-MI:!%s%s/%s%s>%s/%s/A=%s APRS by RPI with GPS at UTC %s on 逗老师的Xiaomi Su7 Max,see more https://ctsdn.blog.csdn.net/article/details/130228867'%(lat,lat_dir,lon,lon_dir,course,speed,altitude,timestamp)).encode()
+			frame_text=('BI1FQO-RP>PYTHON,TCPIP*,qAC,BI1FQO-MI:!%s%s/%s%s>%s/%s/A=%s APRS by RPI with GPS at UTC %s'%(lat,lat_dir,lon,lon_dir,course,speed,altitude,timestamp)).encode()
 			a=aprs.TCP(b'BI1FQO', b'20898')
 			a.start()
 			aprs_return=a.send(frame_text)
