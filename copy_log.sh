@@ -4,7 +4,7 @@
 
 
 # 目标IP地址
-TARGET_IP="10.1.9.1"
+TARGET_IP="223.5.5.5"
 
 # 定义最大重试次数
 MAX_RETRIES=3
