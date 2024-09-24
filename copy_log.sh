@@ -83,7 +83,7 @@ log_system_info() {
   uptime=$(get_uptime)
   
   log_message="$current_time: CPU Temperature: $cpu_temp, Uptime: $uptime"
-  
+  echo "" >> "$log_file"
   echo "$log_message" >> "$log_file"
   echo "Logged: $log_message"
 }
