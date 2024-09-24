@@ -56,8 +56,14 @@ def NMEA_GPRMC(sentence):
 		parts=sentence.split(',')
 		print(parts)
 		if len(parts) > 8 and (parts[7] or parts[8]):
-			speed="%03.0f"%float(parts[7]) #NMEA APRS速度数据单位均为海里每小时/The speed data unit for both NMEA and APRS is knots, no conversion needed.
-			course="%03.0f"%float(parts[8]) #NMEA APRS航向数据单位均为度/The course data unit for both NMEA and APRS is degrees, no conversion needed.
+			if parts[7]==''
+				speed="%03.0f"%0
+			else:
+				speed="%03.0f"%float(parts[7]) #NMEA APRS速度数据单位均为海里每小时/The speed data unit for both NMEA and APRS is knots, no conversion needed.
+			if parts[8]==''
+				course="%03.0f"%0
+			else:
+				course="%03.0f"%float(parts[8]) #NMEA APRS航向数据单位均为度/The course data unit for both NMEA and APRS is degrees, no conversion needed.
 			save_log(sentence)
 			return speed,course
 		else:
