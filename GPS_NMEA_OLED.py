@@ -54,7 +54,7 @@ def NMEA_GPRMC(sentence):
 	match=re.match(r'^\$..RMC,.*', sentence)  # 匹配GPRMC语句
 	if match:
 		parts=sentence.split(',')
-		print(parts)
+		#print(parts)
 		if len(parts) > 8 and (parts[7] or parts[8]):
 			if parts[7]=='':
 				speed="%03.0f"%0
