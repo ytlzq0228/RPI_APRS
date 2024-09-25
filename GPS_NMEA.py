@@ -147,8 +147,8 @@ if __name__ == '__main__':
 					time.sleep(1)  # 等待1秒后重试
 			if OLED_Enable==1:
 				try:
-					lat_disp="%.4f"%(float(lat)/100)+lat_dir
-					lon_disp="%.4f"%(float(lon)/100)+lon_dir
+					lat_disp="%.6f"%(float(lat)/100)+lat_dir
+					lon_disp="%.6f"%(float(lon)/100)+lon_dir
 					OLED.OLED_Position(oled,lat_disp,lon_disp,GNSS_Type,update_time)
 				except Exception as err:
 					save_log(f"main_OLED: {err}")
