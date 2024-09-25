@@ -6,6 +6,7 @@ import serial
 import aprs
 from datetime import datetime
 import socket
+import board
 import adafruit_ssd1306
 from PIL import Image,ImageDraw,ImageFont
 
