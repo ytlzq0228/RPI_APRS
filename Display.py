@@ -3,6 +3,21 @@ import os
 from PIL import Image,ImageDraw,ImageFont
 file_dir = os.path.dirname(os.path.realpath(__file__))
 
+LOG_FILE='/var/log/GPS_NMEA.log'
+VERSION='DISP_0925.01'
+
+def save_log(result):
+	try:
+		print(result)
+		now = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
+		f = open(LOG_FILE,'a')
+		f.writelines("\n%s ver %s log:%s" %(now,VERSION,result))
+		f.flush()
+		f.close()
+	except Exception as err:
+		print(err)
+
+
 class OLED:
 	def OLED_Init(OLED_Enable,OLED_Address):
 		# Define I2C OLED Display and config address.
@@ -48,7 +63,7 @@ class OLED:
 			oled.show()
 			
 		except Exception as err:
-			print(err)
+			save_log(err)
 	
 	def OLED_Display(Message):
 		try:
@@ -72,4 +87,4 @@ class OLED:
 			oled.show()
 			
 		except Exception as err:
-			print(err)
+			save_log(err)
