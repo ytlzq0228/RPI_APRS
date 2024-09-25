@@ -56,7 +56,7 @@ def NMEA_RMC(sentence):
 	if match:
 		parts=sentence.split(',')
 		print(parts)
-		if len(parts) > 8 and parts[3] and parts[5] and parts[7] and parts[8]:
+		if len(parts) > 8 and parts[3] and parts[5]:
 			lat=float(parts[3])
 			lon=float(parts[5])
 			lat_dir=parts[4]
