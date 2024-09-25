@@ -92,6 +92,7 @@ def get_gnss_position(Test_Flag):
 					line='$GPRMC,123519,A,4807.038,N,01131.000,E,010.4,084.4,230394,003.1,W*6A' #for testing
 				lat,lat_dir,lon,lon_dir,speed,course,timestamp,GNSS_Type,lat_raw,lon_raw=NMEA_RMC(line)
 				if lat is not None and lon is not None :
+					i=0
 					#save_log(f"GNSS GGA: lat={lat}, lon={lon}, altitude/feet={altitude}")
 					break
 				if timestamp==0:
@@ -149,7 +150,12 @@ if __name__ == '__main__':
 				try:
 					lat_disp="%011.7f"%(float(lat_raw)/100)+" "+lat_dir
 					lon_disp="%011.7f"%(float(lon_raw)/100)+" "+lon_dir
-					OLED.OLED_Position(oled,lat_disp,lon_disp,GNSS_Type,update_time)
+					if update_time=="00:00:00":
+						time_dif="00"
+					else:
+						time_dif="%02.0f"%(update_time-datetime.now())
+						update_time=update_time.strftime('%H:%M:%S')
+					OLED.OLED_Position(oled,lat_disp,lon_disp,GNSS_Type,update_time,time_dif)
 				except Exception as err:
 					save_log(f"main_OLED: {err}")
 			if float(timestamp)%30==0:
@@ -159,10 +165,10 @@ if __name__ == '__main__':
 				aprs_return=a.send(frame_text)
 				if aprs_return==len(frame_text)+2:
 					save_log('APRS Report Good Length:%s'%aprs_return)
-					update_time=datetime.now().strftime('%H:%M:%S')
+					update_time=datetime.now()
 				else:
 					save_log('APRS Report Return:%s Frame Length: %s Retrying..'%(aprs_return,frame_text))
-					update_time="Fail"
+					update_time="00:00:00"
 
 		except Exception as err:
 			save_log(f"main: {err}")
