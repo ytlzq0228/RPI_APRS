@@ -122,7 +122,7 @@ if __name__ == '__main__':
 				except Exception as err:
 					save_log(f"Retrying get_gnss_position due to error: {err}")
 					time.sleep(1)  # 等待1秒后重试
-			frame_text=(f'{SSID}>PYTHON,TCPIP*,qAC,{SSID}:!{lat},{lat_dir}/{lon},{lon_dir}>{course}/{speed}/A={altitude} APRS by RPI with GPS at UTC {timestamp} {Message}').encode()
+			frame_text=(f'{SSID}>PYTHON,TCPIP*,qAC,{SSID}:!{lat}{lat_dir}/{lon}{lon_dir}>{course}/{speed}/A={altitude} APRS by RPI with GPS at UTC {timestamp} {Message}').encode()
 			a=aprs.TCP(b'BI1FQO', b'20898')
 			a.start()
 			aprs_return=a.send(frame_text)
