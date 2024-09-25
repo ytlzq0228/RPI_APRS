@@ -151,10 +151,11 @@ if __name__ == '__main__':
 	Message=sys.argv[3]
 	SSID_ICON=sys.argv[4]
 	OLED_Enable=int(sys.argv[5])
+	OLED_Address=int(sys.argv[6],16)
 	# Define I2C OLED Display and config address.
 	if OLED_Enable==1:
 		i2c = board.I2C()
-		oled = adafruit_ssd1306.SSD1306_I2C(128, 64, i2c, addr=0x3c)
+		oled = adafruit_ssd1306.SSD1306_I2C(128, 64, i2c, addr=OLED_Address)
 		# Clear display.
 		oled.fill(0)
 		oled.show()
