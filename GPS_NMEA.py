@@ -6,8 +6,6 @@ import serial
 import aprs
 from datetime import datetime
 import socket
-import board
-import adafruit_ssd1306
 from Display import OLED
 
 # 设置全局的socket超时时间，例如10秒

@@ -1,6 +1,8 @@
 import sys
 import os
 from datetime import datetime
+import board
+import adafruit_ssd1306
 from PIL import Image,ImageDraw,ImageFont
 file_dir = os.path.dirname(os.path.realpath(__file__))
 
