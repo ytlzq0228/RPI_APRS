@@ -6,9 +6,7 @@ import serial
 import aprs
 from datetime import datetime
 import socket
-import board
-import adafruit_ssd1306
-from PIL import Image,ImageDraw,ImageFont
+from Display import OLED
 
 
 file_dir = os.path.dirname(os.path.realpath(__file__))
@@ -121,60 +119,6 @@ def get_gnss_position(Test_Flag):
 
 
 
-def OLED_Position(oled,lat,lon,GNSS_Type,update_time):
-	try:
-		# Make sure to create image with mode '1' for 1-bit color.
-		image = Image.new("1", (oled.width, oled.height))
-		
-		# Get drawing object to draw on image.
-		draw = ImageDraw.Draw(image)
-		
-		font1 = ImageFont.truetype(os.path.join(file_dir, 'Menlo.ttc'), 11)
-		font3 = ImageFont.truetype(os.path.join(file_dir, 'PixelOperator.ttf'), 16)
-		font2 = ImageFont.truetype(os.path.join(file_dir, 'Menlo.ttc'), 13,index=1)
-		#logging.info ("***draw line")
-		draw.line([(0,0),(127,0)], fill = 255)
-		draw.line([(0,0),(0,63)], fill = 255)
-		draw.line([(0,63),(127,63)], fill = 255)
-		draw.line([(127,0),(127,63)], fill = 255)
-		draw.line([(0,16),(127,16)], fill = 255)
-		#logging.info ("***draw text")
-		draw.text((3,0), 'GPS Information', font = font2, fill = 255)
-		draw.text((7,16), '%s,%s'%(lat,lon), font = font1, fill = 255)
-		draw.text((1,33), 'GNSS_Type: %s'%GNSS_Type, font = font1, fill = 255)
-		draw.text((7,50), 'Update: %s'%update_time, font = font1, fill = 255)
-		# Display image
-		oled.image(image)
-		oled.show()
-		
-	except Exception as err:
-		print(err)
-
-def OLED_Display(Message):
-	try:
-		# Make sure to create image with mode '1' for 1-bit color.
-		image = Image.new("1", (oled.width, oled.height))
-		
-		# Get drawing object to draw on image.
-		draw = ImageDraw.Draw(image)
-		
-		font1 = ImageFont.truetype(os.path.join(file_dir, 'Menlo.ttc'), 11)
-		font3 = ImageFont.truetype(os.path.join(file_dir, 'PixelOperator.ttf'), 16)
-		font2 = ImageFont.truetype(os.path.join(file_dir, 'Menlo.ttc'), 13,index=1)
-		#logging.info ("***draw line")
-		draw.line([(0,0),(127,0)], fill = 255)
-		draw.line([(0,0),(0,63)], fill = 255)
-		draw.line([(0,63),(127,63)], fill = 255)
-		draw.line([(127,0),(127,63)], fill = 255)
-		draw.text((1,25), Message, font = font1, fill = 255)
-		# Display image
-		oled.image(image)
-		oled.show()
-		
-	except Exception as err:
-		print(err)
-
-
 if __name__ == '__main__':
 	Test_Flag=int(sys.argv[1])
 	SSID=sys.argv[2]
@@ -184,11 +128,16 @@ if __name__ == '__main__':
 	OLED_Address=int(sys.argv[6],16)
 	# Define I2C OLED Display and config address.
 	if OLED_Enable==1:
-		i2c = board.I2C()
-		oled = adafruit_ssd1306.SSD1306_I2C(128, 64, i2c, addr=OLED_Address)
-		# Clear display.
-		oled.fill(0)
-		oled.show()
+		try:
+			i2c = board.I2C()
+			oled = adafruit_ssd1306.SSD1306_I2C(128, 64, i2c, addr=OLED_Address)
+			# Clear display
+			oled.fill(0)
+			oled.show()
+			save_log("Init I2C OLED Success")
+		except Exception as err:
+			OLED_Enable=0
+			save_log("Init I2C OLED Fail.Turn off it.")
 
 	while True:
 		try:
@@ -208,7 +157,7 @@ if __name__ == '__main__':
 				update_time=datetime.now().strftime('%H:%M:%S')
 				if OLED_Enable==1:
 					try:
-						OLED_Position(oled,lat,lon,GNSS_Type,update_time)
+						OLED.OLED_Position(oled,lat,lon,GNSS_Type,update_time)
 					finally:
 						time.sleep(0.01)
 				time.sleep(30)
