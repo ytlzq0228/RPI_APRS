@@ -81,7 +81,7 @@ def NMEA_RMC(sentence):
 			return None,None,None,None,None,None,0,None,None,None
 	return None,None,None,None,None,None,None,None,None,None
 
-def get_gnss_position(Test_Flag,oled):
+def get_gnss_position(Test_Flag):
 	try:
 		ser.reset_input_buffer()
 		i=0
@@ -140,7 +140,7 @@ if __name__ == '__main__':
 		try:
 			while True:
 				try:
-					lat,lat_dir,lon,lon_dir,altitude,timestamp,speed,course,GNSS_Type,lat_raw,lon_raw = get_gnss_position(Test_Flag,oled)
+					lat,lat_dir,lon,lon_dir,altitude,timestamp,speed,course,GNSS_Type,lat_raw,lon_raw = get_gnss_position(Test_Flag)
 					break  # 成功获取GNSS数据时退出循环
 				except Exception as err:
 					save_log(f"Retrying get_gnss_position due to error: {err}")
