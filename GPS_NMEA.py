@@ -112,6 +112,7 @@ if __name__ == '__main__':
 	Test_Flag=sys.argv[1]
 	SSID=sys.argv[2]
 	Message=sys.argv[3]
+	SSID_ICON=sys.argv[4]
 	print(Test_Flag,SSID,Message)
 	while True:
 		try:
@@ -122,7 +123,7 @@ if __name__ == '__main__':
 				except Exception as err:
 					save_log(f"Retrying get_gnss_position due to error: {err}")
 					time.sleep(1)  # 等待1秒后重试
-			frame_text=(f'{SSID}>PYTHON,TCPIP*,qAC,{SSID}:!{lat}{lat_dir}/{lon}{lon_dir}>{course}/{speed}/A={altitude} APRS by RPI with GPS at UTC {timestamp} {Message}').encode()
+			frame_text=(f'{SSID}>PYTHON,TCPIP*,qAC,{SSID}:!{lat}{lat_dir}/{lon}{lon_dir}{SSID_ICON}{course}/{speed}/A={altitude} APRS by RPI with GPS at UTC {timestamp} {Message}').encode()
 			a=aprs.TCP(b'BI1FQO', b'20898')
 			a.start()
 			aprs_return=a.send(frame_text)

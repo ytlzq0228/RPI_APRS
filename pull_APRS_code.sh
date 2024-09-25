@@ -23,4 +23,4 @@ echo "Code pulled on $(date)" >> /var/log/git_pull.log
 
 sudo sync ; sudo sync ; sudo sync ; sudo mount -o remount,ro / ; sudo mount -o remount,ro /boot
 echo "$SSID"
-python3 GPS_NMEA.py "$Test_Flag" "$SSID" "$Message" #> /var/log/GPS_NMEA.log
+python3 GPS_NMEA.py "$Test_Flag" "$SSID" "$Message" "$SSID_ICON"#> /var/log/GPS_NMEA.log
