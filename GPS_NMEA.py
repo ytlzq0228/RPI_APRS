@@ -45,7 +45,8 @@ def NMEA_GPGGA(sentence):
 			altitude="%06.0f"%altitude
 			timestamp=parts[1]
 			GNSS_Type=parts[0].replace("$","")
-			save_log(sentence)
+			if int(timestamp)%10==0:
+				save_log(sentence)
 			return lat_dd,lat_dir,lon_dd,lon_dir,altitude,timestamp,GNSS_Type
 		else:
 			print("No %s Signal. Waiting....."%parts[0])
@@ -66,7 +67,9 @@ def NMEA_GPRMC(sentence):
 				course="%03.0f"%180
 			else:
 				course="%03.0f"%float(parts[8]) #NMEA APRS航向数据单位均为度/The course data unit for both NMEA and APRS is degrees, no conversion needed.
-			save_log(sentence)
+			timestamp=parts[1]
+			if int(timestamp)%10==0:
+				save_log(sentence)
 			return speed,course
 		else:
 			print("No %s Signal. Waiting....."%parts[0])
