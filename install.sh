@@ -22,7 +22,10 @@ sudo apt-get -y install python3-pip python3-pil
 sudo pip3 install --upgrade setuptools
 sudo pip3 install --upgrade adafruit-python-shell
 sudo pip3 install adafruit-circuitpython-ssd1306
+sudo apt-get install libjpeg-dev libfreetype6-dev libopenjp2-7 libtiff5
+sudo -H pip3 install --upgrade luma.lcd Pillow spidev
 sudo pip3 install aprs
+
 
 
 cp ./GPS_config.cfg /etc/
