@@ -29,7 +29,7 @@ def save_log(result):
 	except Exception as err:
 		print(err)
 
-def NMEA_GPGGA(sentence,timestamp):
+def NMEA_GGA(sentence,timestamp):
 	match=re.match(r'^\$..GGA,.*', sentence)  # 匹配GPGGA语句
 	if match:
 		parts=sentence.split(',')
@@ -51,11 +51,11 @@ def NMEA_GPGGA(sentence,timestamp):
 			print("No %s Signal. Waiting....."%parts[0])
 	return None
 
-def NMEA_GPRMC(sentence):
+def NMEA_RMC(sentence):
 	match=re.match(r'^\$..RMC,.*', sentence)  # 匹配GPRMC语句
 	if match:
 		parts=sentence.split(',')
-		#print(parts)
+		print(parts)
 		if len(parts) > 8 and parts[3] and parts[5] and parts[7] and parts[8]:
 			lat=float(parts[3])
 			lon=float(parts[5])
@@ -90,7 +90,7 @@ def get_gnss_position(Test_Flag,oled):
 				line=ser.readline().decode('ascii', errors='replace').strip()  # 读取一行NMEA数据
 				if Test_Flag!=0:
 					line='$GPRMC,123519,A,4807.038,N,01131.000,E,010.4,084.4,230394,003.1,W*6A' #for testing
-				lat,lat_dir,lon,lon_dir,speed,course,timestamp,GNSS_Type=NMEA_GPRMC(line)
+				lat,lat_dir,lon,lon_dir,speed,course,timestamp,GNSS_Type=NMEA_RMC(line)
 				if lat is not None and lon is not None :
 					#save_log(f"GNSS GGA: lat={lat}, lon={lon}, altitude/feet={altitude}")
 					break
@@ -111,7 +111,7 @@ def get_gnss_position(Test_Flag,oled):
 				line=ser.readline().decode('ascii', errors='replace').strip()  # 读取一行NMEA数据
 				if Test_Flag!=0:
 					line='$GPGGA,041824.00,4004.6300,N,11618.2178,E,01,07,10.3,20.05,M,-15.40,M,1.1,1023*63<CR><LF>' #for testing
-				altitude=NMEA_GPGGA(line,timestamp)
+				altitude=NMEA_GGA(line,timestamp)
 				if altitude :
 					#save_log(f"GNSS RMC: speed/knots={speed}, course={course}")
 					break
