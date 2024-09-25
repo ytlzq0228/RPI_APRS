@@ -178,6 +178,8 @@ if __name__ == '__main__':
 				if OLED_Enable==1:
 					try:
 						OLED_Display(oled,lat,lon,GNSS_Type,update_time)
+					finally:
+						time.sleep(0.01)
 				time.sleep(30)
 			else:
 				save_log('APRS Report Return:%s Frame Length: %s Retrying..'%(aprs_return,frame_text))
