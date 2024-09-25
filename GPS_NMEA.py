@@ -151,10 +151,10 @@ if __name__ == '__main__':
 					lat_disp="%011.7f"%(float(lat_raw)/100)+" "+lat_dir
 					lon_disp="%011.7f"%(float(lon_raw)/100)+" "+lon_dir
 					if update_time==datetime.min:
-						time_dif=datetime.min
+						time_diff="00"
 					else:
-						time_dif=update_time-datetime.now()
-					OLED.OLED_Position(oled,lat_disp,lon_disp,GNSS_Type,update_time.strftime('%H:%M:%S'),time_dif.strftime('%S'))
+						time_diff="%02.0f"%(update_time-datetime.now()).total_seconds()
+					OLED.OLED_Position(oled,lat_disp,lon_disp,GNSS_Type,update_time.strftime('%H:%M:%S'),time_diff)
 				except Exception as err:
 					save_log(f"main_OLED: {err}")
 			if float(timestamp)%30==0:
