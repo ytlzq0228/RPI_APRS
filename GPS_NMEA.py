@@ -126,7 +126,7 @@ if __name__ == '__main__':
 	OLED_Enable=int(sys.argv[5])
 	OLED_Address=int(sys.argv[6],16)
 
-	OLED_Enable,oled=OLED.OLED_Init(OLED_Enable)
+	OLED_Enable,oled=OLED.OLED_Init(OLED_Enable,OLED_Address)
 
 	while True:
 		try:
