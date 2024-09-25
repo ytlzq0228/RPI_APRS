@@ -60,7 +60,7 @@ class OLED:
 			draw.line([(0,16),(127,16)], fill = 255)
 			#logging.info ("***draw text")
 			draw.text((3,0), 'GPS Information', font = font2, fill = 255)
-			draw.text((7,16), '%s,%s'%(lat,lon), font = font1, fill = 255)
+			draw.text((5,16), '%s,%s'%(lat,lon), font = font1, fill = 255)
 			draw.text((1,33), 'GNSS_Type: %s'%GNSS_Type, font = font1, fill = 255)
 			draw.text((7,50), 'Update: %s'%update_time, font = font1, fill = 255)
 			# Display image
@@ -93,3 +93,24 @@ class OLED:
 			
 		except Exception as err:
 			save_log(err)
+
+
+class IPS:
+from luma.core.interface.serial import i2c
+from luma.oled.device import ssd1306
+from luma.core.render import canvas
+from PIL import ImageFont, ImageDraw
+
+# 使用I2C接口连接设备
+serial = i2c(port=1, address=0x3C)  # 确保你使用正确的I2C地址
+
+# 创建OLED显示设备实例（如果ST7789支持I2C）
+device = ssd1306(serial, width=128, height=64)
+
+# 使用Pillow的字体功能
+font = ImageFont.load_default()
+
+# 显示文本的函数
+def display_text():
+    with canvas(device) as draw:
+        draw.text((30, 30), "Hello, I2C ST7789!", font=font, fill="white")
