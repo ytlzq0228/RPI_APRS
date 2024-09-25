@@ -1,4 +1,7 @@
+import sys
+import os
 from PIL import Image,ImageDraw,ImageFont
+file_dir = os.path.dirname(os.path.realpath(__file__))
 
 class OLED:
 	def OLED_Position(oled,lat,lon,GNSS_Type,update_time):
