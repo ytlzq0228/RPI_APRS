@@ -75,7 +75,7 @@ def NMEA_GPRMC(sentence):
 			print("No %s Signal. Waiting....."%parts[0])
 	return '000','000'
 
-def get_gnss_position(Test_Flag):
+def get_gnss_position(Test_Flag,oled):
 	try:
 		ser.reset_input_buffer()
 		i=0
@@ -95,7 +95,7 @@ def get_gnss_position(Test_Flag):
 					save_log('No GNSS Signal. Waiting.....')
 					if OLED_Enable==1:
 						try:
-							OLED.OLED_Display('No GNSS Signal Yet')
+							OLED.OLED_Display(oled,'No GNSS Signal Yet')
 						finally:
 							time.sleep(0.01)
 				i=i%3600
@@ -137,7 +137,7 @@ if __name__ == '__main__':
 		try:
 			while True:
 				try:
-					lat,lat_dir,lon,lon_dir,altitude,timestamp,speed,course,GNSS_Type = get_gnss_position(Test_Flag)
+					lat,lat_dir,lon,lon_dir,altitude,timestamp,speed,course,GNSS_Type = get_gnss_position(Test_Flag,oled)
 					break  # 成功获取GNSS数据时退出循环
 				except Exception as err:
 					save_log(f"Retrying get_gnss_position due to error: {err}")

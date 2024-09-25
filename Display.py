@@ -70,7 +70,7 @@ class OLED:
 		except Exception as err:
 			save_log(err)
 	
-	def OLED_Display(Message):
+	def OLED_Display(oled,Message):
 		try:
 			# Make sure to create image with mode '1' for 1-bit color.
 			image = Image.new("1", (oled.width, oled.height))
