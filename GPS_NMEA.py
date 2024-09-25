@@ -154,7 +154,8 @@ if __name__ == '__main__':
 						time_dif="00"
 					else:
 						time_dif=update_time-datetime.now()
-					OLED.OLED_Position(oled,lat_disp,lon_disp,GNSS_Type,update_time.strftime('%H:%M:%S'),time_dif.strftime('%S'))
+						print(time_dif)
+					OLED.OLED_Position(oled,lat_disp,lon_disp,GNSS_Type,update_time.strftime('%H:%M:%S'),time_dif)
 				except Exception as err:
 					save_log(f"main_OLED: {err}")
 			if float(timestamp)%30==0:
