@@ -63,7 +63,7 @@ class OLED:
 			draw.text((1,16), "Lat:%s"%lat_disp, font = font1, fill = 255)
 			draw.text((1,27), "Lon:%s"%lon_disp, font = font1, fill = 255)
 			draw.text((1,38), 'GNSS_Type: %s'%GNSS_Type, font = font1, fill = 255)
-			draw.text((1,50), 'Update:%s %s'%(update_time,time_dif), font = font1, fill = 255)
+			draw.text((1,50), 'Update:%s%s'%(update_time,time_dif), font = font1, fill = 255)
 			# Display image
 			oled.image(image)
 			oled.show()
