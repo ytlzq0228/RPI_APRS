@@ -49,7 +49,7 @@ class OLED:
 			# Get drawing object to draw on image.
 			draw = ImageDraw.Draw(image)
 			
-			font1 = ImageFont.truetype(os.path.join(file_dir, 'Menlo.ttc'), 10)
+			font1 = ImageFont.truetype(os.path.join(file_dir, 'Menlo.ttc'), 11)
 			font3 = ImageFont.truetype(os.path.join(file_dir, 'PixelOperator.ttf'), 16)
 			font2 = ImageFont.truetype(os.path.join(file_dir, 'Menlo.ttc'), 13,index=1)
 			#logging.info ("***draw line")
