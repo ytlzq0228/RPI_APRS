@@ -128,7 +128,8 @@ if __name__ == '__main__':
 		OLED_Address=int(sys.argv[6],16)
 
 	OLED_Enable,oled=OLED.OLED_Init(OLED_Enable,OLED_Address)
-
+	update_time="00:00:00"
+	i=0
 	while True:
 		try:
 			while True:
@@ -138,24 +139,28 @@ if __name__ == '__main__':
 				except Exception as err:
 					save_log(f"Retrying get_gnss_position due to error: {err}")
 					time.sleep(1)  # 等待1秒后重试
-			frame_text=(f'{SSID}>PYTHON,TCPIP*,qAC,{SSID}:!{lat}{lat_dir}/{lon}{lon_dir}{SSID_ICON}{course}/{speed}/A={altitude} APRS by RPI with GNSS Module using {GNSS_Type} at UTC {timestamp} {Message}').encode()
-			a=aprs.TCP(b'BI1FQO', b'20898')
-			a.start()
-			aprs_return=a.send(frame_text)
-			if aprs_return==len(frame_text)+2:
-				save_log('APRS Report Good Length:%s'%aprs_return)
-				update_time=datetime.now().strftime('%H:%M:%S')
-				if OLED_Enable==1:
-					try:
-						lat="%.4f"%(float(lat)/100)+lat_dir
-						lon="%.4f"%(float(lon)/100)+lon_dir
-						OLED.OLED_Position(oled,lat,lon,GNSS_Type,update_time)
-					except Exception as err:
-						save_log(f"main_OLED: {err}")
-				time.sleep(30)
-			else:
-				save_log('APRS Report Return:%s Frame Length: %s Retrying..'%(aprs_return,frame_text))
-				update_time="Fail"
+			if OLED_Enable==1:
+				try:
+					lat="%.4f"%(float(lat)/100)+lat_dir
+					lon="%.4f"%(float(lon)/100)+lon_dir
+					OLED.OLED_Position(oled,lat,lon,GNSS_Type,update_time)
+				except Exception as err:
+					save_log(f"main_OLED: {err}")
+			if i==30:
+				frame_text=(f'{SSID}>PYTHON,TCPIP*,qAC,{SSID}:!{lat}{lat_dir}/{lon}{lon_dir}{SSID_ICON}{course}/{speed}/A={altitude} APRS by RPI with GNSS Module using {GNSS_Type} at UTC {timestamp} {Message}').encode()
+				a=aprs.TCP(b'BI1FQO', b'20898')
+				a.start()
+				aprs_return=a.send(frame_text)
+				if aprs_return==len(frame_text)+2:
+					save_log('APRS Report Good Length:%s'%aprs_return)
+					update_time=datetime.now().strftime('%H:%M:%S')
+					i=0
+				else:
+					save_log('APRS Report Return:%s Frame Length: %s Retrying..'%(aprs_return,frame_text))
+					update_time="Fail"
+					i=29
+			i+=1
+			time.sleep(1)
 
 		except Exception as err:
 			save_log(f"main: {err}")
