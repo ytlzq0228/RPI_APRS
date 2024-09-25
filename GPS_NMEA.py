@@ -6,6 +6,12 @@ import serial
 import aprs
 from datetime import datetime
 import socket
+import adafruit_ssd1306
+from PIL import Image,ImageDraw,ImageFont
+from ina219 import INA219, DeviceRangeError
+
+
+file_dir = os.path.dirname(os.path.realpath(__file__))
 
 # 设置全局的socket超时时间，例如10秒
 socket.setdefaulttimeout(5)
@@ -43,8 +49,9 @@ def NMEA_GPGGA(sentence):
 			lon_dd="%.2f"%lon
 			altitude="%06.0f"%altitude
 			timestamp=parts[1]
+			GNSS_Type=parts[0].replace("$","")
 			save_log(sentence)
-			return lat_dd,lat_dir,lon_dd,lon_dir,altitude,timestamp
+			return lat_dd,lat_dir,lon_dd,lon_dir,altitude,timestamp,GNSS_Type
 		else:
 			print("No %s Signal. Waiting....."%parts[0])
 			return None,None,None,None,0,None
@@ -77,61 +84,103 @@ def get_gnss_position(Test_Flag):
 		while True:
 			if ser.in_waiting > 0:
 				line=ser.readline().decode('ascii', errors='replace').strip()  # 读取一行NMEA数据
-				if Test_Flag!='0':
+				if Test_Flag!=0:
 					line='$GPGGA,041824.00,4004.6300,N,11618.2178,E,01,07,10.3,20.05,M,-15.40,M,1.1,1023*63<CR><LF>' #for testing
-					save_log(f"GPGGA Line:{line}")
-				lat,lat_dir,lon,lon_dir,altitude,timestamp=NMEA_GPGGA(line)
+					#save_log(f"GPGGA Line:{line}")
+				lat,lat_dir,lon,lon_dir,altitude,timestamp,GNSS_Type=NMEA_GPGGA(line)
 				if lat is not None and lon is not None and altitude is not None:
 					save_log(f"GNSS GGA: lat={lat}, lon={lon}, altitude/feet={altitude}")
 					break
 				if altitude==0:
 					i+=1
 				if altitude==0 and i%60==1:
-					save_log('No GPS Signal. Waiting.....')
+					save_log('No GNSS Signal. Waiting.....')
 				i=i%3600
 			
 		i=0
 		while i<120:
 			if ser.in_waiting > 0:  
 				line=ser.readline().decode('ascii', errors='replace').strip()  # 读取一行NMEA数据
-				if Test_Flag!='0':
+				if Test_Flag!=0:
 					line='$GPRMC,123519,A,4807.038,N,01131.000,E,010.4,084.4,230394,003.1,W*6A' #for testing
-					save_log(f"GPRMC Line:{line}")
+					#save_log(f"GPRMC Line:{line}")
 				speed,course=NMEA_GPRMC(line)
 				if speed!='000' or course!='000':
 					save_log(f"GNSS RMC: speed/knots={speed}, course={course}")
 					break
 				i+=1
-		return lat,lat_dir,lon,lon_dir,altitude,timestamp,speed,course
+		return lat,lat_dir,lon,lon_dir,altitude,timestamp,speed,course,GNSS_Type
 	except Exception as err:
 		save_log(f"get_gnss_position: {err}")
 		raise
 
 
+
+def OLED_Display(oled,lat,lon,GNSS_Type,update_time):
+	try:
+		# Make sure to create image with mode '1' for 1-bit color.
+		image = Image.new("1", (oled.width, oled.height))
+		
+		# Get drawing object to draw on image.
+		draw = ImageDraw.Draw(image)
+		
+		font1 = ImageFont.truetype(os.path.join(file_dir, 'Menlo.ttc'), 11)
+		font3 = ImageFont.truetype(os.path.join(file_dir, 'PixelOperator.ttf'), 16)
+		font2 = ImageFont.truetype(os.path.join(file_dir, 'Menlo.ttc'), 13,index=1)
+		#logging.info ("***draw line")
+		draw.line([(0,0),(127,0)], fill = 255)
+		draw.line([(0,0),(0,63)], fill = 255)
+		draw.line([(0,63),(127,63)], fill = 255)
+		draw.line([(127,0),(127,63)], fill = 255)
+		draw.line([(0,16),(127,16)], fill = 255)
+		#logging.info ("***draw text")
+		draw.text((3,0), 'GPS Information', font = font2, fill = 255)
+		draw.text((7,16), '%s,%s'%(lat,lon), font = font1, fill = 255)
+		draw.text((1,33), 'GNSS_Type: %s'%GNSS_Type, font = font1, fill = 255)
+		draw.text((7,50), 'Update: %s'%update_time, font = font1, fill = 255)
+		# Display image
+		oled.image(image)
+		oled.show()
+		
+	except Exception as err:
+		print(err)
+
 if __name__ == '__main__':
-	Test_Flag=sys.argv[1]
+	Test_Flag=int(sys.argv[1])
 	SSID=sys.argv[2]
 	Message=sys.argv[3]
 	SSID_ICON=sys.argv[4]
-	print(Test_Flag,SSID,Message)
+	OLED_Enable=int(sys.argv[5])
+	# Define I2C OLED Display and config address.
+	i2c = board.I2C()
+	oled = adafruit_ssd1306.SSD1306_I2C(128, 64, i2c, addr=0x3d)
+	# Clear display.
+	oled.fill(0)
+	oled.show()
+
 	while True:
 		try:
 			while True:
 				try:
-					lat,lat_dir,lon,lon_dir,altitude,timestamp,speed,course = get_gnss_position(Test_Flag)
+					lat,lat_dir,lon,lon_dir,altitude,timestamp,speed,course,GNSS_Type = get_gnss_position(Test_Flag)
 					break  # 成功获取GNSS数据时退出循环
 				except Exception as err:
 					save_log(f"Retrying get_gnss_position due to error: {err}")
 					time.sleep(1)  # 等待1秒后重试
-			frame_text=(f'{SSID}>PYTHON,TCPIP*,qAC,{SSID}:!{lat}{lat_dir}/{lon}{lon_dir}{SSID_ICON}{course}/{speed}/A={altitude} APRS by RPI with GPS at UTC {timestamp} {Message}').encode()
+			frame_text=(f'{SSID}>PYTHON,TCPIP*,qAC,{SSID}:!{lat}{lat_dir}/{lon}{lon_dir}{SSID_ICON}{course}/{speed}/A={altitude} APRS by RPI with GNSS Module using {GNSS_Type} at UTC {timestamp} {Message}').encode()
 			a=aprs.TCP(b'BI1FQO', b'20898')
 			a.start()
 			aprs_return=a.send(frame_text)
 			if aprs_return==len(frame_text)+2:
 				save_log('APRS Report Good Length:%s'%aprs_return)
+				update_time=datetime.now().strftime('%H:%M:%S')
+				if OLED_Enable==1:
+					OLED_Display(oled,lat,lon,GNSS_Type,update_time)
 				time.sleep(30)
 			else:
 				save_log('APRS Report Return:%s Frame Length: %s Retrying..'%(aprs_return,frame_text))
+				update_time="Fail"
+
 		except Exception as err:
 			save_log(f"main: {err}")
 

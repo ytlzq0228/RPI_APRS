@@ -25,7 +25,7 @@ sudo pip3 install adafruit-circuitpython-ssd1306
 sudo pip3 install aprs
 
 
-
+cp ./GPS_config.cfg /etc/
 
 
 sudo sync ; sudo sync ; sudo sync ; sudo mount -o remount,ro / ; sudo mount -o remount,ro /boot
