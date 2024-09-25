@@ -1,5 +1,5 @@
 #!/bin/bash
-source ~/GPS_config.cfg
+source /etc/GPS_config.cfg
 #alias rpi-ro='sudo sync ; sudo sync ; sudo sync ; sudo mount -o remount,ro / ; sudo mount -o remount,ro /boot'
 #alias rpi-rw='sudo mount -o remount,rw / ; sudo mount -o remount,rw /boot'
 
