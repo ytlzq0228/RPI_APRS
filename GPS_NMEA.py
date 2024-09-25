@@ -112,6 +112,7 @@ if __name__ == '__main__':
 	Test_Flag=sys.argv[1]
 	SSID=sys.argv[2]
 	Message=sys.argv[3]
+	print(Test_Flag,SSID,Message)
 	while True:
 		try:
 			while True:
