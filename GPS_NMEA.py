@@ -136,7 +136,7 @@ if __name__ == '__main__':
 		OLED_Address=int(sys.argv[6],16)
 
 	OLED_Enable,oled=OLED.OLED_Init(OLED_Enable,OLED_Address)
-	update_time="00:00:00"
+	update_time=datetime.min
 	while True:
 		try:
 			while True:
@@ -150,12 +150,11 @@ if __name__ == '__main__':
 				try:
 					lat_disp="%011.7f"%(float(lat_raw)/100)+" "+lat_dir
 					lon_disp="%011.7f"%(float(lon_raw)/100)+" "+lon_dir
-					if update_time=="00:00:00":
+					if update_time==datetime.min:
 						time_dif="00"
 					else:
 						time_dif=update_time-datetime.now()
-						print(time_dif)
-					OLED.OLED_Position(oled,lat_disp,lon_disp,GNSS_Type,update_time.strftime('%H:%M:%S'),time_dif)
+					OLED.OLED_Position(oled,lat_disp,lon_disp,GNSS_Type,update_time.strftime('%H:%M:%S'),time_dif.strftime('%S'))
 				except Exception as err:
 					save_log(f"main_OLED: {err}")
 			if float(timestamp)%30==0:
