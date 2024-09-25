@@ -132,7 +132,7 @@ if __name__ == '__main__':
 
 	OLED_Enable,oled=OLED.OLED_Init(OLED_Enable,OLED_Address)
 	update_time="00:00:00"
-	i=0
+	i=30
 	while True:
 		try:
 			while True:
