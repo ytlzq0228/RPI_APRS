@@ -152,11 +152,12 @@ if __name__ == '__main__':
 	SSID_ICON=sys.argv[4]
 	OLED_Enable=int(sys.argv[5])
 	# Define I2C OLED Display and config address.
-	i2c = board.I2C()
-	oled = adafruit_ssd1306.SSD1306_I2C(128, 64, i2c, addr=0x3d)
-	# Clear display.
-	oled.fill(0)
-	oled.show()
+	if OLED_Enable==1:
+		i2c = board.I2C()
+		oled = adafruit_ssd1306.SSD1306_I2C(128, 64, i2c, addr=0x3d)
+		# Clear display.
+		oled.fill(0)
+		oled.show()
 
 	while True:
 		try:
@@ -175,7 +176,8 @@ if __name__ == '__main__':
 				save_log('APRS Report Good Length:%s'%aprs_return)
 				update_time=datetime.now().strftime('%H:%M:%S')
 				if OLED_Enable==1:
-					OLED_Display(oled,lat,lon,GNSS_Type,update_time)
+					try:
+						OLED_Display(oled,lat,lon,GNSS_Type,update_time)
 				time.sleep(30)
 			else:
 				save_log('APRS Report Return:%s Frame Length: %s Retrying..'%(aprs_return,frame_text))
