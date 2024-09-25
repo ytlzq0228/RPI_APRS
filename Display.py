@@ -61,7 +61,7 @@ class OLED:
 			#logging.info ("***draw text")
 			draw.text((3,0), 'GPS Information', font = font2, fill = 255)
 			draw.text((1,16), "Lat:%s"%lat_disp, font = font1, fill = 255)
-			draw.text((1,27), "Lon:%s"%llon_disp, font = font1, fill = 255)
+			draw.text((1,27), "Lon:%s"%lon_disp, font = font1, fill = 255)
 			draw.text((1,38), 'GNSS_Type: %s'%GNSS_Type, font = font1, fill = 255)
 			draw.text((7,50), 'Update: %s'%update_time, font = font1, fill = 255)
 			# Display image
