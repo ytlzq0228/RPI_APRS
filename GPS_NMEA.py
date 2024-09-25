@@ -154,7 +154,7 @@ if __name__ == '__main__':
 	# Define I2C OLED Display and config address.
 	if OLED_Enable==1:
 		i2c = board.I2C()
-		oled = adafruit_ssd1306.SSD1306_I2C(128, 64, i2c, addr=0x3d)
+		oled = adafruit_ssd1306.SSD1306_I2C(128, 64, i2c, addr=0x3c)
 		# Clear display.
 		oled.fill(0)
 		oled.show()
