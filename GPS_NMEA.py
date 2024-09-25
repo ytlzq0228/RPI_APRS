@@ -150,8 +150,8 @@ if __name__ == '__main__':
 						lat="%.2f"%float(lat)/100+lat_dir
 						lon="%.2f"%float(lon)/100+lon_dir
 						OLED.OLED_Position(oled,lat,lon,GNSS_Type,update_time)
-					finally:
-						time.sleep(0.01)
+					except Exception as err:
+						save_log(f"main_OLED: {err}")
 				time.sleep(30)
 			else:
 				save_log('APRS Report Return:%s Frame Length: %s Retrying..'%(aprs_return,frame_text))
