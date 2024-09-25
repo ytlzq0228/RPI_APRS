@@ -29,7 +29,7 @@ def save_log(result):
 	except Exception as err:
 		print(err)
 
-def NMEA_GPGGA(sentence):
+def NMEA_GPGGA(sentence,timestamp):
 	match=re.match(r'^\$..GGA,.*', sentence)  # 匹配GPGGA语句
 	if match:
 		parts=sentence.split(',')
@@ -43,22 +43,27 @@ def NMEA_GPGGA(sentence):
 			lat_dd="%.2f"%lat
 			lon_dd="%.2f"%lon
 			altitude="%06.0f"%altitude
-			timestamp=parts[1]
 			GNSS_Type=parts[0].replace("$","")
-			if float(timestamp)%10==0:
+			if float(timestamp)%10==0 and timestamp!=0:
 				save_log(sentence)
-			return lat_dd,lat_dir,lon_dd,lon_dir,altitude,timestamp,GNSS_Type
+			return altitude
 		else:
 			print("No %s Signal. Waiting....."%parts[0])
-			return None,None,None,None,0,None,None
-	return None,None,None,None,None,None,None
+	return None
 
-def NMEA_GPRMC(sentence,timestamp):
+def NMEA_GPRMC(sentence):
 	match=re.match(r'^\$..RMC,.*', sentence)  # 匹配GPRMC语句
 	if match:
 		parts=sentence.split(',')
 		#print(parts)
-		if len(parts) > 8 and (parts[7] or parts[8]):
+		if len(parts) > 8 and parts[3] and parts[5] and parts[7] and parts[8]:
+			lat=float(parts[3])
+			lon=float(parts[5])
+			lat_dir=parts[4]
+			lon_dir=parts[6]
+			lat_dd="%.2f"%lat
+			lon_dd="%.2f"%lon
+			GNSS_Type=parts[0].replace("$","")
 			if parts[7]=='':
 				speed="%03.0f"%0
 			else:
@@ -67,12 +72,14 @@ def NMEA_GPRMC(sentence,timestamp):
 				course="%03.0f"%180
 			else:
 				course="%03.0f"%float(parts[8]) #NMEA APRS航向数据单位均为度/The course data unit for both NMEA and APRS is degrees, no conversion needed.
-			if float(timestamp)%10==0:
+			timestamp=parts[1]
+			if float(timestamp)%10==0 and timestamp!=0:
 				save_log(sentence)
-			return speed,course
+			return lat_dd,lat_dir,lon_dd,lon_dir,speed,course,timestamp,GNSS_Type
 		else:
 			print("No %s Signal. Waiting....."%parts[0])
-	return '000','000'
+			return None,None,None,None,None,None,0,None
+	return None,None,None,None,None,None,None,None
 
 def get_gnss_position(Test_Flag,oled):
 	try:
@@ -82,15 +89,14 @@ def get_gnss_position(Test_Flag,oled):
 			if ser.in_waiting > 0:
 				line=ser.readline().decode('ascii', errors='replace').strip()  # 读取一行NMEA数据
 				if Test_Flag!=0:
-					line='$GPGGA,041824.00,4004.6300,N,11618.2178,E,01,07,10.3,20.05,M,-15.40,M,1.1,1023*63<CR><LF>' #for testing
-					#save_log(f"GPGGA Line:{line}")
-				lat,lat_dir,lon,lon_dir,altitude,timestamp,GNSS_Type=NMEA_GPGGA(line)
-				if lat is not None and lon is not None and altitude is not None:
+					line='$GPRMC,123519,A,4807.038,N,01131.000,E,010.4,084.4,230394,003.1,W*6A' #for testing
+				lat_dd,lat_dir,lon_dd,lon_dir,speed,course,timestamp,GNSS_Type=NMEA_GPRMC(line)
+				if lat is not None and lon is not None :
 					#save_log(f"GNSS GGA: lat={lat}, lon={lon}, altitude/feet={altitude}")
 					break
-				if altitude==0:
+				if timestamp==0:
 					i+=1
-				if altitude==0 and i%60==1:
+				if timestamp==0 and i%60==1:
 					save_log('No GNSS Signal. Waiting.....')
 					if OLED_Enable==1:
 						try:
@@ -104,10 +110,9 @@ def get_gnss_position(Test_Flag,oled):
 			if ser.in_waiting > 0:  
 				line=ser.readline().decode('ascii', errors='replace').strip()  # 读取一行NMEA数据
 				if Test_Flag!=0:
-					line='$GPRMC,123519,A,4807.038,N,01131.000,E,010.4,084.4,230394,003.1,W*6A' #for testing
-					#save_log(f"GPRMC Line:{line}")
-				speed,course=NMEA_GPRMC(line,timestamp)
-				if speed!='000' or course!='000':
+					line='$GPGGA,041824.00,4004.6300,N,11618.2178,E,01,07,10.3,20.05,M,-15.40,M,1.1,1023*63<CR><LF>' #for testing
+				altitude=NMEA_GPGGA(line,timestamp)
+				if altitude :
 					#save_log(f"GNSS RMC: speed/knots={speed}, course={course}")
 					break
 				i+=1
@@ -131,7 +136,6 @@ if __name__ == '__main__':
 
 	OLED_Enable,oled=OLED.OLED_Init(OLED_Enable,OLED_Address)
 	update_time="00:00:00"
-	i=30
 	while True:
 		try:
 			while True:
@@ -143,9 +147,9 @@ if __name__ == '__main__':
 					time.sleep(1)  # 等待1秒后重试
 			if OLED_Enable==1:
 				try:
-					lat="%.4f"%(float(lat)/100)+lat_dir
-					lon="%.4f"%(float(lon)/100)+lon_dir
-					OLED.OLED_Position(oled,lat,lon,GNSS_Type,update_time)
+					lat_disp="%.4f"%(float(lat)/100)+lat_dir
+					lon_disp="%.4f"%(float(lon)/100)+lon_dir
+					OLED.OLED_Position(oled,lat_disp,lon_disp,GNSS_Type,update_time)
 				except Exception as err:
 					save_log(f"main_OLED: {err}")
 			if float(timestamp)%30==0:
