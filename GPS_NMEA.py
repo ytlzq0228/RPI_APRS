@@ -122,10 +122,10 @@ if __name__ == '__main__':
 	Message=sys.argv[3]
 	SSID_ICON=sys.argv[4]
 	OLED_Enable=int(sys.argv[5])
-	if OLED_Enable==1:
-		OLED_Address=int(sys.argv[6],16)
+	if sys.argv[6]=='':
+		OLED_Address=60
 	else:
-		OLED_Address=0
+		OLED_Address=int(sys.argv[6],16)
 
 	OLED_Enable,oled=OLED.OLED_Init(OLED_Enable,OLED_Address)
 
