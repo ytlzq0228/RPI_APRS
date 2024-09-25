@@ -166,7 +166,7 @@ def OLED_Display(Message):
 		draw.line([(0,0),(0,63)], fill = 255)
 		draw.line([(0,63),(127,63)], fill = 255)
 		draw.line([(127,0),(127,63)], fill = 255)
-		draw.text((1,20), Message, font = font1, fill = 255)
+		draw.text((1,25), Message, font = font1, fill = 255)
 		# Display image
 		oled.image(image)
 		oled.show()
