@@ -29,12 +29,14 @@ class OLED:
 			try:
 				i2c = board.I2C()
 				oled = adafruit_ssd1306.SSD1306_I2C(128, 64, i2c, addr=OLED_Address)
+				save_log(f"SSD1306_I2C(128, 64, i2c, addr={OLED_Address})")
 				# Clear display
 				oled.fill(0)
 				oled.show()
 				save_log("Init I2C OLED Success")
 			except Exception as err:
 				OLED_Enable=0
+				save_log(err)
 				save_log("Init I2C OLED Fail.Turn off it.")
 		return OLED_Enable,oled
 
