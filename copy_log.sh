@@ -1,5 +1,5 @@
 #!/bin/bash
-source ~/GPS_config.cfg
+source /etc/GPS_config.cfg
 
 
 
