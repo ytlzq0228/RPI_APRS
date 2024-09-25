@@ -4,7 +4,11 @@ source ~/GPS_config.cfg
 #alias rpi-rw='sudo mount -o remount,rw / ; sudo mount -o remount,rw /boot'
 
 
-sleep 30 
+# 判断 Test_Flag 是否等于 0
+if [ "$Test_Flag" -eq 0 ]; then
+    # 如果 Test_Flag 是 0，则执行 sleep 30
+    sleep 30
+fi
 
 sudo mount -o remount,rw / ; sudo mount -o remount,rw /boot
 
@@ -19,4 +23,4 @@ echo "Code pulled on $(date)" >> /var/log/git_pull.log
 
 sudo sync ; sudo sync ; sudo sync ; sudo mount -o remount,ro / ; sudo mount -o remount,ro /boot
 
-python3 GPS_NMEA.py "$SSID" "$Message" #> /var/log/GPS_NMEA.log
+python3 GPS_NMEA.py "$Test_Flag" "$SSID" "$Message" #> /var/log/GPS_NMEA.log
