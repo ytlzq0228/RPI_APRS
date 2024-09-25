@@ -151,7 +151,7 @@ if __name__ == '__main__':
 					lat_disp="%011.7f"%(float(lat_raw)/100)+" "+lat_dir
 					lon_disp="%011.7f"%(float(lon_raw)/100)+" "+lon_dir
 					if update_time==datetime.min:
-						time_dif="00"
+						time_dif=datetime.min
 					else:
 						time_dif=update_time-datetime.now()
 					OLED.OLED_Position(oled,lat_disp,lon_disp,GNSS_Type,update_time.strftime('%H:%M:%S'),time_dif.strftime('%S'))
