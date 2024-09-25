@@ -90,7 +90,7 @@ def get_gnss_position(Test_Flag,oled):
 				line=ser.readline().decode('ascii', errors='replace').strip()  # 读取一行NMEA数据
 				if Test_Flag!=0:
 					line='$GPRMC,123519,A,4807.038,N,01131.000,E,010.4,084.4,230394,003.1,W*6A' #for testing
-				lat_dd,lat_dir,lon_dd,lon_dir,speed,course,timestamp,GNSS_Type=NMEA_GPRMC(line)
+				lat,lat_dir,lon,lon_dir,speed,course,timestamp,GNSS_Type=NMEA_GPRMC(line)
 				if lat is not None and lon is not None :
 					#save_log(f"GNSS GGA: lat={lat}, lon={lon}, altitude/feet={altitude}")
 					break
