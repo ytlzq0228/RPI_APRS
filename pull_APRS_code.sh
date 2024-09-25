@@ -1,5 +1,5 @@
 #!/bin/bash
-
+source ~/GPS_config.cfg
 #alias rpi-ro='sudo sync ; sudo sync ; sudo sync ; sudo mount -o remount,ro / ; sudo mount -o remount,ro /boot'
 #alias rpi-rw='sudo mount -o remount,rw / ; sudo mount -o remount,rw /boot'
 
@@ -19,4 +19,4 @@ echo "Code pulled on $(date)" >> /var/log/git_pull.log
 
 sudo sync ; sudo sync ; sudo sync ; sudo mount -o remount,ro / ; sudo mount -o remount,ro /boot
 
-python3 GPS_NMEA.py #> /var/log/GPS_NMEA.log
+python3 GPS_NMEA.py "$SSID" "$Message" #> /var/log/GPS_NMEA.log
