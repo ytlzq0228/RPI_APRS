@@ -95,6 +95,11 @@ def get_gnss_position(Test_Flag):
 					i+=1
 				if altitude==0 and i%60==1:
 					save_log('No GNSS Signal. Waiting.....')
+					if OLED_Enable==1:
+						try:
+							OLED_Display('No GNSS Signal Yet')
+						finally:
+							time.sleep(0.01)
 				i=i%3600
 			
 		i=0
@@ -116,7 +121,7 @@ def get_gnss_position(Test_Flag):
 
 
 
-def OLED_Display(oled,lat,lon,GNSS_Type,update_time):
+def OLED_Position(oled,lat,lon,GNSS_Type,update_time):
 	try:
 		# Make sure to create image with mode '1' for 1-bit color.
 		image = Image.new("1", (oled.width, oled.height))
@@ -144,6 +149,31 @@ def OLED_Display(oled,lat,lon,GNSS_Type,update_time):
 		
 	except Exception as err:
 		print(err)
+
+def OLED_Display(Message):
+	try:
+		# Make sure to create image with mode '1' for 1-bit color.
+		image = Image.new("1", (oled.width, oled.height))
+		
+		# Get drawing object to draw on image.
+		draw = ImageDraw.Draw(image)
+		
+		font1 = ImageFont.truetype(os.path.join(file_dir, 'Menlo.ttc'), 11)
+		font3 = ImageFont.truetype(os.path.join(file_dir, 'PixelOperator.ttf'), 16)
+		font2 = ImageFont.truetype(os.path.join(file_dir, 'Menlo.ttc'), 13,index=1)
+		#logging.info ("***draw line")
+		draw.line([(0,0),(127,0)], fill = 255)
+		draw.line([(0,0),(0,63)], fill = 255)
+		draw.line([(0,63),(127,63)], fill = 255)
+		draw.line([(127,0),(127,63)], fill = 255)
+		draw.text((20,0), Message, font = font1, fill = 255)
+		# Display image
+		oled.image(image)
+		oled.show()
+		
+	except Exception as err:
+		print(err)
+
 
 if __name__ == '__main__':
 	Test_Flag=int(sys.argv[1])
@@ -178,7 +208,7 @@ if __name__ == '__main__':
 				update_time=datetime.now().strftime('%H:%M:%S')
 				if OLED_Enable==1:
 					try:
-						OLED_Display(oled,lat,lon,GNSS_Type,update_time)
+						OLED_Position(oled,lat,lon,GNSS_Type,update_time)
 					finally:
 						time.sleep(0.01)
 				time.sleep(30)
