@@ -98,7 +98,7 @@ LOG_FILE="/var/log/GPS_NMEA.log"
 # 获取当前日期时间作为文件前缀（格式：yyyy-mm-dd-hh-mm-ss）
 DATE_PREFIX=$(date +"%Y-%m-%d-%H-%M-%S")
 # 生成目标文件名
-REMOTE_FILE="${DATE_PREFIX}_GPS_NMEA.log"
+REMOTE_FILE="${DATE_PREFIX}_GPS_${SSID}.log"
 
 
 # 设置远程服务器信息
