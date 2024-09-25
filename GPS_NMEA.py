@@ -55,7 +55,7 @@ def NMEA_RMC(sentence):
 	match=re.match(r'^\$..RMC,.*', sentence)  # 匹配GPRMC语句
 	if match:
 		parts=sentence.split(',')
-		print(parts)
+		#print(parts)
 		if len(parts) > 8 and parts[3] and parts[5]:
 			lat_raw=float(parts[3])
 			lon_raw=float(parts[5])
@@ -154,8 +154,7 @@ if __name__ == '__main__':
 						time_dif="00"
 					else:
 						time_dif="%02.0f"%(update_time-datetime.now())
-						update_time=update_time.strftime('%H:%M:%S')
-					OLED.OLED_Position(oled,lat_disp,lon_disp,GNSS_Type,update_time,time_dif)
+					OLED.OLED_Position(oled,lat_disp,lon_disp,GNSS_Type,update_time.strftime('%H:%M:%S'),time_dif)
 				except Exception as err:
 					save_log(f"main_OLED: {err}")
 			if float(timestamp)%30==0:
