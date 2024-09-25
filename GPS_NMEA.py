@@ -8,7 +8,6 @@ from datetime import datetime
 import socket
 import adafruit_ssd1306
 from PIL import Image,ImageDraw,ImageFont
-from ina219 import INA219, DeviceRangeError
 
 
 file_dir = os.path.dirname(os.path.realpath(__file__))
