@@ -94,23 +94,3 @@ class OLED:
 		except Exception as err:
 			save_log(err)
 
-
-class IPS:
-from luma.core.interface.serial import i2c
-from luma.oled.device import ssd1306
-from luma.core.render import canvas
-from PIL import ImageFont, ImageDraw
-
-# 使用I2C接口连接设备
-serial = i2c(port=1, address=0x3C)  # 确保你使用正确的I2C地址
-
-# 创建OLED显示设备实例（如果ST7789支持I2C）
-device = ssd1306(serial, width=128, height=64)
-
-# 使用Pillow的字体功能
-font = ImageFont.load_default()
-
-# 显示文本的函数
-def display_text():
-    with canvas(device) as draw:
-        draw.text((30, 30), "Hello, I2C ST7789!", font=font, fill="white")
