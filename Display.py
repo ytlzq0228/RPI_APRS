@@ -41,7 +41,7 @@ class OLED:
 		return OLED_Enable,oled
 
 
-	def OLED_Position(oled,lat_disp,lon_disp,GNSS_Type,update_time):
+	def OLED_Position(oled,lat_disp,lon_disp,GNSS_Type,update_time,time_dif):
 		try:
 			# Make sure to create image with mode '1' for 1-bit color.
 			image = Image.new("1", (oled.width, oled.height))
@@ -63,7 +63,7 @@ class OLED:
 			draw.text((1,16), "Lat:%s"%lat_disp, font = font1, fill = 255)
 			draw.text((1,27), "Lon:%s"%lon_disp, font = font1, fill = 255)
 			draw.text((1,38), 'GNSS_Type: %s'%GNSS_Type, font = font1, fill = 255)
-			draw.text((7,50), 'Update: %s'%update_time, font = font1, fill = 255)
+			draw.text((1,50), 'Update:%s %s'%(update_time,time_dif), font = font1, fill = 255)
 			# Display image
 			oled.image(image)
 			oled.show()
