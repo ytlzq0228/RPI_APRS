@@ -10,9 +10,6 @@ import board
 import adafruit_ssd1306
 from Display import OLED
 
-
-file_dir = os.path.dirname(os.path.realpath(__file__))
-
 # 设置全局的socket超时时间，例如10秒
 socket.setdefaulttimeout(5)
 
@@ -128,18 +125,8 @@ if __name__ == '__main__':
 	SSID_ICON=sys.argv[4]
 	OLED_Enable=int(sys.argv[5])
 	OLED_Address=int(sys.argv[6],16)
-	# Define I2C OLED Display and config address.
-	if OLED_Enable==1:
-		try:
-			i2c = board.I2C()
-			oled = adafruit_ssd1306.SSD1306_I2C(128, 64, i2c, addr=OLED_Address)
-			# Clear display
-			oled.fill(0)
-			oled.show()
-			save_log("Init I2C OLED Success")
-		except Exception as err:
-			OLED_Enable=0
-			save_log("Init I2C OLED Fail.Turn off it.")
+
+	OLED_Enable,oled=OLED.OLED_Init(OLED_Enable)
 
 	while True:
 		try:

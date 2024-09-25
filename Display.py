@@ -4,6 +4,23 @@ from PIL import Image,ImageDraw,ImageFont
 file_dir = os.path.dirname(os.path.realpath(__file__))
 
 class OLED:
+	def OLED_Init(OLED_Enable,OLED_Address):
+		# Define I2C OLED Display and config address.
+		oled=None
+		if OLED_Enable==1:
+			try:
+				i2c = board.I2C()
+				oled = adafruit_ssd1306.SSD1306_I2C(128, 64, i2c, addr=OLED_Address)
+				# Clear display
+				oled.fill(0)
+				oled.show()
+				save_log("Init I2C OLED Success")
+			except Exception as err:
+				OLED_Enable=0
+				save_log("Init I2C OLED Fail.Turn off it.")
+		return OLED_Enable,oled
+
+
 	def OLED_Position(oled,lat,lon,GNSS_Type,update_time):
 		try:
 			# Make sure to create image with mode '1' for 1-bit color.
