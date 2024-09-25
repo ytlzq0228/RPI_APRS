@@ -1,6 +1,6 @@
 from PIL import Image,ImageDraw,ImageFont
 
-class OLED
+class OLED:
 	def OLED_Position(oled,lat,lon,GNSS_Type,update_time):
 		try:
 			# Make sure to create image with mode '1' for 1-bit color.
