@@ -95,7 +95,7 @@ def get_gnss_position(Test_Flag):
 					save_log('No GNSS Signal. Waiting.....')
 					if OLED_Enable==1:
 						try:
-							OLED_Display('No GNSS Signal Yet')
+							OLED.OLED_Display('No GNSS Signal Yet')
 						finally:
 							time.sleep(0.01)
 				i=i%3600
