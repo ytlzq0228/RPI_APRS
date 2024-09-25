@@ -77,7 +77,7 @@ def get_gnss_position(Test_Flag):
 		while True:
 			if ser.in_waiting > 0:
 				line=ser.readline().decode('ascii', errors='replace').strip()  # 读取一行NMEA数据
-				if Test_Flag!='0'
+				if Test_Flag!='0':
 					line='$GPGGA,041824.00,4004.6300,N,11618.2178,E,01,07,10.3,20.05,M,-15.40,M,1.1,1023*63<CR><LF>' #for testing
 					save_log(f"GPGGA Line:{line}")
 				lat,lat_dir,lon,lon_dir,altitude,timestamp=NMEA_GPGGA(line)
@@ -94,7 +94,7 @@ def get_gnss_position(Test_Flag):
 		while i<120:
 			if ser.in_waiting > 0:  
 				line=ser.readline().decode('ascii', errors='replace').strip()  # 读取一行NMEA数据
-				if Test_Flag!='0'
+				if Test_Flag!='0':
 					line='$GPRMC,123519,A,4807.038,N,01131.000,E,010.4,084.4,230394,003.1,W*6A' #for testing
 					save_log(f"GPRMC Line:{line}")
 				speed,course=NMEA_GPRMC(line)
