@@ -148,7 +148,7 @@ if __name__ == '__main__':
 					OLED.OLED_Position(oled,lat,lon,GNSS_Type,update_time)
 				except Exception as err:
 					save_log(f"main_OLED: {err}")
-			if i==30:
+			if float(timestamp)%30==0:
 				frame_text=(f'{SSID}>PYTHON,TCPIP*,qAC,{SSID}:!{lat}{lat_dir}/{lon}{lon_dir}{SSID_ICON}{course}/{speed}/A={altitude} APRS by RPI with GNSS Module using {GNSS_Type} at UTC {timestamp} {Message}').encode()
 				a=aprs.TCP(b'BI1FQO', b'20898')
 				a.start()
@@ -156,12 +156,9 @@ if __name__ == '__main__':
 				if aprs_return==len(frame_text)+2:
 					save_log('APRS Report Good Length:%s'%aprs_return)
 					update_time=datetime.now().strftime('%H:%M:%S')
-					i=0
 				else:
 					save_log('APRS Report Return:%s Frame Length: %s Retrying..'%(aprs_return,frame_text))
 					update_time="Fail"
-					i=29
-			i+=1
 
 		except Exception as err:
 			save_log(f"main: {err}")
