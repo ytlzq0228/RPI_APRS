@@ -78,8 +78,8 @@ def NMEA_RMC(sentence):
 			return lat_dd,lat_dir,lon_dd,lon_dir,speed,course,timestamp,GNSS_Type,lat_raw,lon_raw
 		else:
 			print("No %s Signal. Waiting....."%parts[0])
-			return None,None,None,None,None,None,0,None
-	return None,None,None,None,None,None,None,None
+			return None,None,None,None,None,None,0,None,None,None
+	return None,None,None,None,None,None,None,None,None,None
 
 def get_gnss_position(Test_Flag,oled):
 	try:
