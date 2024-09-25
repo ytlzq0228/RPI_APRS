@@ -163,7 +163,6 @@ if __name__ == '__main__':
 					update_time="Fail"
 					i=29
 			i+=1
-			time.sleep(1)
 
 		except Exception as err:
 			save_log(f"main: {err}")
