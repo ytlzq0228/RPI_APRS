@@ -53,7 +53,7 @@ def NMEA_GPGGA(sentence):
 			return None,None,None,None,0,None,None
 	return None,None,None,None,None,None,None
 
-def NMEA_GPRMC(sentence):
+def NMEA_GPRMC(sentence,timestamp):
 	match=re.match(r'^\$..RMC,.*', sentence)  # 匹配GPRMC语句
 	if match:
 		parts=sentence.split(',')
@@ -67,7 +67,6 @@ def NMEA_GPRMC(sentence):
 				course="%03.0f"%180
 			else:
 				course="%03.0f"%float(parts[8]) #NMEA APRS航向数据单位均为度/The course data unit for both NMEA and APRS is degrees, no conversion needed.
-			timestamp=parts[1]
 			if float(timestamp)%10==0:
 				save_log(sentence)
 			return speed,course
@@ -107,7 +106,7 @@ def get_gnss_position(Test_Flag,oled):
 				if Test_Flag!=0:
 					line='$GPRMC,123519,A,4807.038,N,01131.000,E,010.4,084.4,230394,003.1,W*6A' #for testing
 					#save_log(f"GPRMC Line:{line}")
-				speed,course=NMEA_GPRMC(line)
+				speed,course=NMEA_GPRMC(line,timestamp)
 				if speed!='000' or course!='000':
 					#save_log(f"GNSS RMC: speed/knots={speed}, course={course}")
 					break
