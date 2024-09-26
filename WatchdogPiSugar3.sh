@@ -13,7 +13,7 @@ TMP=$(i2cget -y 1 0x57 0x07)
 echo >> /var/log/GPS_NMEA.log
 echo "WatchDog 设置超时时长0x57 0x07=$TMP" >> /var/log/GPS_NMEA.log
 
-# 0x57 0x06地址为
+# 0x57 0x06地址功能为
 #bit7-功能开关
 #bit5-看门狗复位
 
