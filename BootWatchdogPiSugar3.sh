@@ -1,5 +1,4 @@
-#/bin/bash
-
+#!/bin/bash
 source /etc/GPS_config.cfg
 # 判断 Test_Flag 是否等于 0
 if [ "$Test_Flag" -eq 0 ]; then
