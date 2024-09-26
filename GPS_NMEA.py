@@ -7,6 +7,7 @@ import aprs
 from datetime import datetime
 import socket
 from Display import OLED
+from watchdog import reset_watchdog
 
 # 设置全局的socket超时时间，例如10秒
 socket.setdefaulttimeout(5)
@@ -146,6 +147,7 @@ if __name__ == '__main__':
 				except Exception as err:
 					save_log(f"Retrying get_gnss_position due to error: {err}")
 					time.sleep(1)  # 等待1秒后重试
+			
 			if OLED_Enable==1:
 				try:
 					lat_disp="%011.7f"%(float(lat_raw)/100)+" "+lat_dir
@@ -162,6 +164,9 @@ if __name__ == '__main__':
 					OLED.OLED_Position(oled,lat_disp,lon_disp,GNSS_Type,update_time.strftime('%H:%M:%S'),time_diff,invert)
 				except Exception as err:
 					save_log(f"main_OLED: {err}")
+			
+			reset_watchdog()
+			
 			if float(timestamp)%30==0:
 				frame_text=(f'{SSID}>PYTHON,TCPIP*,qAC,{SSID}:!{lat}{lat_dir}/{lon}{lon_dir}{SSID_ICON}{course}/{speed}/A={altitude} APRS by RPI with GNSS Module using {GNSS_Type} at UTC {timestamp} {Message}').encode()
 				a=aprs.TCP(b'BI1FQO', b'20898')
