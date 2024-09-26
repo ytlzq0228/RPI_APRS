@@ -17,7 +17,7 @@ TMP=$(i2cget -y 1 0x57 0x06)
 RST=$((0x80 | TMP ))
 #echo $RST
 #设置超时时长10*2s Set timeout duration 10 * 2S
-i2cset -y 1 0x57 0x07 10
+i2cset -y 1 0x57 0x07 30
 #写入寄存器 Write register
 i2cset -y 1 0x57 0x06 $RST
 #i2cdump -y 1 0x57

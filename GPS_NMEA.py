@@ -55,6 +55,7 @@ def NMEA_GGA(sentence,timestamp):
 def NMEA_RMC(sentence):
 	match=re.match(r'^\$..RMC,.*', sentence)  # 匹配GPRMC语句
 	if match:
+		reset_watchdog()
 		parts=sentence.split(',')
 		#print(parts)
 		if len(parts) > 8 and parts[3] and parts[5]:
@@ -164,8 +165,6 @@ if __name__ == '__main__':
 					OLED.OLED_Position(oled,lat_disp,lon_disp,GNSS_Type,update_time.strftime('%H:%M:%S'),time_diff,invert)
 				except Exception as err:
 					save_log(f"main_OLED: {err}")
-			
-			reset_watchdog()
 			
 			if float(timestamp)%30==0:
 				frame_text=(f'{SSID}>PYTHON,TCPIP*,qAC,{SSID}:!{lat}{lat_dir}/{lon}{lon_dir}{SSID_ICON}{course}/{speed}/A={altitude} APRS by RPI with GNSS Module using {GNSS_Type} at UTC {timestamp} {Message}').encode()
