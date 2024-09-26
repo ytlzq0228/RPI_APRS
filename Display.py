@@ -41,7 +41,7 @@ class OLED:
 		return OLED_Enable,oled
 
 
-	def OLED_Position(oled,lat_disp,lon_disp,GNSS_Type,update_time,time_dif,invert=0):
+	def OLED_Position(oled,lat_disp,lon_disp,GNSS_Type,update_time,time_dif,invert=False):
 		try:
 			# Make sure to create image with mode '1' for 1-bit color.
 			image = Image.new("1", (oled.width, oled.height))
@@ -52,10 +52,10 @@ class OLED:
 			font1 = ImageFont.truetype(os.path.join(file_dir, 'Menlo.ttc'), 11)
 			font3 = ImageFont.truetype(os.path.join(file_dir, 'PixelOperator.ttf'), 16)
 			font2 = ImageFont.truetype(os.path.join(file_dir, 'Menlo.ttc'), 13,index=1)
-			if invert==0:
-				fill_color=255
+			if invert:
+				fill_color=128
 			else:
-				draw.rectangle([0, 0, oled.width, oled.height], fill=255)
+				draw.rectangle([0, 0, oled.width, oled.height], fill=128)
 				fill_color=0
 			#logging.info ("***draw line")
 			draw.line([(0,0),(127,0)], fill = fill_color)
