@@ -35,8 +35,13 @@ done
 
 # 如果已经尝试3次仍然失败，则重启设备
 if [ $RETRY_COUNT -eq $MAX_RETRIES ]; then
-    echo "$(date): 已尝试3次，但Ping仍然失败，正在重启设备..."
-    reboot
+    ping_target
+    if [ $? -eq 0 ]; then
+        echo "$(date): Ping $TARGET_IP 成功。"
+    else
+        echo "$(date): 已尝试3次，但Ping仍然失败，正在重启设备..."
+        reboot
+    fi
 fi
 
 # 如果ping成功，或者尝试重启VPN之后Ping成功，继续执行后续代码
@@ -101,18 +106,19 @@ DATE_PREFIX=$(date +"%Y-%m-%d-%H-%M-%S")
 REMOTE_FILE="${DATE_PREFIX}_GPS_${SSID}.log"
 
 
+
+
+[SFTP]
 # 设置远程服务器信息
 REMOTE_USER="root"
 REMOTE_HOST="nas.ctsdn.com"
 #重要！！！请自行替换成你的SFTP服务器信息，或者删除
 REMOTE_DIR="/volume1/Storage/Su7-GPS-PATH"
-
-
-
+REMOTE_PORT="10223"
 
 
 # 拷贝文件到远程服务器
-scp -P 10223 $LOG_FILE ${REMOTE_USER}@${REMOTE_HOST}:${REMOTE_DIR}/${REMOTE_FILE}
+scp -P $REMOTE_PORT $LOG_FILE ${REMOTE_USER}@${REMOTE_HOST}:${REMOTE_DIR}/${REMOTE_FILE}
 #已经启用auth_key免密认证
 # 检查拷贝是否成功
 if [ $? -eq 0 ]; then
