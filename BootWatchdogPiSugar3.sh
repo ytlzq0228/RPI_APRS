@@ -1,4 +1,15 @@
 #/bin/bash
+
+source /etc/GPS_config.cfg
+# 判断 Test_Flag 是否等于 0
+if [ "$Test_Flag" -eq 0 ]; then
+    # 如果 Test_Flag 是 0，则执行 sleep 30
+    sleep 30
+fi
+
+
+
+
 TMP=$(i2cget -y 1 0x57 0x06)
 #echo $TMP
 #开机看门狗开启并喂狗 Turn on the watchdog and feed the dog
