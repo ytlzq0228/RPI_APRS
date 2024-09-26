@@ -53,10 +53,10 @@ class OLED:
 			font3 = ImageFont.truetype(os.path.join(file_dir, 'PixelOperator.ttf'), 16)
 			font2 = ImageFont.truetype(os.path.join(file_dir, 'Menlo.ttc'), 13,index=1)
 			if invert:
-				fill_color=128
-			else:
 				draw.rectangle([0, 0, oled.width, oled.height], fill=128)
 				fill_color=0
+			else:
+				fill_color=128
 			#logging.info ("***draw line")
 			draw.line([(0,0),(127,0)], fill = fill_color)
 			draw.line([(0,0),(0,63)], fill = fill_color)
