@@ -146,7 +146,7 @@ if __name__ == '__main__':
 					break  # 成功获取GNSS数据时退出循环
 				except Exception as err:
 					save_log(f"Retrying get_gnss_position due to error: {err}")
-					time.sleep(1)  # 等待1秒后重试
+					time.sleep(0.1)  # 等待0.1秒后重试
 			
 			if OLED_Enable==1:
 				try:
