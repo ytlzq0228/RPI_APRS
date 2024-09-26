@@ -21,3 +21,6 @@ def reset_watchdog():
         
     finally:
         return True
+
+
+reset_watchdog()
