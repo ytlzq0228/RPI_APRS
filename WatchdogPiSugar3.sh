@@ -6,10 +6,6 @@ source /etc/GPS_config.cfg
 #    sleep 60
 #fi
 
-#设置最大重启次数 Set the maximum number of restarts
-i2cset -y 1 0x57 0x0a 10 
-TMP=$(i2cget -y 1 0x57 0x0a)
-echo "设置最大重启次数0x57 0x0a=$TMP" >> /var/log/GPS_NMEA.log
 
 #设置超时时长10*2s Set timeout duration 10 * 2S
 i2cset -y 1 0x57 0x07 10

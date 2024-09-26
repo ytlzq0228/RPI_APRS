@@ -13,8 +13,9 @@ def reset_watchdog():
         # 读取寄存器的当前值
         TMP = bus.read_byte_data(device_address, register_address)
         
-        # 确保看门狗开启（OR 操作以确保第 7,5 位为 1）
-        RST = 0x90 | TMP
+        # 确保看门狗开启（OR 操作以确保第 7,5 位为 1 0x80 or 0x20 = 0xa0）
+        RST = 0xa0 | TMP
+       
         
         # 将新的值写回寄存器
         bus.write_byte_data(device_address, register_address, RST)
