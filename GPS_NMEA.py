@@ -154,7 +154,11 @@ if __name__ == '__main__':
 						time_diff="00"
 					else:
 						time_diff="%02.0f"%(datetime.now()-update_time).total_seconds()
-					OLED.OLED_Position(oled,lat_disp,lon_disp,GNSS_Type,update_time.strftime('%H:%M:%S'),time_diff,1)
+					if float(timestamp)%60>30:
+						invert=True
+					else:
+						invert=False
+					OLED.OLED_Position(oled,lat_disp,lon_disp,GNSS_Type,update_time.strftime('%H:%M:%S'),time_diff,invert)
 				except Exception as err:
 					save_log(f"main_OLED: {err}")
 			if float(timestamp)%30==0:
