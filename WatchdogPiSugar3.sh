@@ -10,8 +10,8 @@ source /etc/GPS_config.cfg
 #设置超时时长10*2s Set timeout duration 10 * 2S
 i2cset -y 1 0x57 0x07 10
 TMP=$(i2cget -y 1 0x57 0x07)
+echo >> /var/log/GPS_NMEA.log
 echo "WatchDog 设置超时时长0x57 0x07=$TMP" >> /var/log/GPS_NMEA.log
-
 
 # 0x57 0x06地址为
 #bit7-功能开关
