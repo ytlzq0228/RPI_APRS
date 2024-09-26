@@ -22,7 +22,5 @@ def reset_watchdog():
         # 将新的值写回寄存器
         bus.write_byte_data(device_address, register_address, RST)
         
-        # 休眠 1 秒（每秒喂一次看门狗）
-        time.sleep(1)
     finally:
         return True
