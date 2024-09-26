@@ -41,7 +41,7 @@ class OLED:
 		return OLED_Enable,oled
 
 
-	def OLED_Position(oled,lat_disp,lon_disp,GNSS_Type,update_time,time_dif):
+	def OLED_Position(oled,lat_disp,lon_disp,GNSS_Type,update_time,time_dif,invert=0):
 		try:
 			# Make sure to create image with mode '1' for 1-bit color.
 			image = Image.new("1", (oled.width, oled.height))
@@ -52,18 +52,23 @@ class OLED:
 			font1 = ImageFont.truetype(os.path.join(file_dir, 'Menlo.ttc'), 11)
 			font3 = ImageFont.truetype(os.path.join(file_dir, 'PixelOperator.ttf'), 16)
 			font2 = ImageFont.truetype(os.path.join(file_dir, 'Menlo.ttc'), 13,index=1)
+			if invert==0:
+				fill_color=255
+			else:
+				draw.rectangle([0, 0, oled.width, oled.height], fill=255)
+				fill_color=0
 			#logging.info ("***draw line")
-			draw.line([(0,0),(127,0)], fill = 255)
-			draw.line([(0,0),(0,63)], fill = 255)
-			draw.line([(0,63),(127,63)], fill = 255)
-			draw.line([(127,0),(127,63)], fill = 255)
-			draw.line([(0,16),(127,16)], fill = 255)
+			draw.line([(0,0),(127,0)], fill = fill_color)
+			draw.line([(0,0),(0,63)], fill = fill_color)
+			draw.line([(0,63),(127,63)], fill = fill_color)
+			draw.line([(127,0),(127,63)], fill = fill_color)
+			draw.line([(0,16),(127,16)], fill = fill_color)
 			#logging.info ("***draw text")
-			draw.text((3,0), 'GPS Information', font = font2, fill = 255)
-			draw.text((1,16), "Lat:%s"%lat_disp, font = font1, fill = 255)
-			draw.text((1,27), "Lon:%s"%lon_disp, font = font1, fill = 255)
-			draw.text((1,38), 'GNSS_Type: %s'%GNSS_Type, font = font1, fill = 255)
-			draw.text((1,50), 'Update:%s-%s'%(update_time,time_dif), font = font1, fill = 255)
+			draw.text((3,0), 'GPS Information', font = font2, fill = fill_color)
+			draw.text((1,16), "Lat:%s"%lat_disp, font = font1, fill = fill_color)
+			draw.text((1,27), "Lon:%s"%lon_disp, font = font1, fill = fill_color)
+			draw.text((1,38), 'GNSS_Type: %s'%GNSS_Type, font = font1, fill = fill_color)
+			draw.text((1,50), 'Update:%s-%s'%(update_time,time_dif), font = font1, fill = fill_color)
 			# Display image
 			oled.image(image)
 			oled.show()
