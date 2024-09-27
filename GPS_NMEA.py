@@ -17,7 +17,7 @@ com_port='/dev/ttyAMA0'
 baud_rate=115200
 ser=serial.Serial(com_port, baud_rate, bytesize=serial.EIGHTBITS, parity=serial.PARITY_NONE, stopbits=serial.STOPBITS_ONE)
 LOG_FILE='/var/log/GPS_NMEA.log'
-VERSION='0925.01'
+VERSION='0926.01'
 
 def save_log(result):
 	try:

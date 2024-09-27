@@ -3,7 +3,7 @@ source /etc/GPS_config.cfg
 # 判断 Test_Flag 是否等于 0
 if [ "$Test_Flag" -eq 0 ]; then
     # 如果 Test_Flag 是 0，则执行 sleep 30
-    sleep 30
+    sleep 60
 fi
 
 
