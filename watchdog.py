@@ -10,8 +10,8 @@ register_address = 0x06
 
 def reset_watchdog():
     try:
-        # 设置超时市场10*2秒
-        bus.write_byte_data(0x57, 0x07, 10)
+        # 设置超时时长30*2秒
+        bus.write_byte_data(0x57, 0x07, 30)
         
         # 读取寄存器的当前值
         TMP = bus.read_byte_data(0x57, 0x06)
