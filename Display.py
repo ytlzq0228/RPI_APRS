@@ -3,6 +3,7 @@ import os
 from datetime import datetime
 import board
 import adafruit_ssd1306
+import smbus
 from PIL import Image,ImageDraw,ImageFont
 file_dir = os.path.dirname(os.path.realpath(__file__))
 
@@ -19,6 +20,13 @@ def save_log(result):
 		f.close()
 	except Exception as err:
 		print(err)
+
+
+def readCapacity():
+	bus=smbus.SMBus(1)
+	address = 0x2a
+	Battery_Capacity = bus.read_word_data(address, 4)
+	return Battery_Capacity
 
 
 class OLED:
@@ -70,6 +78,10 @@ class OLED:
 			draw.text((1,27), "Lon:%s"%lon_disp, font = font1, fill = fill_color)
 			draw.text((1,38), "Type:%s %sKM/H"%(GNSS_Type,speed), font = font1, fill = fill_color)
 			draw.text((1,50), 'Update:%s-%s'%(update_time,time_dif), font = font1, fill = fill_color)
+
+			draw.rectangle((98, 0, 128, 16), outline=255, fill=255)
+			#logging.info ("***draw text")
+			draw.text((100,0), "%i%%"%readCapacity(), font = font2, fill = 0)
 			# Display image
 			oled.image(image)
 			oled.show()
