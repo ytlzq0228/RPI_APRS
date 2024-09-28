@@ -162,7 +162,7 @@ if __name__ == '__main__':
 					#	invert=True
 					#else:
 					#	invert=False
-					OLED.OLED_Position(oled,lat_disp,lon_disp,GNSS_Type,update_time.strftime('%H:%M:%S'),time_diff,invert)
+					OLED.OLED_Position(oled,lat_disp,lon_disp,GNSS_Type,update_time.strftime('%H:%M:%S'),time_diff,speed,invert)
 				except Exception as err:
 					save_log(f"main_OLED: {err}")
 			
