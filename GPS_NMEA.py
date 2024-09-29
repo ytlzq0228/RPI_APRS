@@ -171,14 +171,11 @@ if __name__ == '__main__':
 			
 			if float(timestamp)%30==0:
 				frame_text=(f'{SSID}>PYTHON,TCPIP*,qAC,{SSID}:!{lat}{lat_dir}/{lon}{lon_dir}{SSID_ICON}{course}/{speed}/A={altitude} APRS by RPI with GNSS Module using {GNSS_Type} at UTC {timestamp} {Message}').encode()
-				callsign = b'BI1FQO'
-				password = b'20898'
-				
 				# 定义 APRS 服务器地址和端口（字节形式）
 				server_host = b'rotate.aprs2.net:14580'  # 使用 rotate.aprs2.net 服务器和端口 14580
 				
 				# 创建 TCP 对象并传入服务器信息
-				a = aprs.TCP(callsign, password)
+				a=aprs.TCP(b'BI1FQO', b'20898')
 				a.start()
 				aprs_return=a.send(frame_text)
 				if aprs_return==len(frame_text)+2:
