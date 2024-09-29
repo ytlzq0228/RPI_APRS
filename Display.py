@@ -73,7 +73,7 @@ class OLED:
 			draw.line([(127,0),(127,63)], fill = fill_color)
 			draw.line([(0,16),(127,16)], fill = fill_color)
 			#logging.info ("***draw text")
-			draw.text((3,0), 'GPS%s'%bat_cap, font = font2, fill = fill_color)
+			draw.text((3,0), 'GPS APRS Inf', font = font2, fill = fill_color)
 			draw.text((1,16), "Lat:%s"%lat_disp, font = font1, fill = fill_color)
 			draw.text((1,27), "Lon:%s"%lon_disp, font = font1, fill = fill_color)
 			draw.text((1,38), "Type:%s %sKM/H"%(GNSS_Type,speed), font = font1, fill = fill_color)
