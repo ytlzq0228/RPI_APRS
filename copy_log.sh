@@ -55,7 +55,11 @@ echo "$(date): 继续执行脚本的后续部分。"
 if ! pgrep -f "python3 GPS_NMEA.py" > /dev/null; then
     echo "GPS_NMEA.py 未运行，正在执行 pull_APRS_code.sh"
     # 执行命令
-    /home/pi-star/RPI_APRS/pull_APRS_code.sh
+    if [ "$Test_Flag" -eq 0 ]; then
+    # 如果 Test_Flag 是 0，则执行 pull_APRS_code.sh
+        /home/pi-star/RPI_APRS/pull_APRS_code.sh
+    fi
+    
 else
     echo "GPS_NMEA.py 正在运行。"
 fi
