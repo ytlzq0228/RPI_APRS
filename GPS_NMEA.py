@@ -128,7 +128,7 @@ def get_gnss_position(Test_Flag):
 
 
 if __name__ == '__main__':
-	boot_watchdog()
+	#boot_watchdog()
 	Test_Flag=int(sys.argv[1])
 	SSID=sys.argv[2]
 	Message=sys.argv[3]
