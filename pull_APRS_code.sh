@@ -3,7 +3,7 @@ source /etc/GPS_config.cfg
 #alias rpi-ro='sudo sync ; sudo sync ; sudo sync ; sudo mount -o remount,ro / ; sudo mount -o remount,ro /boot'
 #alias rpi-rw='sudo mount -o remount,rw / ; sudo mount -o remount,rw /boot'
 
-i2cset -y 1 0x57 0x06 0
+i2cset -y 1 0x57 0x06 0x18
 
 # 判断 Test_Flag 是否等于 0
 if [ "$Test_Flag" -eq 0 ]; then
