@@ -79,11 +79,11 @@ class OLED:
 			draw.text((1,38), "Type:%s %sKM/H"%(GNSS_Type,speed), font = font1, fill = fill_color)
 			draw.text((1,50), 'Update:%s-%s'%(update_time,time_dif), font = font1, fill = fill_color)
 
-			draw.rectangle((105, 3, 123, 13), outline=fill_color)
+			draw.rectangle((106, 3, 123, 13), outline=fill_color)
 			draw.rectangle((124, 5, 125, 11), outline=fill_color)
 			for i in range(bat_cap):
-				draw.line([(106+i,4),(106+i,12)], fill = fill_color)
-
+				draw.line([(107+i,4),(107+i,12)], fill = fill_color)
+	
 			# Display image
 			oled.image(image)
 			oled.show()
