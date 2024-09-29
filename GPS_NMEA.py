@@ -174,12 +174,11 @@ if __name__ == '__main__':
 				callsign = b'BI1FQO'
 				password = b'20898'
 				
-				# 定义 APRS 服务器地址和端口号
-				server_host = b'china.aprs2.net'  # 例如，指定 rotate.aprs2.net 服务器
-				server_port = 14580  # APRS-IS 默认端口
+				# 定义 APRS 服务器地址和端口（字节形式）
+				server_host = b'china.aprs2.net:14580'  # 使用 rotate.aprs2.net 服务器和端口 14580
 				
-				# 初始化 APRS 连接
-				a = aprs.TCP(callsign, password)
+				# 创建 TCP 对象并传入服务器信息
+				a = aprs.TCP(callsign, password, servers=[server_host])
 				a.start()
 				aprs_return=a.send(frame_text)
 				if aprs_return==len(frame_text)+2:
