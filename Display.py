@@ -67,11 +67,13 @@ class OLED:
 			draw.line([(127,0),(127,63)], fill = fill_color)
 			draw.line([(0,16),(127,16)], fill = fill_color)
 			#logging.info ("***draw text")
-			draw.text((3,0), 'GPS Information', font = font2, fill = fill_color)
+			draw.text((3,0), 'GPS', font = font2, fill = fill_color)
 			draw.text((1,16), "Lat:%s"%lat_disp, font = font1, fill = fill_color)
 			draw.text((1,27), "Lon:%s"%lon_disp, font = font1, fill = fill_color)
 			draw.text((1,38), "Type:%s %sKM/H"%(GNSS_Type,speed), font = font1, fill = fill_color)
 			draw.text((1,50), 'Update:%s-%s'%(update_time,time_dif), font = font1, fill = fill_color)
+
+			draw.rectangle((98, 0, 128, 16), outline=255,)
 
 			# Display image
 			oled.image(image)
@@ -104,3 +106,7 @@ class OLED:
 		except Exception as err:
 			save_log(err)
 
+if __name__ == '__main__':
+	OLED_Enable=1
+	OLED_Enable,oled=OLED.OLED_Init(OLED_Enable,OLED_Address)
+	OLED_Position(oled,"040.0703800","112.0713240","GNRMC","21:19:32","12","013","50",invert=False)
