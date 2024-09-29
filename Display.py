@@ -113,6 +113,7 @@ class OLED:
 			draw.line([(0,63),(127,63)], fill = 255)
 			draw.line([(127,0),(127,63)], fill = 255)
 			draw.text((1,25), Message, font = font1, fill = 255)
+			draw.text((1,40), datetime.now().strftime('%H:%M:%S'), font = font1, fill = 255)
 			
 			bat_cap=round(int(readCapacity())/6.25)
 			draw.rectangle((106, 3, 123, 13), outline=fill_color)
