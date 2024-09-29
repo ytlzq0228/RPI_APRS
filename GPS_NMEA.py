@@ -171,19 +171,15 @@ if __name__ == '__main__':
 			
 			if float(timestamp)%30==0:
 				frame_text=(f'{SSID}>PYTHON,TCPIP*,qAC,{SSID}:!{lat}{lat_dir}/{lon}{lon_dir}{SSID_ICON}{course}/{speed}/A={altitude} APRS by RPI with GNSS Module using {GNSS_Type} at UTC {timestamp} {Message}').encode()
-				# 定义呼号和密码
 				callsign = b'BI1FQO'
 				password = b'20898'
 				
-				# 初始化 APRS 连接对象
+				# 定义 APRS 服务器地址和端口号
+				server_host = b'china.aprs2.net'  # 例如，指定 rotate.aprs2.net 服务器
+				server_port = 14580  # APRS-IS 默认端口
+				
+				# 初始化 APRS 连接
 				a = aprs.TCP(callsign, password)
-				
-				# 使用 connect 方法指定 APRS 服务器地址和端口
-				server_host = 'china.aprs2.net'  # 服务器地址（使用字符串而非字节）
-				server_port = 14580  # 服务器端口
-				a.connect(server_host, server_port)
-				
-				# 启动连接
 				a.start()
 				aprs_return=a.send(frame_text)
 				if aprs_return==len(frame_text)+2:
