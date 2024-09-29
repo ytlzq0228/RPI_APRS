@@ -9,6 +9,7 @@ file_dir = os.path.dirname(os.path.realpath(__file__))
 
 LOG_FILE='/var/log/GPS_NMEA.log'
 VERSION='DISP_0925.01'
+bus=smbus.SMBus(1)
 
 def save_log(result):
 	try:
@@ -21,6 +22,10 @@ def save_log(result):
 	except Exception as err:
 		print(err)
 
+def readCapacity():
+
+	Battery_Capacity = bus.read_word_data(0x57, 0x2a)
+	return Battery_Capacity
 
 
 class OLED:
@@ -46,6 +51,7 @@ class OLED:
 	def OLED_Position(oled,lat_disp,lon_disp,GNSS_Type,update_time,time_dif,speed,invert=False):
 		try:
 			speed="%03.0f"%(float(speed)*1.852)
+			bat_cap=round(int(readCapacity())/6.25)
 			# Make sure to create image with mode '1' for 1-bit color.
 			image = Image.new("1", (oled.width, oled.height))
 			
@@ -67,13 +73,16 @@ class OLED:
 			draw.line([(127,0),(127,63)], fill = fill_color)
 			draw.line([(0,16),(127,16)], fill = fill_color)
 			#logging.info ("***draw text")
-			draw.text((3,0), 'GPS', font = font2, fill = fill_color)
+			draw.text((3,0), 'GPS%s'%bat_cap, font = font2, fill = fill_color)
 			draw.text((1,16), "Lat:%s"%lat_disp, font = font1, fill = fill_color)
 			draw.text((1,27), "Lon:%s"%lon_disp, font = font1, fill = fill_color)
 			draw.text((1,38), "Type:%s %sKM/H"%(GNSS_Type,speed), font = font1, fill = fill_color)
 			draw.text((1,50), 'Update:%s-%s'%(update_time,time_dif), font = font1, fill = fill_color)
 
-			draw.rectangle((98, 0, 128, 16), outline=255,)
+			draw.rectangle((105, 3, 123, 13), outline=fill_color)
+			draw.rectangle((124, 5, 125, 11), outline=fill_color)
+			for i in range(bat_cap):
+				draw.line([(106+i,4),(106+i,12)], fill = fill_color)
 
 			# Display image
 			oled.image(image)
