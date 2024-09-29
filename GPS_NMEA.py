@@ -93,7 +93,7 @@ def get_gnss_position(Test_Flag):
 			if ser.in_waiting > 0:
 				line=ser.readline().decode('ascii', errors='replace').strip()  # 读取一行NMEA数据
 				if Test_Flag!=0:
-					line='$GPRMC,123519,A,4807.038,N,01131.000,E,010.4,084.4,230394,003.1,W*6A' #for testing
+					line=f'$GPRMC,{datetime.now().strftime('%H%M%S')},A,4807.038,N,01131.000,E,010.4,084.4,230394,003.1,W*6A' #for testing
 				lat,lat_dir,lon,lon_dir,speed,course,timestamp,GNSS_Type,lat_raw,lon_raw=NMEA_RMC(line)
 				if lat is not None and lon is not None :
 					i=0
@@ -115,7 +115,7 @@ def get_gnss_position(Test_Flag):
 			if ser.in_waiting > 0:  
 				line=ser.readline().decode('ascii', errors='replace').strip()  # 读取一行NMEA数据
 				if Test_Flag!=0:
-					line='$GPGGA,123519.00,4004.6300,N,11618.2178,E,01,07,10.3,20.05,M,-15.40,M,1.1,1023*63<CR><LF>' #for testing
+					line=f'$GPGGA,{datetime.now().strftime('%H%M%S')},4004.6300,N,11618.2178,E,01,07,10.3,20.05,M,-15.40,M,1.1,1023*63<CR><LF>' #for testing
 				altitude=NMEA_GGA(line,timestamp)
 				if altitude :
 					#save_log(f"GNSS RMC: speed/knots={speed}, course={course}")
@@ -171,7 +171,15 @@ if __name__ == '__main__':
 			
 			if float(timestamp)%30==0:
 				frame_text=(f'{SSID}>PYTHON,TCPIP*,qAC,{SSID}:!{lat}{lat_dir}/{lon}{lon_dir}{SSID_ICON}{course}/{speed}/A={altitude} APRS by RPI with GNSS Module using {GNSS_Type} at UTC {timestamp} {Message}').encode()
-				a=aprs.TCP(b'BI1FQO', b'20898')
+				callsign = b'BI1FQO'
+				password = b'20898'
+				
+				# 定义 APRS 服务器地址和端口号
+				server_host = b'china.aprs2.net'  # 例如，指定 rotate.aprs2.net 服务器
+				server_port = 14580  # APRS-IS 默认端口
+				
+				# 初始化 APRS 连接
+				a = aprs.TCP(callsign, password, host=server_host, port=server_port)
 				a.start()
 				aprs_return=a.send(frame_text)
 				if aprs_return==len(frame_text)+2:
