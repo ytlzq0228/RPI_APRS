@@ -114,7 +114,7 @@ def get_gnss_position(Test_Flag):
 			if ser.in_waiting > 0:  
 				line=ser.readline().decode('ascii', errors='replace').strip()  # 读取一行NMEA数据
 				if Test_Flag!=0:
-					line='$GPGGA,041824.00,4004.6300,N,11618.2178,E,01,07,10.3,20.05,M,-15.40,M,1.1,1023*63<CR><LF>' #for testing
+					line='$GPGGA,123519.00,4004.6300,N,11618.2178,E,01,07,10.3,20.05,M,-15.40,M,1.1,1023*63<CR><LF>' #for testing
 				altitude=NMEA_GGA(line,timestamp)
 				if altitude :
 					#save_log(f"GNSS RMC: speed/knots={speed}, course={course}")
