@@ -59,6 +59,7 @@ class OLED:
 			draw = ImageDraw.Draw(image)
 			
 			font1 = ImageFont.truetype(os.path.join(file_dir, 'Menlo.ttc'), 11)
+			font1_XL = ImageFont.truetype(os.path.join(file_dir, 'Menlo.ttc'), 25)
 			font3 = ImageFont.truetype(os.path.join(file_dir, 'PixelOperator.ttf'), 16)
 			font2 = ImageFont.truetype(os.path.join(file_dir, 'Menlo.ttc'), 13,index=1)
 			if invert:
@@ -76,9 +77,10 @@ class OLED:
 			draw.text((3,0), 'GPS APRS Inf', font = font2, fill = fill_color)
 			draw.text((1,16), "%s"%lat_disp, font = font1, fill = fill_color)
 			draw.text((1,27), "%s"%lon_disp, font = font1, fill = fill_color)
-			draw.text((1,38), "Type:%s %sKM/H"%(GNSS_Type,speed), font = font1, fill = fill_color)
+			draw.text((78,20), speed, font = font1_XL, fill = fill_color)
+			draw.text((1,38), "Type:%s"%GNSS_Type, font = font1, fill = fill_color)
 			draw.text((1,50), 'Update:%s-%s'%(update_time,time_dif), font = font1, fill = fill_color)
-
+	
 			draw.rectangle((106, 3, 123, 13), outline=fill_color)
 			draw.rectangle((124, 5, 125, 11), outline=fill_color)
 			for i in range(bat_cap):
