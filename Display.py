@@ -113,6 +113,13 @@ class OLED:
 			draw.line([(0,63),(127,63)], fill = 255)
 			draw.line([(127,0),(127,63)], fill = 255)
 			draw.text((1,25), Message, font = font1, fill = 255)
+			
+			bat_cap=round(int(readCapacity())/6.25)
+			draw.rectangle((106, 3, 123, 13), outline=fill_color)
+			draw.rectangle((124, 5, 125, 11), outline=fill_color)
+			for i in range(bat_cap):
+				draw.line([(107+i,4),(107+i,12)], fill = fill_color)
+			
 			# Display image
 			oled.image(image)
 			oled.show()
