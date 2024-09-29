@@ -5,6 +5,12 @@ source /etc/GPS_config.cfg
 
 i2cset -y 1 0x57 0x06 0x18
 
+if [ "$OLED_Enable" -eq 1 ]; then
+    # 如果 Test_Flag 是 0，则执行 sleep 30
+    python3 SSD1306_booting
+fi
+
+
 # 判断 Test_Flag 是否等于 0
 if [ "$Test_Flag" -eq 0 ]; then
     # 如果 Test_Flag 是 0，则执行 sleep 30
