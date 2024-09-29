@@ -7,7 +7,7 @@ i2cset -y 1 0x57 0x06 0x18
 
 if [ "$OLED_Enable" -eq 1 ]; then
     # 如果 Test_Flag 是 0，则执行 sleep 30
-    python3 SSD1306_booting
+    python3 SSD1306_booting.py
 fi
 
 
