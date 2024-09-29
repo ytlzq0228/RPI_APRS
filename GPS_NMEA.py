@@ -93,7 +93,7 @@ def get_gnss_position(Test_Flag):
 			if ser.in_waiting > 0:
 				line=ser.readline().decode('ascii', errors='replace').strip()  # 读取一行NMEA数据
 				if Test_Flag!=0:
-					line=f'$GPRMC,{datetime.now().strftime('%H%M%S')},A,4807.038,N,01131.000,E,010.4,084.4,230394,003.1,W*6A' #for testing
+					line='$GPRMC,%s,A,4807.038,N,01131.000,E,010.4,084.4,230394,003.1,W*6A'%datetime.now().strftime('%H%M%S') #for testing
 				lat,lat_dir,lon,lon_dir,speed,course,timestamp,GNSS_Type,lat_raw,lon_raw=NMEA_RMC(line)
 				if lat is not None and lon is not None :
 					i=0
@@ -115,7 +115,7 @@ def get_gnss_position(Test_Flag):
 			if ser.in_waiting > 0:  
 				line=ser.readline().decode('ascii', errors='replace').strip()  # 读取一行NMEA数据
 				if Test_Flag!=0:
-					line=f'$GPGGA,{datetime.now().strftime('%H%M%S')},4004.6300,N,11618.2178,E,01,07,10.3,20.05,M,-15.40,M,1.1,1023*63<CR><LF>' #for testing
+					line='$GPGGA,%s,4004.6300,N,11618.2178,E,01,07,10.3,20.05,M,-15.40,M,1.1,1023*63<CR><LF>'%datetime.now().strftime('%H%M%S') #for testing
 				altitude=NMEA_GGA(line,timestamp)
 				if altitude :
 					#save_log(f"GNSS RMC: speed/knots={speed}, course={course}")
