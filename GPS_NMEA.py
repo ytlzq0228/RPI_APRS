@@ -93,7 +93,7 @@ def get_gnss_position(Test_Flag):
 			if ser.in_waiting > 0:
 				line=ser.readline().decode('ascii', errors='replace').strip()  # 读取一行NMEA数据
 				if Test_Flag!=0:
-					line='$GPRMC,%s,A,4807.038,N,01131.000,E,010.4,084.4,230394,003.1,W*6A'%datetime.now().strftime('%H%M%S') #for testing
+					line='$GPRMC,%s,A,4004.6300,N,11618.2178,E,010.4,084.4,230394,003.1,W*6A'%datetime.now().strftime('%H%M%S') #for testing
 				lat,lat_dir,lon,lon_dir,speed,course,timestamp,GNSS_Type,lat_raw,lon_raw=NMEA_RMC(line)
 				if lat is not None and lon is not None :
 					i=0
@@ -171,11 +171,14 @@ if __name__ == '__main__':
 			
 			if float(timestamp)%30==0:
 				frame_text=(f'{SSID}>PYTHON,TCPIP*,qAC,{SSID}:!{lat}{lat_dir}/{lon}{lon_dir}{SSID_ICON}{course}/{speed}/A={altitude} APRS by RPI with GNSS Module using {GNSS_Type} at UTC {timestamp} {Message}').encode()
+				callsign = b'BI1FQO'
+				password = b'20898'
+				
 				# 定义 APRS 服务器地址和端口（字节形式）
 				server_host = b'rotate.aprs2.net:14580'  # 使用 rotate.aprs2.net 服务器和端口 14580
 				
 				# 创建 TCP 对象并传入服务器信息
-				a=aprs.TCP(b'BI1FQO', b'20898')
+				a = aprs.TCP(callsign, password, servers=[server_host])
 				a.start()
 				aprs_return=a.send(frame_text)
 				if aprs_return==len(frame_text)+2:
