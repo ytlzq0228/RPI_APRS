@@ -110,4 +110,4 @@ if __name__ == '__main__':
 	OLED_Enable=1
 	OLED_Address=0x3c
 	OLED_Enable,oled=OLED.OLED_Init(OLED_Enable,OLED_Address)
-	OLED.OLED_Position(oled,"040.0703800","112.0713240","GNRMC","21:19:32","12","013","50",invert=False)
+	OLED.OLED_Position(oled,"040.0703800","112.0713240","GNRMC","21:19:32","12","013",invert=False)
