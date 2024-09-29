@@ -179,7 +179,7 @@ if __name__ == '__main__':
 				server_port = 14580  # APRS-IS 默认端口
 				
 				# 初始化 APRS 连接
-				a = aprs.TCP(callsign, password, host=server_host, port=server_port)
+				a = aprs.TCP(callsign, password, server_host, server_port)
 				a.start()
 				aprs_return=a.send(frame_text)
 				if aprs_return==len(frame_text)+2:
