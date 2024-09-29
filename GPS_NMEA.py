@@ -101,13 +101,13 @@ def get_gnss_position(Test_Flag):
 					break
 				if timestamp==0:
 					i+=1
-				if timestamp==0 and i%60==1:
-					save_log('No GNSS Signal. Waiting.....')
 					if OLED_Enable==1:
 						try:
 							OLED.OLED_Display(oled,'No GNSS Signal Yet')
-						finally:
-							time.sleep(0.01)
+						except Exception as err:
+							save_log(f"No GNSS_OLED: {err}")
+				if timestamp==0 and i%60==1:
+					save_log('No GNSS Signal. Waiting.....')
 				i=i%3600
 			
 		i=0
