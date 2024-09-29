@@ -33,15 +33,7 @@ i2cset -y 1 $I2C_ADDR 0x00 0x8D    # Charge Pump Setting
 i2cset -y 1 $I2C_ADDR 0x00 0x14
 i2cset -y 1 $I2C_ADDR 0x00 0xAF    # Display ON
 
-# 清屏（全屏设置为黑色）
-for page in $(seq 0 7); do
-    i2cset -y 1 $I2C_ADDR 0x00 0xB0$page  # Set page address
-    i2cset -y 1 $I2C_ADDR 0x00 0x00       # Set low column address
-    i2cset -y 1 $I2C_ADDR 0x00 0x10       # Set high column address
-    for col in $(seq 0 127); do
-        i2cset -y 1 $I2C_ADDR 0x40 0x00   # Clear display (fill with zeros)
-    done
-done
+
 
 # 定义 "B" 字符的位图，8x8 像素，每一行对应一个字节
 # 你可以使用在线工具生成字符位图
