@@ -80,7 +80,7 @@ class OLED:
 			draw.text((1,27), "%s"%lon_disp, font = font1, fill = fill_color)
 			draw.text((72,15), "Speed", font = font1_SM, fill = fill_color)
 			draw.text((102,43), "km /H", font = font1_SM, fill = fill_color)
-			draw.text((78,20), speed, font = font1_XL, fill = fill_color)
+			draw.text((78,19), speed, font = font1_XL, fill = fill_color)
 			draw.text((1,38), "Type:%s"%GNSS_Type, font = font1, fill = fill_color)
 			draw.text((1,50), 'Update:%s-%s'%(update_time,time_dif), font = font1, fill = fill_color)
 	
