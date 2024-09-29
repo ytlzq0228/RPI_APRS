@@ -56,7 +56,8 @@ def NMEA_GGA(sentence,timestamp):
 def NMEA_RMC(sentence):
 	match=re.match(r'^\$..RMC,.*', sentence)  # 匹配GPRMC语句
 	if match:
-		reset_watchdog()
+		if Test_Flag!=0:
+			reset_watchdog()
 		parts=sentence.split(',')
 		#print(parts)
 		if len(parts) > 8 and parts[3] and parts[5]:
