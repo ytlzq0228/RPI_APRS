@@ -76,7 +76,7 @@ class OLED:
 			# Display image
 			oled.image(image)
 			oled.show()
-			
+			save_log("booting")
 		except Exception as err:
 			save_log(err)
 
