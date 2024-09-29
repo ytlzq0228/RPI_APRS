@@ -59,7 +59,7 @@ class OLED:
 			draw = ImageDraw.Draw(image)
 			
 			font1 = ImageFont.truetype(os.path.join(file_dir, 'Menlo.ttc'), 11)
-			font1_XL = ImageFont.truetype(os.path.join(file_dir, 'Menlo.ttc'), 25)
+			font1_XL = ImageFont.truetype(os.path.join(file_dir, 'Menlo.ttc'), 30)
 			font1_SM = ImageFont.truetype(os.path.join(file_dir, 'Menlo.ttc'), 8)
 			font3 = ImageFont.truetype(os.path.join(file_dir, 'PixelOperator.ttf'), 16)
 			font2 = ImageFont.truetype(os.path.join(file_dir, 'Menlo.ttc'), 13,index=1)
