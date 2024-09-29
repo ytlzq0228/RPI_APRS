@@ -8,6 +8,7 @@ from datetime import datetime
 import socket
 from Display import OLED
 from watchdog import reset_watchdog
+from watchdog import boot_watchdog
 
 # 设置全局的socket超时时间，例如10秒
 socket.setdefaulttimeout(5)
@@ -127,6 +128,7 @@ def get_gnss_position(Test_Flag):
 
 
 if __name__ == '__main__':
+	boot_watchdog()
 	Test_Flag=int(sys.argv[1])
 	SSID=sys.argv[2]
 	Message=sys.argv[3]

@@ -28,5 +28,23 @@ def reset_watchdog():
     finally:
         return True
 
+def boot_watchdog():
+    try:
+        #设置最大重启次数 Set the maximum number of restarts
+        bus.write_byte_data(0x57, 0x0a, 10)
+        
+        # 读取寄存器的当前值
+        TMP = bus.read_byte_data(0x57, 0x06)
+        
+        # 启动看门狗复位（OR 操作以确保第 4,3 位为 1 0x18）
+        # 0x57 0x06地址功能为
+        #bit4-功能开关
+        #bit3-看门狗复位（加电后90s内喂狗）
+        RST = 0x18 | TMP
 
-reset_watchdog()
+        # 将新的值写回寄存器
+        bus.write_byte_data(0x57, 0x06, RST)
+        
+    finally:
+        return True
+
