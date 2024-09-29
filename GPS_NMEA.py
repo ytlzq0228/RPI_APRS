@@ -154,8 +154,8 @@ if __name__ == '__main__':
 			
 			if OLED_Enable==1:
 				try:
-					lat_disp=lat_dir+" "+"%07.4f"%(float(lat_raw)/100)
-					lon_disp=lon_dir+" "+"%07.4f"%(float(lon_raw)/100)
+					lat_disp=lat_dir+" "+"%08.4f"%(float(lat_raw)/100)
+					lon_disp=lon_dir+" "+"%08.4f"%(float(lon_raw)/100)
 					if update_time==datetime.min:
 						time_diff="00"
 					else:
