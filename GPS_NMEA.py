@@ -178,7 +178,7 @@ if __name__ == '__main__':
 				server_host = b'rotate.aprs2.net:14580'  # 使用 rotate.aprs2.net 服务器和端口 14580
 				
 				# 创建 TCP 对象并传入服务器信息
-				a = aprs.TCP(callsign, password, servers=[server_host])
+				a = aprs.TCP(callsign, password)
 				a.start()
 				aprs_return=a.send(frame_text)
 				if aprs_return==len(frame_text)+2:
