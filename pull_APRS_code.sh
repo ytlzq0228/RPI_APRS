@@ -6,7 +6,8 @@ source /etc/GPS_config.cfg
 i2cset -y 1 0x57 0x06 0x18
 
 if [ "$OLED_Enable" -eq 1 ]; then
-    python3 SSD1306_booting.py
+    echo "booting $(date)" >> /var/log/git_pull.log
+    python3 /home/pi-star/RPI_APRS/SSD1306_booting.py
 fi
 
 
