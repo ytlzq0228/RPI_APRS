@@ -49,7 +49,7 @@ class OLED:
 
 
 	
-	def OLED_Display(oled):
+	def booting(oled):
 		try:
 			# Make sure to create image with mode '1' for 1-bit color.
 			image = Image.new("1", (oled.width, oled.height))
@@ -84,4 +84,4 @@ if __name__ == '__main__':
 	OLED_Enable=1
 	OLED_Address=0x3c
 	OLED_Enable,oled=OLED.OLED_Init(OLED_Enable,OLED_Address)
-	booting(oled)
+	OLED.booting(oled)
