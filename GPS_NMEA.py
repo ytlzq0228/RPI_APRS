@@ -211,7 +211,7 @@ if __name__ == '__main__':
 		OLED_Address=60
 	else:
 		OLED_Address=int(sys.argv[6],16)
-	print(sys.argv[7],sys.argv[8])
+	#print(sys.argv[7],sys.argv[8])
 	GPS_Device=sys.argv[7]
 	if GPS_Device[:8]=="/dev/tty":
 		COMorTCP="COM"
@@ -229,9 +229,9 @@ if __name__ == '__main__':
 			while True:
 				try:
 					if COMorTCP=="COM":
-						lat,lat_dir,lon,lon_dir,altitude,timestamp,speed,course,GNSS_Type,lat_raw,lon_raw = get_gnss_position(COMorTCP,com_port,baud_rate,Test_Flag)
+						lat,lat_dir,lon,lon_dir,altitude,timestamp,speed,course,GNSS_Type,lat_raw,lon_raw = get_gnss_position(COMorTCP=COMorTCP,com_port=com_port,baud_rate=baud_rate,Test_Flag=Test_Flag)
 					if COMorTCP=="TCP":
-						lat,lat_dir,lon,lon_dir,altitude,timestamp,speed,course,GNSS_Type,lat_raw,lon_raw = get_gnss_position(COMorTCP,tcp_host,tcp_port,Test_Flag)
+						lat,lat_dir,lon,lon_dir,altitude,timestamp,speed,course,GNSS_Type,lat_raw,lon_raw = get_gnss_position(COMorTCP=COMorTCP,tcp_host=tcp_host,tcp_port=tcp_port,Test_Flag=Test_Flag)
 					break  # 成功获取GNSS数据时退出循环
 				except Exception as err:
 					save_log(f"Retrying get_gnss_position due to error: {err}")
