@@ -186,7 +186,7 @@ def get_gnss_position(COMorTCP, com_port=None, baud_rate=None, tcp_host=None, tc
 				except socket.timeout:
 					raise Exception("TCP connection timed out.")
 
-			if Test_Flag != 0:ß
+			if Test_Flag != 0:
 				line = '$GPGGA,%s,4004.6300,N,11618.2178,E,01,07,10.3,20.05,M,-15.40,M,1.1,1023*63<CR><LF>' % datetime.now().strftime('%H%M%S')  # for testing
 			
 			altitude = NMEA_GGA(line, timestamp)
