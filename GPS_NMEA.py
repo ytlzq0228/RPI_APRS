@@ -131,7 +131,7 @@ def get_gnss_position_TCP(Test_Flag,tcp_host,tcp_port):
 		sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 		#print(tcp_host, tcp_port)
 		sock.connect((tcp_host, tcp_port))
-		sock.settimeout(10)  # 设置超时时间
+		sock.settimeout(2)  # 设置超时时间
 
 		i = 0
 		line=""
