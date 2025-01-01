@@ -14,8 +14,8 @@ from watchdog import boot_watchdog
 socket.setdefaulttimeout(5)
 
 # 串口配置部分/COM port config params part
-com_port='/dev/ttyAMA0'  
-baud_rate=115200
+com_port=sys.argv[7] 
+baud_rate=int(sys.argv[8])
 ser=serial.Serial(com_port, baud_rate, bytesize=serial.EIGHTBITS, parity=serial.PARITY_NONE, stopbits=serial.STOPBITS_ONE)
 LOG_FILE='/var/log/GPS_NMEA.log'
 VERSION='0926.01'
