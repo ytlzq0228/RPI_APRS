@@ -136,6 +136,7 @@ def get_gnss_position(COMorTCP, com_port=None, baud_rate=None, tcp_host=None, tc
             print(tcp_host, tcp_port)
             sock.connect((tcp_host, tcp_port))
             sock.settimeout(10)  # 设置超时时间
+            print(sock)
         else:
             raise ValueError("Invalid value for COMorTCP. Choose 'COM' or 'TCP'.")
 
