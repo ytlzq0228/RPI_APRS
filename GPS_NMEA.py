@@ -132,6 +132,7 @@ def get_gnss_position(COMorTCP, com_port=None, baud_rate=None, tcp_host=None, tc
         elif COMorTCP == "TCP":
             # TCP 初始化
             sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+            print(tcp_host, tcp_port)
             sock.connect((tcp_host, tcp_port))
             sock.settimeout(10)  # 设置超时时间
         else:
