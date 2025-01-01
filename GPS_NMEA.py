@@ -138,6 +138,7 @@ def get_gnss_position(COMorTCP, com_port=None, baud_rate=None, tcp_host=None, tc
             raise ValueError("Invalid value for COMorTCP. Choose 'COM' or 'TCP'.")
 
         i = 0
+        line=""
         while True:
             if COMorTCP == "COM":
                 if ser.in_waiting > 0:
