@@ -138,7 +138,7 @@ def get_gnss_position(COMorTCP, com_port=None, baud_rate=None, tcp_host=None, tc
 			sock.settimeout(10)  # 设置超时时间
 			print(sock)
 			while True:
-				data = s.recv(1024)  # 每次接收 1024 字节
+				data = sock.recv(1024)  # 每次接收 1024 字节
 				if not data:  # 如果接收不到数据，退出循环
 					break
 				print("收到数据:", data.decode('utf-8'))
