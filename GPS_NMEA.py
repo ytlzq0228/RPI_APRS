@@ -143,12 +143,19 @@ def get_gnss_position_TCP(Test_Flag,tcp_host,tcp_port):
 				line_GGA = '$GPGGA,%s,4004.6300,N,11618.2178,E,01,07,10.3,20.05,M,-15.40,M,1.1,1023*63<CR><LF>' % datetime.now().strftime('%H%M%S')  # for testing
 			else:
 				try:
-					line = sock.recv(1024).decode('utf-8')
+					line = sock.recv(1024).decode('utf-8').split()
 				except socket.timeout:
 					raise Exception("TCP connection timed out.")
-			print(line)
-			lat, lat_dir, lon, lon_dir, speed, course, timestamp, GNSS_Type, lat_raw, lon_raw = NMEA_RMC(line)
-			altitude = NMEA_GGA(line, timestamp)
+				print(line)
+				line_RMC =""
+				line_GGA =""
+				for i in line:
+					if i[3:6]=="RMC":
+						line_RMC=i
+					if i[3:6]=="GGA":
+						line_GGA=i
+			lat, lat_dir, lon, lon_dir, speed, course, timestamp, GNSS_Type, lat_raw, lon_raw = NMEA_RMC(line_RMC)
+			altitude = NMEA_GGA(line_GGA, timestamp)
 
 
 			if lat is not None and lon is not None:
