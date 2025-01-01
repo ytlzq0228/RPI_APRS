@@ -13,12 +13,9 @@ from watchdog import boot_watchdog
 # 设置全局的socket超时时间，例如10秒
 socket.setdefaulttimeout(5)
 
-# 串口配置部分/COM port config params part
-com_port=sys.argv[7] 
-baud_rate=int(sys.argv[8])
-ser=serial.Serial(com_port, baud_rate, bytesize=serial.EIGHTBITS, parity=serial.PARITY_NONE, stopbits=serial.STOPBITS_ONE)
+
 LOG_FILE='/var/log/GPS_NMEA.log'
-VERSION='0926.01'
+VERSION='0101.01'
 
 def save_log(result):
 	try:
@@ -85,47 +82,119 @@ def NMEA_RMC(sentence):
 			return None,None,None,None,None,None,0,None,None,None
 	return None,None,None,None,None,None,None,None,None,None
 
-def get_gnss_position(Test_Flag):
-	try:
-		ser.reset_input_buffer()
-		i=0
-		while True:
-			if ser.in_waiting > 0:
-				line=ser.readline().decode('ascii', errors='replace').strip()  # 读取一行NMEA数据
-				if Test_Flag!=0:
-					line='$GPRMC,%s,A,4004.6300,N,11618.2178,E,010.4,084.4,230394,003.1,W*6A'%datetime.now().strftime('%H%M%S') #for testing
-				lat,lat_dir,lon,lon_dir,speed,course,timestamp,GNSS_Type,lat_raw,lon_raw=NMEA_RMC(line)
-				if lat is not None and lon is not None :
-					i=0
-					#save_log(f"GNSS GGA: lat={lat}, lon={lon}, altitude/feet={altitude}")
-					break
-				if timestamp==0:
-					i+=1
-					if OLED_Enable==1:
-						try:
-							OLED.OLED_Display(oled,'No GNSS Signal Yet')
-						except Exception as err:
-							save_log(f"No GNSS_OLED: {err}")
-				if timestamp==0 and i%60==1:
-					save_log('No GNSS Signal. Waiting.....')
-				i=i%3600
-			
-		i=0
-		while i<120:
-			if ser.in_waiting > 0:  
-				line=ser.readline().decode('ascii', errors='replace').strip()  # 读取一行NMEA数据
-				if Test_Flag!=0:
-					line='$GPGGA,%s,4004.6300,N,11618.2178,E,01,07,10.3,20.05,M,-15.40,M,1.1,1023*63<CR><LF>'%datetime.now().strftime('%H%M%S') #for testing
-				altitude=NMEA_GGA(line,timestamp)
-				if altitude :
-					#save_log(f"GNSS RMC: speed/knots={speed}, course={course}")
-					break
-				i+=1
-		return lat,lat_dir,lon,lon_dir,altitude,timestamp,speed,course,GNSS_Type,lat_raw,lon_raw
-	except Exception as err:
-		save_log(f"get_gnss_position: {err}")
-		raise
+#def get_gnss_position(Test_Flag):
+#	try:
+#		ser.reset_input_buffer()
+#		i=0
+#		while True:
+#			if ser.in_waiting > 0:
+#				line=ser.readline().decode('ascii', errors='replace').strip()  # 读取一行NMEA数据
+#				if Test_Flag!=0:
+#					line='$GPRMC,%s,A,4004.6300,N,11618.2178,E,010.4,084.4,230394,003.1,W*6A'%datetime.now().strftime('%H%M%S') #for testing
+#				lat,lat_dir,lon,lon_dir,speed,course,timestamp,GNSS_Type,lat_raw,lon_raw=NMEA_RMC(line)
+#				if lat is not None and lon is not None :
+#					i=0
+#					#save_log(f"GNSS GGA: lat={lat}, lon={lon}, altitude/feet={altitude}")
+#					break
+#				if timestamp==0:
+#					i+=1
+#					if OLED_Enable==1:
+#						try:
+#							OLED.OLED_Display(oled,'No GNSS Signal Yet')
+#						except Exception as err:
+#							save_log(f"No GNSS_OLED: {err}")
+#				if timestamp==0 and i%60==1:
+#					save_log('No GNSS Signal. Waiting.....')
+#				i=i%3600
+#			
+#		i=0
+#		while i<120:
+#			if ser.in_waiting > 0:  
+#				line=ser.readline().decode('ascii', errors='replace').strip()  # 读取一行NMEA数据
+#				if Test_Flag!=0:
+#					line='$GPGGA,%s,4004.6300,N,11618.2178,E,01,07,10.3,20.05,M,-15.40,M,1.1,1023*63<CR><LF>'%datetime.now().strftime('%H%M%S') #for testing
+#				altitude=NMEA_GGA(line,timestamp)
+#				if altitude :
+#					#save_log(f"GNSS RMC: speed/knots={speed}, course={course}")
+#					break
+#				i+=1
+#		return lat,lat_dir,lon,lon_dir,altitude,timestamp,speed,course,GNSS_Type,lat_raw,lon_raw
+#	except Exception as err:
+#		save_log(f"get_gnss_position: {err}")
+#		raise
 
+def get_gnss_position(COMorTCP, com_port=None, baud_rate=None, tcp_host=None, tcp_port=None, Test_Flag=0):
+    try:
+        if COMorTCP == "COM":
+            # 串口初始化
+            ser = serial.Serial(com_port, baud_rate, bytesize=serial.EIGHTBITS, parity=serial.PARITY_NONE, stopbits=serial.STOPBITS_ONE)
+            ser.reset_input_buffer()
+        elif COMorTCP == "TCP":
+            # TCP 初始化
+            sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+            sock.connect((tcp_host, tcp_port))
+            sock.settimeout(10)  # 设置超时时间
+        else:
+            raise ValueError("Invalid value for COMorTCP. Choose 'COM' or 'TCP'.")
+
+        i = 0
+        while True:
+            if COMorTCP == "COM":
+                if ser.in_waiting > 0:
+                    line = ser.readline().decode('ascii', errors='replace').strip()
+            elif COMorTCP == "TCP":
+                try:
+                    line = sock.recv(1024).decode('ascii', errors='replace').strip()
+                except socket.timeout:
+                    raise Exception("TCP connection timed out.")
+
+            if Test_Flag != 0:
+                line = '$GPRMC,%s,A,4004.6300,N,11618.2178,E,010.4,084.4,230394,003.1,W*6A' % datetime.now().strftime('%H%M%S')  # for testing
+            
+            lat, lat_dir, lon, lon_dir, speed, course, timestamp, GNSS_Type, lat_raw, lon_raw = NMEA_RMC(line)
+            if lat is not None and lon is not None:
+                i = 0
+                break
+            if timestamp == 0:
+                i += 1
+                if OLED_Enable == 1:
+                    try:
+                        OLED.OLED_Display(oled, 'No GNSS Signal Yet')
+                    except Exception as err:
+                        save_log(f"No GNSS_OLED: {err}")
+                if i % 60 == 1:
+                    save_log('No GNSS Signal. Waiting.....')
+                i = i % 3600
+
+        i = 0
+        while i < 120:
+            if COMorTCP == "COM":
+                if ser.in_waiting > 0:
+                    line = ser.readline().decode('ascii', errors='replace').strip()
+            elif COMorTCP == "TCP":
+                try:
+                    line = sock.recv(1024).decode('ascii', errors='replace').strip()
+                except socket.timeout:
+                    raise Exception("TCP connection timed out.")
+
+            if Test_Flag != 0:
+                line = '$GPGGA,%s,4004.6300,N,11618.2178,E,01,07,10.3,20.05,M,-15.40,M,1.1,1023*63<CR><LF>' % datetime.now().strftime('%H%M%S')  # for testing
+            
+            altitude = NMEA_GGA(line, timestamp)
+            if altitude:
+                break
+            i += 1
+
+        if COMorTCP == "COM":
+            ser.close()
+        elif COMorTCP == "TCP":
+            sock.close()
+
+        return lat, lat_dir, lon, lon_dir, altitude, timestamp, speed, course, GNSS_Type, lat_raw, lon_raw
+
+    except Exception as err:
+        save_log(f"get_gnss_position: {err}")
+        raise
 
 
 if __name__ == '__main__':
@@ -139,6 +208,15 @@ if __name__ == '__main__':
 		OLED_Address=60
 	else:
 		OLED_Address=int(sys.argv[6],16)
+	GPS_Device=sys.argv[7]
+	if GPS_Device[:8]=="/dev/tty":
+		COMorTCP="COM"
+		com_port=GPS_Device
+		baud_rate=int(sys.argv[8])
+	else:
+		COMorTCP="TCP"
+		tcp_host=GPS_Device
+		tcp_port=int(sys.argv[8])
 
 	OLED_Enable,oled=OLED.OLED_Init(OLED_Enable,OLED_Address)
 	update_time=datetime.min
@@ -146,7 +224,10 @@ if __name__ == '__main__':
 		try:
 			while True:
 				try:
-					lat,lat_dir,lon,lon_dir,altitude,timestamp,speed,course,GNSS_Type,lat_raw,lon_raw = get_gnss_position(Test_Flag)
+					if COMorTCP=="COM":
+						lat,lat_dir,lon,lon_dir,altitude,timestamp,speed,course,GNSS_Type,lat_raw,lon_raw = get_gnss_position(COMorTCP,com_port,baud_rate,Test_Flag)
+					if COMorTCP=="TCP":
+						lat,lat_dir,lon,lon_dir,altitude,timestamp,speed,course,GNSS_Type,lat_raw,lon_raw = get_gnss_position(COMorTCP,tcp_host,tcp_port,Test_Flag)
 					break  # 成功获取GNSS数据时退出循环
 				except Exception as err:
 					save_log(f"Retrying get_gnss_position due to error: {err}")
