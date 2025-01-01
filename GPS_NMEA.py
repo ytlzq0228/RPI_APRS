@@ -154,6 +154,7 @@ def get_gnss_position_TCP(Test_Flag,tcp_host,tcp_port):
 						line_GGA=i
 			lat, lat_dir, lon, lon_dir, speed, course, timestamp, GNSS_Type, lat_raw, lon_raw = NMEA_RMC(line_RMC)
 			altitude = NMEA_GGA(line_GGA, timestamp)
+			print(lat,lon)
 
 
 			if lat is not None and lon is not None:
