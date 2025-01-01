@@ -128,6 +128,7 @@ def get_gnss_position(COMorTCP, com_port=None, baud_rate=None, tcp_host=None, tc
         if COMorTCP == "COM":
             # 串口初始化
             ser = serial.Serial(com_port, baud_rate, bytesize=serial.EIGHTBITS, parity=serial.PARITY_NONE, stopbits=serial.STOPBITS_ONE)
+            print(com_port, baud_rate)
             ser.reset_input_buffer()
         elif COMorTCP == "TCP":
             # TCP 初始化
@@ -210,6 +211,7 @@ if __name__ == '__main__':
 		OLED_Address=60
 	else:
 		OLED_Address=int(sys.argv[6],16)
+	print(sys.argv[7],sys.argv[8])
 	GPS_Device=sys.argv[7]
 	if GPS_Device[:8]=="/dev/tty":
 		COMorTCP="COM"
