@@ -122,7 +122,7 @@ def get_gnss_position_COM(Test_Flag,com_port,baud_rate):
 				i+=1
 		return lat,lat_dir,lon,lon_dir,altitude,timestamp,speed,course,GNSS_Type,lat_raw,lon_raw
 	except Exception as err:
-		save_log(f"get_gnss_position: {err}")
+		save_log(f"get_gnss_position_COM: {err}")
 		raise
 
 def get_gnss_position_TCP(Test_Flag,tcp_host,tcp_port):
@@ -178,7 +178,7 @@ def get_gnss_position_TCP(Test_Flag,tcp_host,tcp_port):
 		return lat, lat_dir, lon, lon_dir, altitude, timestamp, speed, course, GNSS_Type, lat_raw, lon_raw
 
 	except Exception as err:
-		save_log(f"get_gnss_position: {err}")
+		save_log(f"get_gnss_position_TCP: {err}")
 		raise
 
 
