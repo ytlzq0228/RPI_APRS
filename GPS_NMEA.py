@@ -206,7 +206,9 @@ if __name__ == '__main__':
 	update_time=datetime.min
 	while True:
 		try:
-			while True:
+			MAX_RETRIES = 10  # 最大重试次数
+			retry_count = 0
+			while retry_count < MAX_RETRIES:
 				try:
 					if COMorTCP=="COM":
 						lat,lat_dir,lon,lon_dir,altitude,timestamp,speed,course,GNSS_Type,lat_raw,lon_raw = get_gnss_position_COM(Test_Flag,com_port,baud_rate)
@@ -214,6 +216,7 @@ if __name__ == '__main__':
 						lat,lat_dir,lon,lon_dir,altitude,timestamp,speed,course,GNSS_Type,lat_raw,lon_raw = get_gnss_position_TCP(Test_Flag,tcp_host,tcp_port)
 					break  # 成功获取GNSS数据时退出循环
 				except Exception as err:
+					retry_count += 1
 					save_log(f"Retrying get_gnss_position due to error: {err}")
 					time.sleep(0.1)  # 等待0.1秒后重试
 			
