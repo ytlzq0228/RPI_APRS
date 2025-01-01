@@ -124,86 +124,86 @@ def NMEA_RMC(sentence):
 #		raise
 
 def get_gnss_position(COMorTCP, com_port=None, baud_rate=None, tcp_host=None, tcp_port=None, Test_Flag=0):
-    try:
-        if COMorTCP == "COM":
-            # 串口初始化
-            ser = serial.Serial(com_port, baud_rate, bytesize=serial.EIGHTBITS, parity=serial.PARITY_NONE, stopbits=serial.STOPBITS_ONE)
-            print(com_port, baud_rate)
-            ser.reset_input_buffer()
-        elif COMorTCP == "TCP":
-            # TCP 初始化
-            sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-            print(tcp_host, tcp_port)
-            sock.connect((tcp_host, tcp_port))
-            sock.settimeout(10)  # 设置超时时间
-            print(sock)
+	try:
+		if COMorTCP == "COM":
+			# 串口初始化
+			ser = serial.Serial(com_port, baud_rate, bytesize=serial.EIGHTBITS, parity=serial.PARITY_NONE, stopbits=serial.STOPBITS_ONE)
+			print(com_port, baud_rate)
+			ser.reset_input_buffer()
+		elif COMorTCP == "TCP":
+			# TCP 初始化
+			sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+			print(tcp_host, tcp_port)
+			sock.connect((tcp_host, tcp_port))
+			sock.settimeout(10)  # 设置超时时间
+			print(sock)
 			while True:
 				data = s.recv(1024)  # 每次接收 1024 字节
 				if not data:  # 如果接收不到数据，退出循环
 					break
 				print("收到数据:", data.decode('utf-8'))
-        else:
-            raise ValueError("Invalid value for COMorTCP. Choose 'COM' or 'TCP'.")
+		else:
+			raise ValueError("Invalid value for COMorTCP. Choose 'COM' or 'TCP'.")
 
-        i = 0
-        line=""
-        while True:
-            if COMorTCP == "COM":
-                if ser.in_waiting > 0:
-                    line = ser.readline().decode('ascii', errors='replace').strip()
-            elif COMorTCP == "TCP":
-                try:
-                    line = sock.recv(1024).decode('ascii', errors='replace').strip()
-                except socket.timeout:
-                    raise Exception("TCP connection timed out.")
+		i = 0
+		line=""
+		while True:
+			if COMorTCP == "COM":
+				if ser.in_waiting > 0:
+					line = ser.readline().decode('ascii', errors='replace').strip()
+			elif COMorTCP == "TCP":
+				try:
+					line = sock.recv(1024).decode('ascii', errors='replace').strip()
+				except socket.timeout:
+					raise Exception("TCP connection timed out.")
 
-            if Test_Flag != 0:
-                line = '$GPRMC,%s,A,4004.6300,N,11618.2178,E,010.4,084.4,230394,003.1,W*6A' % datetime.now().strftime('%H%M%S')  # for testing
-            
-            lat, lat_dir, lon, lon_dir, speed, course, timestamp, GNSS_Type, lat_raw, lon_raw = NMEA_RMC(line)
-            if lat is not None and lon is not None:
-                i = 0
-                break
-            if timestamp == 0:
-                i += 1
-                if OLED_Enable == 1:
-                    try:
-                        OLED.OLED_Display(oled, 'No GNSS Signal Yet')
-                    except Exception as err:
-                        save_log(f"No GNSS_OLED: {err}")
-                if i % 60 == 1:
-                    save_log('No GNSS Signal. Waiting.....')
-                i = i % 3600
+			if Test_Flag != 0:
+				line = '$GPRMC,%s,A,4004.6300,N,11618.2178,E,010.4,084.4,230394,003.1,W*6A' % datetime.now().strftime('%H%M%S')  # for testing
+			
+			lat, lat_dir, lon, lon_dir, speed, course, timestamp, GNSS_Type, lat_raw, lon_raw = NMEA_RMC(line)
+			if lat is not None and lon is not None:
+				i = 0
+				break
+			if timestamp == 0:
+				i += 1
+				if OLED_Enable == 1:
+					try:
+						OLED.OLED_Display(oled, 'No GNSS Signal Yet')
+					except Exception as err:
+						save_log(f"No GNSS_OLED: {err}")
+				if i % 60 == 1:
+					save_log('No GNSS Signal. Waiting.....')
+				i = i % 3600
 
-        i = 0
-        while i < 120:
-            if COMorTCP == "COM":
-                if ser.in_waiting > 0:
-                    line = ser.readline().decode('ascii', errors='replace').strip()
-            elif COMorTCP == "TCP":
-                try:
-                    line = sock.recv(1024).decode('ascii', errors='replace').strip()
-                except socket.timeout:
-                    raise Exception("TCP connection timed out.")
+		i = 0
+		while i < 120:
+			if COMorTCP == "COM":
+				if ser.in_waiting > 0:
+					line = ser.readline().decode('ascii', errors='replace').strip()
+			elif COMorTCP == "TCP":
+				try:
+					line = sock.recv(1024).decode('ascii', errors='replace').strip()
+				except socket.timeout:
+					raise Exception("TCP connection timed out.")
 
-            if Test_Flag != 0:
-                line = '$GPGGA,%s,4004.6300,N,11618.2178,E,01,07,10.3,20.05,M,-15.40,M,1.1,1023*63<CR><LF>' % datetime.now().strftime('%H%M%S')  # for testing
-            
-            altitude = NMEA_GGA(line, timestamp)
-            if altitude:
-                break
-            i += 1
+			if Test_Flag != 0:ß
+				line = '$GPGGA,%s,4004.6300,N,11618.2178,E,01,07,10.3,20.05,M,-15.40,M,1.1,1023*63<CR><LF>' % datetime.now().strftime('%H%M%S')  # for testing
+			
+			altitude = NMEA_GGA(line, timestamp)
+			if altitude:
+				break
+			i += 1
 
-        if COMorTCP == "COM":
-            ser.close()
-        elif COMorTCP == "TCP":
-            sock.close()
+		if COMorTCP == "COM":
+			ser.close()
+		elif COMorTCP == "TCP":
+			sock.close()
 
-        return lat, lat_dir, lon, lon_dir, altitude, timestamp, speed, course, GNSS_Type, lat_raw, lon_raw
+		return lat, lat_dir, lon, lon_dir, altitude, timestamp, speed, course, GNSS_Type, lat_raw, lon_raw
 
-    except Exception as err:
-        save_log(f"get_gnss_position: {err}")
-        raise
+	except Exception as err:
+		save_log(f"get_gnss_position: {err}")
+		raise
 
 
 if __name__ == '__main__':
