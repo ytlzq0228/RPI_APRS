@@ -143,8 +143,7 @@ def get_gnss_position_TCP(Test_Flag,tcp_host,tcp_port):
 				try:
 					line = sock.recv(1024).decode('utf-8').split()
 				except socket.timeout:
-					raise Exception("TCP connection timed out.")
-				#print(line)
+					save_log("TCP connection timed out.")
 				line_RMC =""
 				line_GGA =""
 				for i in line:
