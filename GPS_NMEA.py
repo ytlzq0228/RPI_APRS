@@ -129,15 +129,13 @@ def get_gnss_position_TCP(Test_Flag,tcp_host,tcp_port):
 	try:
 		# TCP 初始化
 		sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-		print(tcp_host, tcp_port)
+		#print(tcp_host, tcp_port)
 		sock.connect((tcp_host, tcp_port))
 		sock.settimeout(10)  # 设置超时时间
 
 		i = 0
 		line=""
 		while True:
-
-
 			if Test_Flag != 0:
 				line_RMC = '$GPRMC,%s,A,4004.6300,N,11618.2178,E,010.4,084.4,230394,003.1,W*6A' % datetime.now().strftime('%H%M%S')  # for testing
 				line_GGA = '$GPGGA,%s,4004.6300,N,11618.2178,E,01,07,10.3,20.05,M,-15.40,M,1.1,1023*63<CR><LF>' % datetime.now().strftime('%H%M%S')  # for testing
