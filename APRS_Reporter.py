@@ -65,11 +65,11 @@ if __name__ == '__main__':
 			while True:
 				try:
 					if GPS_Method=="COM":
-						lat,lat_dir,lon,lon_dir,altitude,timestamp,speed,course,GNSS_Type,lat_raw,lon_raw = GNSS_NMAE.Get_GNSS_Position.COM(Test_Flag,com_port,baud_rate)
+						lat,lat_dir,lon,lon_dir,altitude,timestamp,speed,course,GNSS_Type,lat_raw,lon_raw,GPS_Source = GNSS_NMAE.Get_GNSS_Position.COM(Test_Flag,com_port,baud_rate)
 					if GPS_Method=="TCP":
-						lat,lat_dir,lon,lon_dir,altitude,timestamp,speed,course,GNSS_Type,lat_raw,lon_raw = GNSS_NMAE.Get_GNSS_Position.TCP(Test_Flag,tcp_host,tcp_port)
+						lat,lat_dir,lon,lon_dir,altitude,timestamp,speed,course,GNSS_Type,lat_raw,lon_raw,GPS_Source = GNSS_NMAE.Get_GNSS_Position.TCP(Test_Flag,tcp_host,tcp_port)
 					if GPS_Method=="GPSd":
-						lat,lat_dir,lon,lon_dir,altitude,timestamp,speed,course,GNSS_Type,lat_raw,lon_raw = GNSS_NMAE.Get_GNSS_Position.GPSd()
+						lat,lat_dir,lon,lon_dir,altitude,timestamp,speed,course,GNSS_Type,lat_raw,lon_raw,GPS_Source = GNSS_NMAE.Get_GNSS_Position.GPSd()
 					break  # 成功获取GNSS数据时退出循环
 				except Exception as err:
 					save_log(f"Retrying get_gnss_position due to error: {err}")

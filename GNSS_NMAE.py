@@ -126,7 +126,8 @@ class Get_GNSS_Position:
 						#save_log(f"GNSS RMC: speed/knots={speed}, course={course}")
 						break
 					i+=1
-			return lat,lat_dir,lon,lon_dir,altitude,timestamp,speed,course,GNSS_Type,lat_raw,lon_raw
+			GPS_Source=com_port
+			return lat,lat_dir,lon,lon_dir,altitude,timestamp,speed,course,GNSS_Type,lat_raw,lon_raw,GPS_Source
 		except Exception as err:
 			save_log(f"get_gnss_position_COM: {err}")
 			raise
@@ -164,7 +165,8 @@ class Get_GNSS_Position:
 	
 				if lat is not None and lon is not None:
 					i = 0
-					return lat,lat_dir,lon,lon_dir,altitude,timestamp,speed,course,GNSS_Type,lat_raw,lon_raw
+					GPS_Source="tcp://%s:%s"%(tcp_host,tcp_port)
+					return lat,lat_dir,lon,lon_dir,altitude,timestamp,speed,course,GNSS_Type,lat_raw,lon_raw,GPS_Source
 					break
 				if timestamp == 0:
 					i += 1
@@ -236,8 +238,9 @@ class Get_GNSS_Position:
 							GNSS_Type='TPV'
 							lat_raw=float(data['lat'])*100
 							lon_raw=float(data['lon'])*100
+							GPS_Source="GPSd_Device:%s"%data['device']
 							if lat and lon:
-								return lat,lat_dir,lon,lon_dir,altitude,timestamp,speed,course,GNSS_Type,lat_raw,lon_raw
+								return lat,lat_dir,lon,lon_dir,altitude,timestamp,speed,course,GNSS_Type,lat_raw,lon_raw,GPS_Source
 									  #4004.83 N 11619.38 E    000211   092344.00 000   066    GPRMC     4004.829687 11619.375852
 				time.sleep(0.01)
 		except Exception as e:
