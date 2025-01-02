@@ -195,6 +195,7 @@ class Get_GNSS_Position:
 		try:
 			for new_data in gps_socket:
 				if new_data:
+					print(new_data)
 					data=json.loads(new_data)
 					data_stream.unpack(new_data)
 					if data['class']=='TPV':
