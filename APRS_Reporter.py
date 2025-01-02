@@ -59,6 +59,7 @@ if __name__ == '__main__':
 
 	OLED_Enable,oled=OLED.OLED_Init(OLED_Enable,OLED_Address)
 	update_time=datetime.min
+	uodate_timestamp=''
 	while True:
 		try:
 			while True:
@@ -90,7 +91,8 @@ if __name__ == '__main__':
 			if float(timestamp)%10==0:
 				save_log(f"gpx:{lat,lat_dir,lon,lon_dir,altitude,timestamp,speed,course}")
 
-			if float(timestamp)%30==0:
+			if float(timestamp)%30==0 and timestamp!=update_timestamp:#避免多GPS源的情况下多次上报
+				update_timestamp=timestamp
 				frame_text=(f'{SSID}>PYTHON,TCPIP*,qAC,{SSID}:!{lat}{lat_dir}/{lon}{lon_dir}{SSID_ICON}{course}/{speed}/A={altitude} APRS by RPI with GNSS Module using {GNSS_Type} at UTC {timestamp} {Message}').encode()
 				callsign = b'BI1FQO'
 				password = b'20898'

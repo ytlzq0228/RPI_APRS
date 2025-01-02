@@ -88,6 +88,7 @@ class NMEA_Processing:
 class Get_GNSS_Position:
 
 	def COM(Test_Flag,com_port,baud_rate):
+		"""直读本地串口获取数据"""
 		try:
 			ser = serial.Serial(com_port, baud_rate, bytesize=serial.EIGHTBITS, parity=serial.PARITY_NONE, stopbits=serial.STOPBITS_ONE)
 			print(com_port, baud_rate)
@@ -131,6 +132,7 @@ class Get_GNSS_Position:
 			raise
 	
 	def TCP(Test_Flag,tcp_host,tcp_port):
+		"""通过TCP Server获取数据"""
 		try:
 			# TCP 初始化
 			sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
