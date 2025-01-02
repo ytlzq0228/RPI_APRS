@@ -79,7 +79,7 @@ class NMEA_Processing:
 		return None,None,None,None,None,None,None,None,None,None
 
 
-class Get_Gnss_Position
+class Get_GNSS_Position
 
 	def COM(Test_Flag,com_port,baud_rate):
 		try:
@@ -92,7 +92,7 @@ class Get_Gnss_Position
 					line=ser.readline().decode('ascii', errors='replace').strip()  # 读取一行NMEA数据
 					if Test_Flag!=0:
 						line='$GPRMC,%s,A,4004.6300,N,11618.2178,E,010.4,084.4,230394,003.1,W*6A'%datetime.now().strftime('%H%M%S') #for testing
-					lat,lat_dir,lon,lon_dir,speed,course,timestamp,GNSS_Type,lat_raw,lon_raw=NMEA_RMC(line)
+					lat,lat_dir,lon,lon_dir,speed,course,timestamp,GNSS_Type,lat_raw,lon_raw=NMEA_Processing.NMEA_RMC(line)
 					if lat is not None and lon is not None :
 						i=0
 						#save_log(f"GNSS GGA: lat={lat}, lon={lon}, altitude/feet={altitude}")
@@ -114,7 +114,7 @@ class Get_Gnss_Position
 					line=ser.readline().decode('ascii', errors='replace').strip()  # 读取一行NMEA数据
 					if Test_Flag!=0:
 						line='$GPGGA,%s,4004.6300,N,11618.2178,E,01,07,10.3,20.05,M,-15.40,M,1.1,1023*63<CR><LF>'%datetime.now().strftime('%H%M%S') #for testing
-					altitude=NMEA_GGA(line,timestamp)
+					altitude=NMEA_Processing.NMEA_GGA(line,timestamp)
 					if altitude :
 						#save_log(f"GNSS RMC: speed/knots={speed}, course={course}")
 						break
@@ -153,8 +153,8 @@ class Get_Gnss_Position
 							line_RMC=i
 						if i[3:6]=="GGA":
 							line_GGA=i
-				lat, lat_dir, lon, lon_dir, speed, course, timestamp, GNSS_Type, lat_raw, lon_raw = NMEA_RMC(line_RMC)
-				altitude = NMEA_GGA(line_GGA, timestamp)
+				lat, lat_dir, lon, lon_dir, speed, course, timestamp, GNSS_Type, lat_raw, lon_raw = NMEA_Processing.NMEA_RMC(line_RMC)
+				altitude = NMEA_Processing.NMEA_GGA(line_GGA, timestamp)
 				print(lat, lat_dir, lon, lon_dir, speed, course, timestamp, GNSS_Type, lat_raw, lon_raw)
 	
 				if lat is not None and lon is not None:
