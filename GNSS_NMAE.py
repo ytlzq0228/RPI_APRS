@@ -188,6 +188,7 @@ class Get_GNSS_Position:
 		gps_socket = gps3.GPSDSocket()
 		data_stream = gps3.DataStream()
 		
+		
 		# 连接到 GPSd
 		gps_socket.connect(host="127.0.0.1", port=2947)
 		gps_socket.watch()
