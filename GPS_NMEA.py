@@ -65,14 +65,14 @@ if __name__ == '__main__':
 	SSID_ICON=config['SSID_Config']['SSID_ICON']
 	OLED_Enable=config.getboolean('OLED_Config', 'OLED_Enable')
 	OLED_Address=int(config.get('OLED_Config', 'OLED_Address'), 16)
-	GPS_Device=sys.argv[7]
-	if config['GPS_Config']['GPS_Device'][:8]=="/dev/tty":
+	GPS_Device=config['GPS_Config']['GPS_Device']
+	if GPS_Device[:8]=="/dev/tty":
 		COMorTCP="COM"
-		com_port=config['GPS_Config']['GPS_Device']
+		com_port=GPS_Device
 		baud_rate=config.getint('GPS_Config', 'GPS_Option')
 	else:
 		COMorTCP="TCP"
-		tcp_host=config['GPS_Config']['GPS_Device']
+		tcp_host=GPS_Device
 		tcp_port=config.getint('GPS_Config', 'GPS_Option')
 
 	OLED_Enable,oled=OLED.OLED_Init(OLED_Enable,OLED_Address)
