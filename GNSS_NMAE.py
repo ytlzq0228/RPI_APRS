@@ -129,10 +129,6 @@ class Get_GNSS_Position:
 	
 	def TCP(Test_Flag,tcp_host,tcp_port):
 		try:
-			try:
-				print(Test_Flag)
-			except Exception as err:
-				print("check Test_Flag")
 			# TCP 初始化
 			sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 			#print(tcp_host, tcp_port)
