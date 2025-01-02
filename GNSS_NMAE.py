@@ -12,6 +12,9 @@ from Display import OLED
 # 设置全局的socket超时时间，例如10秒
 socket.setdefaulttimeout(5)
 
+
+LOG_FILE='/var/log/GPS_NMEA.log'
+VERSION='0102.02'
 def save_log(result):
 	try:
 		print(result)
