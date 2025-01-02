@@ -111,13 +111,12 @@ LOG_FILE="/var/log/GPS_NMEA.log"
 # 获取当前日期时间作为文件前缀（格式：yyyy-mm-dd-hh-mm-ss）
 DATE_PREFIX=$(date +"%Y-%m-%d-%H-%M-%S")
 SSID=$(get_config "SSID_Config" "SSID")
-# 生成目标文件名
+echo $SSID
 REMOTE_FILE="${DATE_PREFIX}_GPS_${SSID}.log"
 
 
 
 
-[SFTP]
 # 设置远程服务器信息
 REMOTE_USER=$(get_config "SFTP_Config" "REMOTE_USER")
 REMOTE_HOST=$(get_config "SFTP_Config" "REMOTE_HOST")
