@@ -79,7 +79,7 @@ class NMEA_Processing:
 		return None,None,None,None,None,None,None,None,None,None
 
 
-class Get_GNSS_Position
+class Get_GNSS_Position:
 
 	def COM(Test_Flag,com_port,baud_rate):
 		try:
