@@ -157,11 +157,11 @@ class Get_GNSS_Position:
 							line_GGA=i
 				lat, lat_dir, lon, lon_dir, speed, course, timestamp, GNSS_Type, lat_raw, lon_raw = NMEA_Processing.NMEA_RMC(line_RMC)
 				altitude = NMEA_Processing.NMEA_GGA(line_GGA, timestamp)
-				print(lat, lat_dir, lon, lon_dir, speed, course, timestamp, GNSS_Type, lat_raw, lon_raw)
+				print(lat,lat_dir,lon,lon_dir,altitude,timestamp,speed,course,GNSS_Type,lat_raw,lon_raw)
 	
 				if lat is not None and lon is not None:
 					i = 0
-					return lat, lat_dir, lon, lon_dir, altitude, timestamp, speed, course, GNSS_Type, lat_raw, lon_raw
+					return lat,lat_dir,lon,lon_dir,altitude,timestamp,speed,course,GNSS_Type,lat_raw,lon_raw
 					break
 				if timestamp == 0:
 					i += 1
@@ -183,5 +183,49 @@ class Get_GNSS_Position:
 			raise
 
 
-
-
+	def GPSd(Test_Flag,tcp_host,tcp_port):
+		"""通过 gps3 获取 GPS 数据"""
+		gps_socket = gps3.GPSDSocket()
+		data_stream = gps3.DataStream()
+		
+		# 连接到 GPSd
+		gps_socket.connect(host="127.0.0.1", port=2947)
+		gps_socket.watch()
+		
+		try:
+			for new_data in gps_socket:
+				if new_data:
+					data_stream.unpack(new_data)
+					lat = "%.2f"%data_stream.TPV['lat']
+					lon = "%.2f"%data_stream.TPV['lon']
+					altitude = altitude="%06.0f"%data_stream.TPV['alt']
+					speed = speed="%03.0f"%float(data_stream.TPV['speed'])
+					timestamp = datetime.strptime(data_stream.TPV['time'], "%Y-%m-%dT%H:%M:%S.%fZ").strftime("%H%M%S.00")
+					
+					if latitude and longitude:
+					return lat,lat_dir,lon,lon_dir,altitude,timestamp,speed,course,GNSS_Type,lat_raw,lon_raw
+						
+		except KeyboardInterrupt:
+			print("Exiting...")
+		except Exception as e:
+			print(f"Error fetching GPS data: {e}")
+	
+{
+    "class": "TPV",
+    "device": "tcp://10.0.6.116:12321",
+    "mode": 3,
+    "time": "2025-01-02T09:01:10.000Z",
+    "ept": 0.005,
+    "lat": 40.0806169,
+    "lon": 116.322863433,
+    "altHAE": 53.7,
+    "altMSL": 60.7,
+    "alt": 60.7,
+    "track": 195.5,
+    "magtrack": 201.4,
+    "magvar": -5.9,
+    "speed": 0,
+    "climb": -0.1,
+    "geoidSep": -7,
+    "eph": 24.7
+}
