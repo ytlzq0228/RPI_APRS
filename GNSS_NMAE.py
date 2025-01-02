@@ -200,7 +200,6 @@ class Get_GNSS_Position:
 					data_stream.unpack(new_data)
 					if data['class']=='TPV':
 						if int(data['mode'])>2:
-
 							# 纬度转换
 							decimal_lat=float(data['lat'])
 							lat_dir = "N" if decimal_lat >= 0 else "S"  # 北纬为 N，南纬为 S
@@ -240,26 +239,4 @@ class Get_GNSS_Position:
 								return lat,lat_dir,lon,lon_dir,altitude,timestamp,speed,course,GNSS_Type,lat_raw,lon_raw
 									  #4004.83 N 11619.38 E    000211   092344.00 000   066    GPRMC     4004.829687 11619.375852
 		except Exception as e:
-			print(f"Error fetching GPS data: {e}")
-
-
-
-#{
-#    "class": "TPV",
-#    "device": "tcp://10.0.6.116:12321",
-#    "mode": 3,
-#    "time": "2025-01-02T09:01:10.000Z",
-#    "ept": 0.005,
-#    "lat": 40.0806169,
-#    "lon": 116.322863433,
-#    "altHAE": 53.7,
-#    "altMSL": 60.7,
-#    "alt": 60.7,
-#    "track": 195.5,
-#    "magtrack": 201.4,
-#    "magvar": -5.9,
-#    "speed": 0,
-#    "climb": -0.1,
-#    "geoidSep": -7,
-#    "eph": 24.7
-#}
+			print(f"Error fetching GPSd data: {e}")
