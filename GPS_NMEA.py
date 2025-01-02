@@ -64,7 +64,7 @@ if __name__ == '__main__':
 	Message=config['SSID_Config']['Message']
 	SSID_ICON=config['SSID_Config']['SSID_ICON']
 	OLED_Enable=config.getboolean('OLED_Config', 'OLED_Enable')
-	OLED_Address=config.getint('OLED_Config', 'OLED_Address')
+	OLED_Address=int(config.get('OLED_Config', 'OLED_Address'), 16)
 	GPS_Device=sys.argv[7]
 	if config['GPS_Config']['GPS_Device'][:8]=="/dev/tty":
 		COMorTCP="COM"
@@ -129,6 +129,7 @@ if __name__ == '__main__':
 		except Exception as err:
 			save_log(f"main: {err}")
 			raise
+			#切记全部改完了之后这里把raise注释掉
 
 
 #sudo apt-get update
