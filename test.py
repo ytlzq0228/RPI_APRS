@@ -21,14 +21,14 @@ def fetch_gps_data():
                 speed = data_stream.TPV['speed']
                 timestamp = data_stream.TPV['time']
 
-                #if latitude and longitude:
-                #    print(f"Time: {timestamp}")
-                #    print(f"Latitude: {latitude}°")
-                #    print(f"Longitude: {longitude}°")
-                #    print(f"Altitude: {altitude} m")
-                #    print(f"Speed: {speed} m/s")
-                #else:
-                #    print("Waiting for GPS signal...")
+                if latitude and longitude:
+                    print(f"Time: {timestamp}")
+                    print(f"Latitude: {latitude}°")
+                    print(f"Longitude: {longitude}°")
+                    print(f"Altitude: {altitude} m")
+                    print(f"Speed: {speed} m/s")
+                else:
+                    print("Waiting for GPS signal...")
     except KeyboardInterrupt:
         print("Exiting...")
     except Exception as e:
