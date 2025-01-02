@@ -52,8 +52,8 @@ echo "$(date): 继续执行脚本的后续部分。"
 
 
 # 检查 python3 GPS_NMEA.py 是否在运行
-if ! pgrep -f "python3 GPS_NMEA.py" > /dev/null; then
-    echo "GPS_NMEA.py 未运行，正在执行 pull_APRS_code.sh"
+if ! pgrep -f "python3 APRS_Reporter.py" > /dev/null; then
+    echo "python3 APRS_Reporter.py 未运行，正在执行 pull_APRS_code.sh"
     # 执行命令
     if [ "$Test_Flag" -eq 0 ]; then
     # 如果 Test_Flag 是 0，则执行 pull_APRS_code.sh
@@ -61,7 +61,7 @@ if ! pgrep -f "python3 GPS_NMEA.py" > /dev/null; then
     fi
     
 else
-    echo "GPS_NMEA.py 正在运行。"
+    echo "python3 APRS_Reporter.py 正在运行。"
 fi
 
 
