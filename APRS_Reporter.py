@@ -47,11 +47,13 @@ if __name__ == '__main__':
 	OLED_Address=int(config.get('OLED_Config', 'OLED_Address'), 16)
 	GPS_Device=config['GPS_Config']['GPS_Device']
 	if GPS_Device[:8]=="/dev/tty":
-		COMorTCP="COM"
+		GPS_Method="COM"
 		com_port=GPS_Device
 		baud_rate=config.getint('GPS_Config', 'GPS_Option')
+	else if GPS_Device=='GPSd':
+		GPS_Method=GPS_Device
 	else:
-		COMorTCP="TCP"
+		GPS_Method="TCP"
 		tcp_host=GPS_Device
 		tcp_port=config.getint('GPS_Config', 'GPS_Option')
 
@@ -61,10 +63,12 @@ if __name__ == '__main__':
 		try:
 			while True:
 				try:
-					if COMorTCP=="COM":
+					if GPS_Method=="COM":
 						lat,lat_dir,lon,lon_dir,altitude,timestamp,speed,course,GNSS_Type,lat_raw,lon_raw = GNSS_NMAE.Get_GNSS_Position.COM(Test_Flag,com_port,baud_rate)
-					if COMorTCP=="TCP":
-						lat,lat_dir,lon,lon_dir,altitude,timestamp,speed,course,GNSS_Type,lat_raw,lon_raw = GNSS_NMAE.Get_GNSS_Position.GPSd(Test_Flag,tcp_host,tcp_port)
+					if GPS_Method=="TCP":
+						lat,lat_dir,lon,lon_dir,altitude,timestamp,speed,course,GNSS_Type,lat_raw,lon_raw = GNSS_NMAE.Get_GNSS_Position.TCP(Test_Flag,tcp_host,tcp_port)
+					if GPS_Method=="GPSd":
+						lat,lat_dir,lon,lon_dir,altitude,timestamp,speed,course,GNSS_Type,lat_raw,lon_raw = GNSS_NMAE.Get_GNSS_Position.GPSd()
 					break  # 成功获取GNSS数据时退出循环
 				except Exception as err:
 					save_log(f"Retrying get_gnss_position due to error: {err}")
