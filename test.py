@@ -1,48 +1,36 @@
-import gps
-import time
+from gps3 import gps3
 
-def connect_gpsd():
-    """连接到 GPSd 服务"""
+def fetch_gps_data():
+    """通过 gps3 获取 GPS 数据"""
+    gps_socket = gps3.GPSDSocket()
+    data_stream = gps3.DataStream()
+    
+    # 连接到 GPSd
+    gps_socket.connect(host="127.0.0.1", port=2947)
+    gps_socket.watch()
+
     try:
-        # 创建 GPS 对象并连接到 GPSd
-        session = gps.gps(host="127.0.0.1", port=2947)
-        session.stream(gps.WATCH_ENABLE | gps.WATCH_NEWSTYLE)
-        print("Connected to GPSd")
-        return session
-    except Exception as e:
-        print(f"Failed to connect to GPSd: {e}")
-        return None
+        for new_data in gps_socket:
+            if new_data:
+                data_stream.unpack(new_data)
+                latitude = data_stream.TPV['lat']
+                longitude = data_stream.TPV['lon']
+                altitude = data_stream.TPV['alt']
+                speed = data_stream.TPV['speed']
+                timestamp = data_stream.TPV['time']
 
-def fetch_gps_data(session):
-    """从 GPSd 获取数据"""
-    try:
-        while True:
-            # 等待 GPS 数据更新
-            report = session.next()  # 获取下一条 GPS 数据
-
-            # 检查是否是定位数据
-            if report['class'] == 'TPV':
-                latitude = getattr(report, 'lat', None)
-                longitude = getattr(report, 'lon', None)
-                altitude = getattr(report, 'alt', None)
-                speed = getattr(report, 'speed', None)
-                timestamp = getattr(report, 'time', None)
-
-                print(f"Time: {timestamp}")
-                print(f"Latitude: {latitude}°")
-                print(f"Longitude: {longitude}°")
-                print(f"Altitude: {altitude} m")
-                print(f"Speed: {speed} m/s")
-
-            time.sleep(1)  # 延迟 1 秒
+                if latitude and longitude:
+                    print(f"Time: {timestamp}")
+                    print(f"Latitude: {latitude}°")
+                    print(f"Longitude: {longitude}°")
+                    print(f"Altitude: {altitude} m")
+                    print(f"Speed: {speed} m/s")
+                else:
+                    print("Waiting for GPS signal...")
     except KeyboardInterrupt:
         print("Exiting...")
-    except StopIteration:
-        print("GPSD has terminated")
     except Exception as e:
         print(f"Error fetching GPS data: {e}")
 
 if __name__ == "__main__":
-    gpsd_session = connect_gpsd()
-    if gpsd_session:
-        fetch_gps_data(gpsd_session)
+    fetch_gps_data()
