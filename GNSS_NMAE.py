@@ -196,9 +196,9 @@ class Get_GNSS_Position:
 			for new_data in gps_socket:
 				if new_data:
 					data_stream.unpack(new_data)
-					lat = "%.2f"%data_stream.TPV['lat']
-					lon = "%.2f"%data_stream.TPV['lon']
-					altitude = altitude="%06.0f"%data_stream.TPV['alt']
+					lat = "%.2f"%float(data_stream.TPV['lat'])
+					lon = "%.2f"%float(data_stream.TPV['lon'])
+					altitude = altitude="%06.0f"%float(data_stream.TPV['alt'])
 					speed = speed="%03.0f"%float(data_stream.TPV['speed'])
 					timestamp = datetime.strptime(data_stream.TPV['time'], "%Y-%m-%dT%H:%M:%S.%fZ").strftime("%H%M%S.00")
 					

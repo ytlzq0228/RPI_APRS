@@ -104,7 +104,7 @@ if __name__ == '__main__':
 
 		except Exception as err:
 			save_log(f"main: {err}")
-			raise
+			#raise
 			#切记全部改完了之后这里把raise注释掉
 
 
