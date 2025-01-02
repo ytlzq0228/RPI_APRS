@@ -146,7 +146,7 @@ def get_gnss_position_TCP(Test_Flag,tcp_host,tcp_port):
 					save_log("TCP connection timed out.%s"%err)
 				if len(line)==0:
 					break
-				print(line)
+				#print(line)
 				line_RMC =""
 				line_GGA =""
 				for i in line:
