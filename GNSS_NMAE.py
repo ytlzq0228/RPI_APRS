@@ -9,6 +9,8 @@ import socket
 
 from Display import OLED
 
+from watchdog import reset_watchdog
+
 # 设置全局的socket超时时间，例如10秒
 socket.setdefaulttimeout(5)
 
