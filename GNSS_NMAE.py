@@ -52,8 +52,7 @@ class NMEA_Processing:
 	def NMEA_RMC(sentence):
 		match=re.match(r'^\$..RMC,.*', sentence)  # 匹配GPRMC语句
 		if match:
-			if Test_Flag==0:
-				reset_watchdog()
+			reset_watchdog()
 			parts=sentence.split(',')
 			#print(parts)
 			if len(parts) > 8 and parts[3] and parts[5]:
