@@ -183,33 +183,33 @@ class Get_GNSS_Position:
 			raise
 
 
-#	def GPSd(Test_Flag,tcp_host,tcp_port):
-#		"""通过 gps3 获取 GPS 数据"""
-#		gps_socket = gps3.GPSDSocket()
-#		data_stream = gps3.DataStream()
-#		
-#		# 连接到 GPSd
-#		gps_socket.connect(host="127.0.0.1", port=2947)
-#		gps_socket.watch()
-#		
-#		try:
-#			for new_data in gps_socket:
-#				if new_data:
-#					data_stream.unpack(new_data)
-#					lat = "%.2f"%data_stream.TPV['lat']
-#					lon = "%.2f"%data_stream.TPV['lon']
-#					altitude = altitude="%06.0f"%data_stream.TPV['alt']
-#					speed = speed="%03.0f"%float(data_stream.TPV['speed'])
-#					timestamp = datetime.strptime(data_stream.TPV['time'], "%Y-%m-%dT%H:%M:%S.%fZ").strftime("%H%M%S.00")
-#					
-#					if latitude and longitude:
-#						return lat,lat_dir,lon,lon_dir,altitude,timestamp,speed,course,GNSS_Type,lat_raw,lon_raw
-#
-#		except KeyboardInterrupt:
-#			print("Exiting...")
-#		except Exception as e:
-#			print(f"Error fetching GPS data: {e}")
-#	
+	def GPSd(Test_Flag,tcp_host,tcp_port):
+		"""通过 gps3 获取 GPS 数据"""
+		gps_socket = gps3.GPSDSocket()
+		data_stream = gps3.DataStream()
+		
+		# 连接到 GPSd
+		gps_socket.connect(host="127.0.0.1", port=2947)
+		gps_socket.watch()
+		
+		try:
+			for new_data in gps_socket:
+				if new_data:
+					data_stream.unpack(new_data)
+					lat = "%.2f"%data_stream.TPV['lat']
+					lon = "%.2f"%data_stream.TPV['lon']
+					altitude = altitude="%06.0f"%data_stream.TPV['alt']
+					speed = speed="%03.0f"%float(data_stream.TPV['speed'])
+					timestamp = datetime.strptime(data_stream.TPV['time'], "%Y-%m-%dT%H:%M:%S.%fZ").strftime("%H%M%S.00")
+					
+					if latitude and longitude:
+						return lat,lat_dir,lon,lon_dir,altitude,timestamp,speed,course,GNSS_Type,lat_raw,lon_raw
+							  #4004.83 N 11619.38 E    000211   092344.00 000   066    GPRMC     4004.829687 11619.375852
+		except KeyboardInterrupt:
+			print("Exiting...")
+		except Exception as e:
+			print(f"Error fetching GPS data: {e}")
+	
 #{
 #    "class": "TPV",
 #    "device": "tcp://10.0.6.116:12321",

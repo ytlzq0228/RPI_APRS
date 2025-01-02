@@ -64,7 +64,7 @@ if __name__ == '__main__':
 					if COMorTCP=="COM":
 						lat,lat_dir,lon,lon_dir,altitude,timestamp,speed,course,GNSS_Type,lat_raw,lon_raw = GNSS_NMAE.Get_GNSS_Position.COM(Test_Flag,com_port,baud_rate)
 					if COMorTCP=="TCP":
-						lat,lat_dir,lon,lon_dir,altitude,timestamp,speed,course,GNSS_Type,lat_raw,lon_raw = GNSS_NMAE.Get_GNSS_Position.TCP(Test_Flag,tcp_host,tcp_port)
+						lat,lat_dir,lon,lon_dir,altitude,timestamp,speed,course,GNSS_Type,lat_raw,lon_raw = GNSS_NMAE.Get_GNSS_Position.GPSd(Test_Flag,tcp_host,tcp_port)
 					break  # 成功获取GNSS数据时退出循环
 				except Exception as err:
 					save_log(f"Retrying get_gnss_position due to error: {err}")
