@@ -59,7 +59,7 @@ if __name__ == '__main__':
 
 	OLED_Enable,oled=OLED.OLED_Init(OLED_Enable,OLED_Address)
 	update_time=datetime.min
-	uodate_timestamp=''
+	update_timestamp=''
 	while True:
 		try:
 			while True:
