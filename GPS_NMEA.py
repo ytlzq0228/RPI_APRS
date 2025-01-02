@@ -34,26 +34,6 @@ def save_log(result):
 
 
 if __name__ == '__main__':
-	#Test_Flag=int(sys.argv[1])
-	#SSID=sys.argv[2]
-	#Message=sys.argv[3]
-	#SSID_ICON=sys.argv[4]
-	#OLED_Enable=int(sys.argv[5])
-	#if sys.argv[6]=='':
-	#	OLED_Address=60
-	#else:
-	#	OLED_Address=int(sys.argv[6],16)
-	##print(sys.argv[7],sys.argv[8])
-	#GPS_Device=sys.argv[7]
-	#if GPS_Device[:8]=="/dev/tty":
-	#	COMorTCP="COM"
-	#	com_port=GPS_Device
-	#	baud_rate=int(sys.argv[8])
-	#else:
-	#	COMorTCP="TCP"
-	#	tcp_host=GPS_Device
-	#	tcp_port=int(sys.argv[8])
-
 
 	# 读取配置文件
 	config = configparser.ConfigParser()
@@ -90,7 +70,7 @@ if __name__ == '__main__':
 					save_log(f"Retrying get_gnss_position due to error: {err}")
 					time.sleep(0.1)  # 等待0.1秒后重试
 			
-			if OLED_Enable==1:
+			if OLED_Enable:
 				try:
 					lat_disp=lat_dir+" "+"%08.4f"%(float(lat_raw)/100)
 					lon_disp=lon_dir+" "+"%08.4f"%(float(lon_raw)/100)
@@ -99,10 +79,6 @@ if __name__ == '__main__':
 					else:
 						time_diff="%02.0f"%(datetime.now()-update_time).total_seconds()
 					invert=False
-					#if float(timestamp)%60>30:
-					#	invert=True
-					#else:
-					#	invert=False
 					OLED.OLED_Position(oled,lat_disp,lon_disp,GNSS_Type,update_time.strftime('%H:%M:%S'),time_diff,speed,invert)
 				except Exception as err:
 					save_log(f"main_OLED: {err}")

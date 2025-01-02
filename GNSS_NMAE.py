@@ -94,7 +94,7 @@ class Get_GNSS_Position:
 			while True:
 				if ser.in_waiting > 0:
 					line=ser.readline().decode('ascii', errors='replace').strip()  # 读取一行NMEA数据
-					if Test_Flag!=0:
+					if Test_Flag:
 						line='$GPRMC,%s,A,4004.6300,N,11618.2178,E,010.4,084.4,230394,003.1,W*6A'%datetime.now().strftime('%H%M%S') #for testing
 					lat,lat_dir,lon,lon_dir,speed,course,timestamp,GNSS_Type,lat_raw,lon_raw=NMEA_Processing.NMEA_RMC(line)
 					if lat is not None and lon is not None :
@@ -116,7 +116,7 @@ class Get_GNSS_Position:
 			while i<120:
 				if ser.in_waiting > 0:  
 					line=ser.readline().decode('ascii', errors='replace').strip()  # 读取一行NMEA数据
-					if Test_Flag!=0:
+					if Test_Flag:
 						line='$GPGGA,%s,4004.6300,N,11618.2178,E,01,07,10.3,20.05,M,-15.40,M,1.1,1023*63<CR><LF>'%datetime.now().strftime('%H%M%S') #for testing
 					altitude=NMEA_Processing.NMEA_GGA(line,timestamp)
 					if altitude :
@@ -132,14 +132,13 @@ class Get_GNSS_Position:
 		try:
 			# TCP 初始化
 			sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-			#print(tcp_host, tcp_port)
 			sock.connect((tcp_host, tcp_port))
 			sock.settimeout(2)  # 设置超时时间
 	
 			i = 0
 			line=""
 			while True:
-				if Test_Flag != 0:
+				if Test_Flag:
 					line_RMC = '$GPRMC,%s,A,4004.6300,N,11618.2178,E,010.4,084.4,230394,003.1,W*6A' % datetime.now().strftime('%H%M%S')  # for testing
 					line_GGA = '$GPGGA,%s,4004.6300,N,11618.2178,E,01,07,10.3,20.05,M,-15.40,M,1.1,1023*63<CR><LF>' % datetime.now().strftime('%H%M%S')  # for testing
 				else:

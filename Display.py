@@ -32,7 +32,7 @@ class OLED:
 	def OLED_Init(OLED_Enable,OLED_Address):
 		# Define I2C OLED Display and config address.
 		oled=None
-		if OLED_Enable==1:
+		if OLED_Enable:
 			try:
 				i2c = board.I2C()
 				oled = adafruit_ssd1306.SSD1306_I2C(128, 64, i2c, addr=OLED_Address)
@@ -42,7 +42,7 @@ class OLED:
 				oled.show()
 				save_log("Init I2C OLED Success")
 			except Exception as err:
-				OLED_Enable=0
+				OLED_Enable=False
 				save_log(err)
 				save_log("Init I2C OLED Fail.Turn off it.")
 		return OLED_Enable,oled
@@ -132,4 +132,5 @@ if __name__ == '__main__':
 	OLED_Enable=1
 	OLED_Address=0x3c
 	OLED_Enable,oled=OLED.OLED_Init(OLED_Enable,OLED_Address)
-	OLED.OLED_Position(oled,"040.0703800","112.0713240","GNRMC","21:19:32","12","013",invert=False)
+	if OLED_Enable:
+		OLED.OLED_Position(oled,"040.0703800","112.0713240","GNRMC","21:19:32","12","013",invert=False)
