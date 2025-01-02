@@ -195,7 +195,7 @@ class Get_GNSS_Position:
 		try:
 			for new_data in gps_socket:
 				if new_data:
-					print(new_data)
+					print(json.loads(new_data))
 					#data_stream.unpack(new_data)
 					#print(data_stream)
 					#lat = "%.2f"%float(data_stream.TPV['lat'])
