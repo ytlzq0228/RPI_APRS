@@ -200,18 +200,26 @@ class Get_GNSS_Position:
 					data_stream.unpack(new_data)
 					if data['class']=='TPV':
 						if int(data['mode'])>2:
-							if float(data['lat'])>0:
-								lat = "%.2f"%(float(data['lat'])*100)#GPSd经纬度数据为度数，APRS需求百分之一度
-								lat_dir='N'
-							else:
-								lat = "%.2f"%-(float(data['lat'])*100)#GPSd经纬度数据为度数，APRS需求百分之一度
-								lat_dir='S'
-							if float(data['lon'])>0:
-								lon = "%.2f"%(float(data['lon'])*100)#GPSd经纬度数据为度数，APRS需求百分之一度
-								lon_dir='E'
-							else:
-								lon = "%.2f"%-(float(data['lon'])*100)#GPSd经纬度数据为度数，APRS需求百分之一度
-								lon_dir='W'
+							
+							# 纬度转换
+							decimal_lat=float(data['lat'])
+							lat_dir = "N" if decimal_lat >= 0 else "S"  # 北纬为 N，南纬为 S
+							lat_abs = abs(decimal_lat)
+							lat_degrees = int(lat_abs)
+							lat_minutes = (lat_abs - lat_degrees) * 60
+							
+
+							# 经度转换
+							decimal_lon=float(data['lon'])
+							lon_dir = "E" if decimal_lon >= 0 else "W"  # 东经为 E，西经为 W
+							lon_abs = abs(decimal_lon)
+							lon_degrees = int(lon_abs)
+							lon_minutes = (lon_abs - lon_degrees) * 60
+
+							# 格式化为 NMEA 格式
+							lat = f"{lat_degrees:02d}{lat_minutes:06.3f}"
+							lon = f"{lon_degrees:03d}{lon_minutes:06.3f}"
+
 							altitude = altitude="%06.0f"%(float(data['alt'])*3.28)#APRS报文海拔数据单位英尺，米转英尺/APRS message altitude data is in feet; convert meters to feet.
 							
 							timestamp = datetime.strptime(data['time'], "%Y-%m-%dT%H:%M:%S.%fZ").strftime("%H%M%S.00")#时间戳"2025-01-02T09:01:10.000Z"转为NMEA语句格式的时间戳090110.00
