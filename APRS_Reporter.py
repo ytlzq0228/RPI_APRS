@@ -50,7 +50,7 @@ if __name__ == '__main__':
 		GPS_Method="COM"
 		com_port=GPS_Device
 		baud_rate=config.getint('GPS_Config', 'GPS_Option')
-	else if GPS_Device=='GPSd':
+	elif GPS_Device=='GPSd':
 		GPS_Method=GPS_Device
 	else:
 		GPS_Method="TCP"
