@@ -86,8 +86,10 @@ if __name__ == '__main__':
 					OLED.OLED_Position(oled,lat_disp,lon_disp,GNSS_Type,update_time.strftime('%H:%M:%S'),time_diff,speed,invert)
 				except Exception as err:
 					save_log(f"main_OLED: {err}")
+
 			if float(timestamp)%10==0:
-				save_log(lat,lat_dir,lon,lon_dir,altitude,timestamp,speed,course)
+				save_log(f"gpx:{lat,lat_dir,lon,lon_dir,altitude,timestamp,speed,course}")
+
 			if float(timestamp)%30==0:
 				frame_text=(f'{SSID}>PYTHON,TCPIP*,qAC,{SSID}:!{lat}{lat_dir}/{lon}{lon_dir}{SSID_ICON}{course}/{speed}/A={altitude} APRS by RPI with GNSS Module using {GNSS_Type} at UTC {timestamp} {Message}').encode()
 				callsign = b'BI1FQO'
