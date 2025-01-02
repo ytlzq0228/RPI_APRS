@@ -84,4 +84,5 @@ if __name__ == '__main__':
 	OLED_Enable=1
 	OLED_Address=0x3c
 	OLED_Enable,oled=OLED.OLED_Init(OLED_Enable,OLED_Address)
-	OLED.booting(oled)
+	if OLED_Enable==1:
+		OLED.booting(oled)
