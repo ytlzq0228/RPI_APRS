@@ -217,11 +217,11 @@ class Get_GNSS_Position:
 							timestamp = datetime.strptime(data['time'], "%Y-%m-%dT%H:%M:%S.%fZ").strftime("%H%M%S.00")
 							
 							speed='000'
-							if data['speed']:
+							if 'speed' in data:
 								speed = speed="%03.0f"%float(data['speed'])
 							
 							course='000'
-							if data['track']:
+							if 'track' in data:
 								course="%03.0f"%float(data['track'])
 
 							GNSS_Type='TPV'
