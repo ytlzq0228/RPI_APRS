@@ -18,6 +18,7 @@ socket.setdefaulttimeout(5)
 
 LOG_FILE='/var/log/GPS_NMEA.log'
 VERSION='0102.02'
+
 def save_log(result):
 	try:
 		print(result)
@@ -45,8 +46,8 @@ class NMEA_Processing:
 				lon_dd="%.2f"%lon
 				altitude="%06.0f"%altitude
 				GNSS_Type=parts[0].replace("$","")
-				if float(timestamp)%10==0 and timestamp!=0:
-					save_log(sentence)
+				#if float(timestamp)%10==0 and timestamp!=0:
+				#	save_log(sentence)
 				return altitude
 			else:
 				print("No %s Signal. Waiting....."%parts[0])
@@ -75,8 +76,8 @@ class NMEA_Processing:
 				else:
 					course="%03.0f"%float(parts[8]) #NMEA APRS航向数据单位均为度/The course data unit for both NMEA and APRS is degrees, no conversion needed.
 				timestamp=parts[1]
-				if float(timestamp)%10==0 and timestamp!=0:
-					save_log(sentence)
+				#if float(timestamp)%10==0 and timestamp!=0:
+				#	save_log(sentence)
 				return lat_dd,lat_dir,lon_dd,lon_dir,speed,course,timestamp,GNSS_Type,lat_raw,lon_raw
 			else:
 				print("No %s Signal. Waiting....."%parts[0])
@@ -158,7 +159,6 @@ class Get_GNSS_Position:
 							line_GGA=i
 				lat, lat_dir, lon, lon_dir, speed, course, timestamp, GNSS_Type, lat_raw, lon_raw = NMEA_Processing.NMEA_RMC(line_RMC)
 				altitude = NMEA_Processing.NMEA_GGA(line_GGA, timestamp)
-				print(lat,lat_dir,lon,lon_dir,altitude,timestamp,speed,course,GNSS_Type,lat_raw,lon_raw)
 	
 				if lat is not None and lon is not None:
 					i = 0
