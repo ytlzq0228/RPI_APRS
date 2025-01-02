@@ -59,7 +59,7 @@ if __name__ == '__main__':
 	config = configparser.ConfigParser()
 	config.read(CONFIG_FILE)
 
-	Test_Flag=config.getint('general', 'debug')
+	Test_Flag=config.getint('Test_Flag', 'enable')
 	SSID=config['SSID_Config']['SSID']
 	Message=config['SSID_Config']['Message']
 	SSID_ICON=config['SSID_Config']['SSID_ICON']
