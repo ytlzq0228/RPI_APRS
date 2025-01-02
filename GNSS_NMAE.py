@@ -193,7 +193,11 @@ class Get_GNSS_Position:
 		gps_socket.watch()
 		
 		try:
+			retyr_time=0
 			for new_data in gps_socket:
+				retyr_time+=1
+				if retyr_time>100:
+					raise
 				if new_data:
 					print(new_data)
 					data=json.loads(new_data)
