@@ -35,3 +35,4 @@ echo "Code pulled on $(date)" >> /var/log/git_pull.log
 sudo sync ; sudo sync ; sudo sync ; sudo mount -o remount,ro / ; sudo mount -o remount,ro /boot
 echo $(get_config "SSID_Config" "SSID")
 python3 APRS_Reporter.py 
+gpsdctl add tcp://10.0.6.116:12321
