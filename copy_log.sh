@@ -117,7 +117,7 @@ REMOTE_FILE="${DATE_PREFIX}_GPS_${SSID}.log"
 
 
 
-
+[SFTP]
 # 设置远程服务器信息
 REMOTE_USER=$(get_config "SFTP_Config" "REMOTE_USER")
 REMOTE_HOST=$(get_config "SFTP_Config" "REMOTE_HOST")
