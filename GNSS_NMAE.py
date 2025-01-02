@@ -213,9 +213,17 @@ class Get_GNSS_Position:
 								lon = "%.2f"%-(float(data['lon'])*100)
 								lon_dir='W'
 							altitude = altitude="%06.0f"%float(data['alt'])
-							speed = speed="%03.0f"%float(data['speed'])
+							
 							timestamp = datetime.strptime(data['time'], "%Y-%m-%dT%H:%M:%S.%fZ").strftime("%H%M%S.00")
-							course="%03.0f"%float(data['track'])
+							
+							speed='000'
+							if data['speed']:
+								speed = speed="%03.0f"%float(data['speed'])
+							
+							course='000'
+							if data['track']:
+								course="%03.0f"%float(data['track'])
+
 							GNSS_Type='TPV'
 							lat_raw=float(data['lat'])*100
 							lon_raw=float(data['lon'])*100
