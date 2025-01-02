@@ -33,5 +33,5 @@ git pull origin main
 echo "Code pulled on $(date)" >> /var/log/git_pull.log
 
 sudo sync ; sudo sync ; sudo sync ; sudo mount -o remount,ro / ; sudo mount -o remount,ro /boot
-echo "$SSID"
+echo $(get_config "SSID_Config" "SSID")
 python3 GPS_NMEA.py 

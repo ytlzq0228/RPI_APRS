@@ -59,11 +59,11 @@ if __name__ == '__main__':
 	config = configparser.ConfigParser()
 	config.read(CONFIG_FILE)
 
-	Test_Flag=config.getint('Test_Flag', 'enable')
+	Test_Flag=config.getboolean('Test_Flag', 'enable')
 	SSID=config['SSID_Config']['SSID']
 	Message=config['SSID_Config']['Message']
 	SSID_ICON=config['SSID_Config']['SSID_ICON']
-	OLED_Enable=config.getint('OLED_Config', 'OLED_Enable')
+	OLED_Enable=config.getboolean('OLED_Config', 'OLED_Enable')
 	OLED_Address=config.getint('OLED_Config', 'OLED_Address')
 	GPS_Device=sys.argv[7]
 	if config['GPS_Config']['GPS_Device'][:8]=="/dev/tty":
