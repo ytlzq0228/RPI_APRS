@@ -149,7 +149,6 @@ class Get_GNSS_Position:
 						save_log("TCP connection timed out.%s"%err)
 					if len(line)==0:
 						break
-					print(line)
 					line_RMC =""
 					line_GGA =""
 					for i in line:
