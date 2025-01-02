@@ -24,7 +24,7 @@ fi
 # 判断 Test_Flag 是否等于 0
 if [ $(get_config "Test_Flag" "enable") = "True" ]; then
     # 如果 Test_Flag 是 0，则执行 sleep 30
-    sleep 5
+    sleep 10
 fi
 
 git reset --hard
@@ -34,5 +34,6 @@ echo "Code pulled on $(date)" >> /var/log/git_pull.log
 
 sudo sync ; sudo sync ; sudo sync ; sudo mount -o remount,ro / ; sudo mount -o remount,ro /boot
 echo $(get_config "SSID_Config" "SSID")
-python3 APRS_Reporter.py 
 gpsdctl add tcp://10.0.6.116:12321
+python3 APRS_Reporter.py 
+
