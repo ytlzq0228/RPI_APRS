@@ -105,7 +105,7 @@ if __name__ == '__main__':
 
 		except Exception as err:
 			save_log(f"main: {err}")
-			#raise
+			raise
 
 
 #sudo apt-get update
