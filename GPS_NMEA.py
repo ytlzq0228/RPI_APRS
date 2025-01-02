@@ -160,6 +160,7 @@ def get_gnss_position_TCP(Test_Flag,tcp_host,tcp_port):
 
 			if lat is not None and lon is not None:
 				i = 0
+				return lat, lat_dir, lon, lon_dir, altitude, timestamp, speed, course, GNSS_Type, lat_raw, lon_raw
 				break
 			if timestamp == 0:
 				i += 1
@@ -175,7 +176,6 @@ def get_gnss_position_TCP(Test_Flag,tcp_host,tcp_port):
 
 		sock.close()
 
-		return lat, lat_dir, lon, lon_dir, altitude, timestamp, speed, course, GNSS_Type, lat_raw, lon_raw
 
 	except Exception as err:
 		save_log(f"get_gnss_position_TCP: {err}")
