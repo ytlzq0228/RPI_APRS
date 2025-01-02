@@ -217,8 +217,8 @@ class Get_GNSS_Position:
 							lon_minutes = (lon_abs - lon_degrees) * 60
 
 							# 格式化为 NMEA 格式
-							lat = f"{lat_degrees:02d}{lat_minutes:06.2f}"
-							lon = f"{lon_degrees:03d}{lon_minutes:06.2f}"
+							lat = f"{lat_degrees:02d}{lat_minutes:05.2f}"
+							lon = f"{lon_degrees:03d}{lon_minutes:05.2f}"
 
 							altitude = altitude="%06.0f"%(float(data['alt'])*3.28)#APRS报文海拔数据单位英尺，米转英尺/APRS message altitude data is in feet; convert meters to feet.
 							
