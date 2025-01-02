@@ -223,17 +223,13 @@ class Get_GNSS_Position:
 							lat = f"{lat_degrees:02d}{lat_minutes:05.2f}"
 							lon = f"{lon_degrees:03d}{lon_minutes:05.2f}"
 
-							altitude = altitude="%06.0f"%(float(data['alt'])*3.28)#APRS报文海拔数据单位英尺，米转英尺/APRS message altitude data is in feet; convert meters to feet.
+							altitude="%06.0f"%(float(data['alt'])*3.28) if 'alt' in data else '000000'#APRS报文海拔数据单位英尺，米转英尺/APRS message altitude data is in feet; convert meters to feet.
 							
 							timestamp = datetime.strptime(data['time'], "%Y-%m-%dT%H:%M:%S.%fZ").strftime("%H%M%S.00")#时间戳"2025-01-02T09:01:10.000Z"转为NMEA语句格式的时间戳090110.00
 							
-							speed='000'
-							if 'speed' in data:
-								speed = speed="%03.0f"%(float(data['speed'])*3.6/1852)#NMEA APRS速度数据单位均为海里每小时，GPSd报告的为米/秒。/The speed data unit for both NMEA and APRS is knots, no conversion needed.
+							speed = speed="%03.0f"%(float(data['speed'])*3.6/1852) if 'speed' in data else '000'#NMEA APRS速度数据单位均为海里每小时，GPSd报告的为米/秒。/The speed data unit for both NMEA and APRS is knots, no conversion needed.
 							
-							course='000'
-							if 'track' in data:
-								course="%03.0f"%float(data['track'])
+							course="%03.0f"%float(data['track']) if 'track' in data else '000'
 
 							GNSS_Type='TPV'
 							lat_raw=float(data['lat'])*100
