@@ -1,7 +1,11 @@
 #!/bin/bash
-source /etc/GPS_config.cfg
-
-
+CONFIG_FILE='/etc/GPS_config.ini'
+# 读取配置函数
+function get_config() {
+    local section=$1
+    local key=$2
+    grep -A 10 "^\[$section\]" "$CONFIG_FILE" | grep "^$key" | awk -F '=' '{print $2}' | sed 's/^[ \t]*//;s/[ \t]*$//'
+}
 
 # 目标IP地址
 TARGET_IP="223.5.5.5"
@@ -114,11 +118,11 @@ REMOTE_FILE="${DATE_PREFIX}_GPS_${SSID}.log"
 
 [SFTP]
 # 设置远程服务器信息
-REMOTE_USER="root"
-REMOTE_HOST="nas.ctsdn.com"
+REMOTE_USER=$(get_config "SFTP_Config" "REMOTE_USER")
+REMOTE_HOST=$(get_config "SFTP_Config" "REMOTE_HOST")
 #重要！！！请自行替换成你的SFTP服务器信息，或者删除
-REMOTE_DIR="/volume1/Storage/Su7-GPS-PATH"
-REMOTE_PORT="10223"
+REMOTE_DIR=$(get_config "SFTP_Config" "REMOTE_DIR")
+REMOTE_PORT=$(get_config "SFTP_Config" "REMOTE_PORT")
 
 
 # 拷贝文件到远程服务器
