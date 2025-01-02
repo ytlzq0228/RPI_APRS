@@ -196,7 +196,7 @@ class Get_GNSS_Position:
 			retyr_time=0
 			for new_data in gps_socket:
 				retyr_time+=1
-				if retyr_time>100:
+				if retyr_time>1000:
 					raise
 				if new_data:
 					print(f"GPSd data: {new_data}")
@@ -237,6 +237,6 @@ class Get_GNSS_Position:
 							if lat and lon:
 								return lat,lat_dir,lon,lon_dir,altitude,timestamp,speed,course,GNSS_Type,lat_raw,lon_raw
 									  #4004.83 N 11619.38 E    000211   092344.00 000   066    GPRMC     4004.829687 11619.375852
-				time.sleep(0.1)
+				time.sleep(0.01)
 		except Exception as e:
 			print(f"Error fetching GPSd data: {e}")
