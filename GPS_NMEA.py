@@ -15,7 +15,7 @@ socket.setdefaulttimeout(5)
 
 
 LOG_FILE='/var/log/GPS_NMEA.log'
-VERSION='0101.01'
+VERSION='0102.01'
 
 def save_log(result):
 	try:
