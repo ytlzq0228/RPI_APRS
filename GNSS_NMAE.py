@@ -200,7 +200,7 @@ class Get_GNSS_Position:
 					data_stream.unpack(new_data)
 					if data['class']=='TPV':
 						if int(data['mode'])>2:
-							
+
 							# 纬度转换
 							decimal_lat=float(data['lat'])
 							lat_dir = "N" if decimal_lat >= 0 else "S"  # 北纬为 N，南纬为 S
@@ -217,8 +217,8 @@ class Get_GNSS_Position:
 							lon_minutes = (lon_abs - lon_degrees) * 60
 
 							# 格式化为 NMEA 格式
-							lat = f"{lat_degrees:02d}{lat_minutes:06.3f}"
-							lon = f"{lon_degrees:03d}{lon_minutes:06.3f}"
+							lat = f"{lat_degrees:02d}{lat_minutes:06.2f}"
+							lon = f"{lon_degrees:03d}{lon_minutes:06.2f}"
 
 							altitude = altitude="%06.0f"%(float(data['alt'])*3.28)#APRS报文海拔数据单位英尺，米转英尺/APRS message altitude data is in feet; convert meters to feet.
 							
