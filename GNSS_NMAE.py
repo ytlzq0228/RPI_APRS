@@ -219,6 +219,7 @@ class Get_GNSS_Position:
 							lat_raw=float(data['lat'])*100
 							lon_raw=float(data['lon'])*100
 							if lat and lon:
+								print(lat,lat_dir,lon,lon_dir,altitude,timestamp,speed,course,GNSS_Type,lat_raw,lon_raw)
 								return lat,lat_dir,lon,lon_dir,altitude,timestamp,speed,course,GNSS_Type,lat_raw,lon_raw
 									  #4004.83 N 11619.38 E    000211   092344.00 000   066    GPRMC     4004.829687 11619.375852
 		except Exception as e:
