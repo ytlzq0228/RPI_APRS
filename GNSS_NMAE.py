@@ -200,16 +200,16 @@ class Get_GNSS_Position:
 					if data['class']=='TPV':
 						if int(data['mode'])>2:
 							if float(data['lat'])>0:
-								lat = "%.2f"%float(data['lat'])*100
+								lat = "%.2f"%(float(data['lat'])*100)
 								lat_dir='N'
 							else:
-								lat = "%.2f"%-float(data['lat'])*100
+								lat = "%.2f"%-(float(data['lat'])*100)
 								lat_dir='S'
 							if float(data['lon'])>0:
-								lon = "%.2f"%float(data['lon'])*100
+								lon = "%.2f"%(float(data['lon'])*100)
 								lon_dir='E'
 							else:
-								lon = "%.2f"%-float(data['lon'])*100
+								lon = "%.2f"%-(float(data['lon'])*100)
 								lon_dir='W'
 							altitude = altitude="%06.0f"%float(data['alt'])
 							speed = speed="%03.0f"%float(data['speed'])
