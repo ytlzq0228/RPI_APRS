@@ -3,6 +3,7 @@ import os
 import time
 import re
 import serial
+import configparser
 import aprs
 from datetime import datetime
 import socket
@@ -11,10 +12,11 @@ from watchdog import reset_watchdog
 from watchdog import boot_watchdog
 import GNSS_NMAE
 
+
 # 设置全局的socket超时时间，例如10秒
 socket.setdefaulttimeout(5)
 
-
+CONFIG_FILE='/etc/GPS_config.cfg'
 LOG_FILE='/var/log/GPS_NMEA.log'
 VERSION='0102.02'
 
@@ -32,25 +34,46 @@ def save_log(result):
 
 
 if __name__ == '__main__':
-	Test_Flag=int(sys.argv[1])
-	SSID=sys.argv[2]
-	Message=sys.argv[3]
-	SSID_ICON=sys.argv[4]
-	OLED_Enable=int(sys.argv[5])
-	if sys.argv[6]=='':
-		OLED_Address=60
-	else:
-		OLED_Address=int(sys.argv[6],16)
-	#print(sys.argv[7],sys.argv[8])
+	#Test_Flag=int(sys.argv[1])
+	#SSID=sys.argv[2]
+	#Message=sys.argv[3]
+	#SSID_ICON=sys.argv[4]
+	#OLED_Enable=int(sys.argv[5])
+	#if sys.argv[6]=='':
+	#	OLED_Address=60
+	#else:
+	#	OLED_Address=int(sys.argv[6],16)
+	##print(sys.argv[7],sys.argv[8])
+	#GPS_Device=sys.argv[7]
+	#if GPS_Device[:8]=="/dev/tty":
+	#	COMorTCP="COM"
+	#	com_port=GPS_Device
+	#	baud_rate=int(sys.argv[8])
+	#else:
+	#	COMorTCP="TCP"
+	#	tcp_host=GPS_Device
+	#	tcp_port=int(sys.argv[8])
+
+
+	# 读取配置文件
+	config = configparser.ConfigParser()
+	config.read(CONFIG_FILE)
+
+	Test_Flag=config.getint('general', 'debug')
+	SSID=config['SSID_Config']['SSID']
+	Message=config['SSID_Config']['Message']
+	SSID_ICON=config['SSID_Config']['SSID_ICON']
+	OLED_Enable=config.getint('OLED_Config', 'OLED_Enable')
+	OLED_Address=config.getint('OLED_Config', 'OLED_Address')
 	GPS_Device=sys.argv[7]
-	if GPS_Device[:8]=="/dev/tty":
+	if config['GPS_Config']['GPS_Device'][:8]=="/dev/tty":
 		COMorTCP="COM"
-		com_port=GPS_Device
-		baud_rate=int(sys.argv[8])
+		com_port=config['GPS_Config']['GPS_Device']
+		baud_rate=config.getint('GPS_Config', 'GPS_Option')
 	else:
 		COMorTCP="TCP"
-		tcp_host=GPS_Device
-		tcp_port=int(sys.argv[8])
+		tcp_host=config['GPS_Config']['GPS_Device']
+		tcp_port=config.getint('GPS_Config', 'GPS_Option')
 
 	OLED_Enable,oled=OLED.OLED_Init(OLED_Enable,OLED_Address)
 	update_time=datetime.min
