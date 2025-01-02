@@ -206,7 +206,7 @@ class Get_GNSS_Position:
 					data=json.loads(new_data)
 					data_stream.unpack(new_data)
 					if data['class']=='TPV':
-						print(f"GPSd TPV data: {new_data}")
+						#print(f"GPSd TPV data: {new_data}")
 						if int(data['mode'])>2:
 							# 纬度转换
 							decimal_lat=float(data['lat'])
