@@ -42,7 +42,7 @@ if __name__ == '__main__':
 	Test_Flag=config.getboolean('Test_Flag', 'enable')
 	SSID=config['SSID_Config']['SSID']
 	Message=config['SSID_Config']['Message']
-	SSID_ICON=config['SSID_Config']['SSID_ICON']
+	SSID_ICON=config['SSID_Config']['ICON']
 	OLED_Enable=config.getboolean('OLED_Config', 'OLED_Enable')
 	OLED_Address=int(config.get('OLED_Config', 'OLED_Address'), 16)
 	GPS_Device=config['GPS_Config']['GPS_Device']
