@@ -195,7 +195,7 @@ class Get_GNSS_Position:
 		try:
 			for new_data in gps_socket:
 				if new_data:
-					print(json.load(new_data))
+					print(new_data)
 					#data_stream.unpack(new_data)
 					#print(data_stream)
 					#lat = "%.2f"%float(data_stream.TPV['lat'])
@@ -207,8 +207,6 @@ class Get_GNSS_Position:
 					#if latitude and longitude:
 					#	return lat,lat_dir,lon,lon_dir,altitude,timestamp,speed,course,GNSS_Type,lat_raw,lon_raw
 					#		  #4004.83 N 11619.38 E    000211   092344.00 000   066    GPRMC     4004.829687 11619.375852
-		except KeyboardInterrupt:
-			print("Exiting...")
 		except Exception as e:
 			print(f"Error fetching GPS data: {e}")
 
