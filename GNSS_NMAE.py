@@ -196,6 +196,7 @@ class Get_GNSS_Position:
 			for new_data in gps_socket:
 				if new_data:
 					data=json.loads(new_data)
+					data_stream.unpack(new_data)
 					if data['class']=='TPV':
 						if int(data['mode'])>2:
 							if float(data['lat'])>0:
@@ -217,7 +218,7 @@ class Get_GNSS_Position:
 							GNSS_Type='TPV'
 							lat_raw=float(data['lat'])*100
 							lon_raw=float(data['lon'])*100
-							if latitude and longitude:
+							if lat and lon:
 								return lat,lat_dir,lon,lon_dir,altitude,timestamp,speed,course,GNSS_Type,lat_raw,lon_raw
 									  #4004.83 N 11619.38 E    000211   092344.00 000   066    GPRMC     4004.829687 11619.375852
 		except Exception as e:
