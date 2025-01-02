@@ -89,7 +89,7 @@ if __name__ == '__main__':
 					save_log(f"main_OLED: {err}")
 
 			if float(timestamp)%10==0:
-				save_log(f"gpx:{lat,lat_dir,lon,lon_dir,altitude,timestamp,speed,course}")
+				save_log(f"gpx:{lat,lat_dir,lon,lon_dir,altitude,timestamp,speed,course,GPS_Source}")
 
 			if float(timestamp)%30==0 and timestamp!=update_timestamp:#避免多GPS源的情况下多次上报
 				update_timestamp=timestamp
