@@ -112,6 +112,7 @@ LOG_FILE="/var/log/GPS_NMEA.log"
 DATE_PREFIX=$(date +"%Y-%m-%d-%H-%M-%S")
 SSID=$(get_config "SSID_Config" "SSID")
 echo $SSID
+
 REMOTE_FILE="${DATE_PREFIX}_GPS_${SSID}.log"
 
 
