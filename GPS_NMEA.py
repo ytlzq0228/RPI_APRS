@@ -183,7 +183,6 @@ def get_gnss_position_TCP(Test_Flag,tcp_host,tcp_port):
 
 
 if __name__ == '__main__':
-	#boot_watchdog()
 	Test_Flag=int(sys.argv[1])
 	SSID=sys.argv[2]
 	Message=sys.argv[3]
