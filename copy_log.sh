@@ -59,8 +59,7 @@ echo "$(date): 继续执行脚本的后续部分。"
 if ! pgrep -f "python3 APRS_Reporter.py" > /dev/null; then
     echo "python3 APRS_Reporter.py 未运行，正在执行 pull_APRS_code.sh"
     # 执行命令
-    /home/pi-star/RPI_APRS/APRS_Reporter.sh
-    
+    /home/pi-star/RPI_APRS/APRS_Reporter.sh &
     
 else
     echo "python3 APRS_Reporter.py 正在运行。"
