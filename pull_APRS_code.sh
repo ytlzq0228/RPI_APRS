@@ -27,8 +27,8 @@ if [ $(get_config "Test_Flag" "enable") != "True" ]; then
     sleep 5
 fi
 
-git reset --hard
-git pull origin main
+#git reset --hard
+#git pull origin main
 
 echo "Code pulled on $(date)" >> /var/log/git_pull.log
 
