@@ -251,10 +251,17 @@ class Get_GNSS_Position:
 
 def add_gps_source(source):
 	"""通过 gpsdctl 动态添加 GPS 源"""
-	try:
-		subprocess.run(['gpsdctl', 'add', source], check=True)
-		save_log(f"Successfully added GPS source: {source}")
-	except subprocess.CalledProcessError as e:
-		save_log(f"Failed to add GPS source: {source}. Error: {e}")
-	except Exception as e:
-		save_log(f"Failed to add GPS source: {source}. Error: {e}")
+	retyr_time=0
+	max_retry=30
+	while retyr_time<max_retry:
+		try:
+			retyr_time+=1
+			subprocess.run(['gpsdctl', 'add', source], check=True)
+			save_log(f"Successfully added GPS source: {source}")
+			break
+		except subprocess.CalledProcessError as e:
+			save_log(f"Failed to add GPS source: {source}.Retry{retyr_time}/{max_retry} Error: {e}")
+			time.sleep(1)
+		except Exception as e:
+			save_log(f"Failed to add GPS source: {source}.Retry{retyr_time}/{max_retry} Error: {e}")
+			time.sleep(1)
