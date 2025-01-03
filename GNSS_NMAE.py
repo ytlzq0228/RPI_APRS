@@ -256,7 +256,7 @@ def add_gps_source(source):
 	while retyr_time<max_retry:
 		try:
 			retyr_time+=1
-			subprocess.run(['gpsdctl', 'add', source], check=True)
+			subprocess.run(['gpsdctl', 'add', source], check=True,timeout=5)
 			save_log(f"Successfully added GPS source: {source}")
 			break
 		except subprocess.CalledProcessError as e:
