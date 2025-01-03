@@ -246,13 +246,13 @@ class Get_GNSS_Position:
 									  #4004.83 N 11619.38 E    000211   092344.00 000   066    GPRMC     4004.829687 11619.375852
 				time.sleep(0.01)
 		except Exception as e:
-			print(f"Error fetching GPSd data: {e}")
+			save_log(f"Error fetching GPSd data: {e}")
 
 
 	def add_gps_source(source):
 		"""通过 gpsdctl 动态添加 GPS 源"""
 		try:
 			subprocess.run(['gpsdctl', 'add', source], check=True)
-			print(f"Successfully added GPS source: {source}")
+			save_log(f"Successfully added GPS source: {source}")
 		except subprocess.CalledProcessError as e:
-			print(f"Failed to add GPS source: {source}. Error: {e}")
+			save_log(f"Failed to add GPS source: {source}. Error: {e}")
