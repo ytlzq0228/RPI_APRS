@@ -15,7 +15,7 @@ PROJECT_DIR="/home/pi-star/RPI_APRS"
 cd "$PROJECT_DIR" || exit
 
 if [ $(get_config "OLED_Config" "OLED_Enable") = "True" ]; then
-    echo "booting $(date)" >> /var/log/git_pull.log
+    echo "booting $(date)" >> /var/log/GPS_NMEA.log
     python3 SSD1306_booting.py
 fi
 
@@ -26,6 +26,6 @@ if [ $(get_config "Test_Flag" "enable") != "True" ]; then
 fi
 
 echo $(get_config "SSID_Config" "SSID")
-echo "start python $(date)" >> /var/log/git_pull.log
+echo "start python $(date)" >> /var/log/GPS_NMEA.log
 python3 APRS_Reporter.py 
 
