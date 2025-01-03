@@ -4,6 +4,7 @@ import time
 import re
 import serial
 import json
+import subprocess
 from gps3 import gps3
 from datetime import datetime
 import socket
@@ -246,3 +247,12 @@ class Get_GNSS_Position:
 				time.sleep(0.01)
 		except Exception as e:
 			print(f"Error fetching GPSd data: {e}")
+
+
+	def add_gps_source(source):
+		"""通过 gpsdctl 动态添加 GPS 源"""
+		try:
+			subprocess.run(['gpsdctl', 'add', source], check=True)
+			print(f"Successfully added GPS source: {source}")
+		except subprocess.CalledProcessError as e:
+			print(f"Failed to add GPS source: {source}. Error: {e}")

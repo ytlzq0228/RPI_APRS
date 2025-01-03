@@ -52,6 +52,9 @@ if __name__ == '__main__':
 		baud_rate=config.getint('GPS_Config', 'GPS_Option')
 	elif GPS_Device=='GPSd':
 		GPS_Method=GPS_Device
+		GPS_addition_Source=config['GPS_Config']['GPS_Option'].split(',') if 'GPS_Option' in config['GPS_Config'] else []
+		for source in GPS_addition_Source:
+			GNSS_NMAE.add_gps_source(source)
 	else:
 		GPS_Method="TCP"
 		tcp_host=GPS_Device
