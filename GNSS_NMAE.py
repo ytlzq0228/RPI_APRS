@@ -256,3 +256,5 @@ def add_gps_source(source):
 		save_log(f"Successfully added GPS source: {source}")
 	except subprocess.CalledProcessError as e:
 		save_log(f"Failed to add GPS source: {source}. Error: {e}")
+	except Exception as e:
+		save_log(f"Failed to add GPS source: {e}")
