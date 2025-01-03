@@ -27,12 +27,13 @@ if [ $(get_config "Test_Flag" "enable") != "True" ]; then
     sleep 30
 fi
 
-#git reset --hard
-#git pull origin main
+git reset --hard
+git pull origin main
 
 echo "Code pulled on $(date)" >> /var/log/git_pull.log
 
 sudo sync ; sudo sync ; sudo sync ; sudo mount -o remount,ro / ; sudo mount -o remount,ro /boot
 echo $(get_config "SSID_Config" "SSID")
+echo "start python $(date)" >> /var/log/git_pull.log
 python3 APRS_Reporter.py 
 
