@@ -249,10 +249,10 @@ class Get_GNSS_Position:
 			save_log(f"Error fetching GPSd data: {e}")
 
 
-	def add_gps_source(source):
-		"""通过 gpsdctl 动态添加 GPS 源"""
-		try:
-			subprocess.run(['gpsdctl', 'add', source], check=True)
-			save_log(f"Successfully added GPS source: {source}")
-		except subprocess.CalledProcessError as e:
-			save_log(f"Failed to add GPS source: {source}. Error: {e}")
+def add_gps_source(source):
+	"""通过 gpsdctl 动态添加 GPS 源"""
+	try:
+		subprocess.run(['gpsdctl', 'add', source], check=True)
+		save_log(f"Successfully added GPS source: {source}")
+	except subprocess.CalledProcessError as e:
+		save_log(f"Failed to add GPS source: {source}. Error: {e}")
