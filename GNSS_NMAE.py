@@ -203,6 +203,11 @@ class Get_GNSS_Position:
 				retyr_time+=1
 				if retyr_time>1000:
 					save_log('GPSd not reply GNSS Signal. Waiting.....')
+					if OLED_Enable==1:
+						try:
+							OLED.OLED_Display(oled,'No GNSS Signal Yet')
+						except Exception as err:
+							save_log(f"No GNSS_OLED: {err}")
 					raise
 				if new_data:
 					data=json.loads(new_data)

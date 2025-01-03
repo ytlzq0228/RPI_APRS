@@ -31,7 +31,9 @@ sudo pip3 install aprs
 
 
 
-cp ./GPS_config.cfg /etc/
+cp ./GPS_config.ini /etc/
 
 
 sudo sync ; sudo sync ; sudo sync ; sudo mount -o remount,ro / ; sudo mount -o remount,ro /boot
+
+
