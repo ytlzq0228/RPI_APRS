@@ -231,7 +231,7 @@ class Get_GNSS_Position:
 
 							altitude="%06.0f"%(float(data['alt'])*3.28) if 'alt' in data else '000000'#APRS报文海拔数据单位英尺，米转英尺/APRS message altitude data is in feet; convert meters to feet.
 							
-							timestamp = datetime.strptime(data['time'], "%Y-%m-%dT%H:%M:%S.%fZ").strftime("%H%M%S.00")#时间戳"2025-01-02T09:01:10.000Z"转为NMEA语句格式的时间戳090110.00
+							timestamp = datetime.strptime(data['time'], "%Y-%m-%dT%H:%M:%S.%fZ").strftime("%H%M%S.00") if 'time' in data else '000000.00'#时间戳"2025-01-02T09:01:10.000Z"转为NMEA语句格式的时间戳090110.00
 							
 							speed = speed="%03.0f"%(float(data['speed'])*3600/1852) if 'speed' in data else '000'#NMEA APRS速度数据单位均为海里每小时，GPSd报告的为米/秒。/The speed data unit for both NMEA and APRS is knots, no conversion needed.
 							
@@ -257,4 +257,4 @@ def add_gps_source(source):
 	except subprocess.CalledProcessError as e:
 		save_log(f"Failed to add GPS source: {source}. Error: {e}")
 	except Exception as e:
-		save_log(f"Failed to add GPS source: {e}")
+		save_log(f"Failed to add GPS source: {source}. Error: {e}")
