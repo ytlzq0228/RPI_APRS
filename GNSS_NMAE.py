@@ -231,7 +231,7 @@ class Get_GNSS_Position:
 							
 							timestamp = datetime.strptime(data['time'], "%Y-%m-%dT%H:%M:%S.%fZ").strftime("%H%M%S.00")#时间戳"2025-01-02T09:01:10.000Z"转为NMEA语句格式的时间戳090110.00
 							
-							speed = speed="%03.0f"%(float(data['speed'])*3.6/1852) if 'speed' in data else '000'#NMEA APRS速度数据单位均为海里每小时，GPSd报告的为米/秒。/The speed data unit for both NMEA and APRS is knots, no conversion needed.
+							speed = speed="%03.0f"%(float(data['speed'])*3600/1852) if 'speed' in data else '000'#NMEA APRS速度数据单位均为海里每小时，GPSd报告的为米/秒。/The speed data unit for both NMEA and APRS is knots, no conversion needed.
 							
 							course="%03.0f"%float(data['track']) if 'track' in data else '000'
 
