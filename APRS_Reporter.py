@@ -18,7 +18,7 @@ socket.setdefaulttimeout(5)
 
 CONFIG_FILE='/etc/GPS_config.ini'
 LOG_FILE='/var/log/GPS_NMEA.log'
-VERSION='0102.02'
+VERSION='main_0103.01'
 
 def save_log(result):
 	try:
