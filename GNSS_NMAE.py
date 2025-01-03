@@ -201,6 +201,7 @@ class Get_GNSS_Position:
 			for new_data in gps_socket:
 				retyr_time+=1
 				if retyr_time>1000:
+					save_log('GPSd not reply GNSS Signal. Waiting.....')
 					raise
 				if new_data:
 					data=json.loads(new_data)

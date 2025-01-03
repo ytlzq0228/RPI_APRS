@@ -72,7 +72,7 @@ if __name__ == '__main__':
 						lat,lat_dir,lon,lon_dir,altitude,timestamp,speed,course,GNSS_Type,lat_raw,lon_raw,GPS_Source = GNSS_NMAE.Get_GNSS_Position.GPSd()
 					break  # 成功获取GNSS数据时退出循环
 				except Exception as err:
-					save_log(f"Retrying get_gnss_position due to error: {err}")
+					save_log(f"Retrying get_gnss_position with {GPS_Method}")
 					time.sleep(0.1)  # 等待0.1秒后重试
 			
 			if OLED_Enable:
