@@ -18,7 +18,7 @@ socket.setdefaulttimeout(5)
 
 CONFIG_FILE='/etc/GPS_config.ini'
 LOG_FILE='/var/log/GPS_NMEA.log'
-VERSION='main_0103.01'
+VERSION='main_0107.01'
 
 def save_log(result):
 	try:
@@ -63,6 +63,9 @@ if __name__ == '__main__':
 	OLED_Enable,oled=OLED.OLED_Init(OLED_Enable,OLED_Address)
 	update_time=datetime.min
 	update_timestamp=report_timestamp='0'
+	altitude='000000'
+	speed='000'
+	course='000'
 	while True:
 		try:
 			while True:
@@ -72,7 +75,7 @@ if __name__ == '__main__':
 					if GPS_Method=="TCP":
 						lat,lat_dir,lon,lon_dir,altitude,timestamp,speed,course,GNSS_Type,lat_raw,lon_raw,GPS_Source = GNSS_NMAE.Get_GNSS_Position.TCP(Test_Flag,tcp_host,tcp_port)
 					if GPS_Method=="GPSd":
-						lat,lat_dir,lon,lon_dir,altitude,timestamp,speed,course,GNSS_Type,lat_raw,lon_raw,GPS_Source = GNSS_NMAE.Get_GNSS_Position.GPSd()
+						lat,lat_dir,lon,lon_dir,altitude,timestamp,speed,course,GNSS_Type,lat_raw,lon_raw,GPS_Source = GNSS_NMAE.Get_GNSS_Position.GPSd(altitude,speed,course)
 					break  # 成功获取GNSS数据时退出循环
 				except Exception as err:
 					save_log(f"Retrying get_gnss_position with {GPS_Method}")
