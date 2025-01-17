@@ -20,7 +20,7 @@ socket.setdefaulttimeout(5)
 CONFIG_FILE='/etc/GPS_config.ini'
 LOG_FILE='/var/log/GPS_NMEA.log'
 VERSION='main_0117.01'
-Radio_ENABLE_PIN=33
+Radio_ENABLE_PIN=13
 
 def save_log(result):
 	try:
