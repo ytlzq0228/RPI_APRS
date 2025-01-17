@@ -11,7 +11,7 @@ def read_gpio(pin):
     state = False
     try:
         # 设置引脚模式
-        GPIO.setmode(GPIO.BOARD)  # 使用物理引脚编号
+        GPIO.setmode(GPIO.BCM)  # 使用物理引脚编号
         GPIO.setup(pin, GPIO.IN)
         
         # 读取引脚状态
@@ -22,4 +22,4 @@ def read_gpio(pin):
         return state
 
 if __name__ == '__main__':
-    print(read_gpio(33))
+    print(read_gpio(13))
