@@ -8,11 +8,12 @@ def read_gpio(pin):
     :param pin: GPIO引脚编号 (物理引脚号)
     :return: True (高电平) 或 False (低电平)
     """
+    state = False
     try:
         # 设置引脚模式
         GPIO.setmode(GPIO.BOARD)  # 使用物理引脚编号
         GPIO.setup(pin, GPIO.IN)
-        state = False
+        
         # 读取引脚状态
         state = GPIO.input(pin)
     finally:

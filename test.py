@@ -1,38 +1,52 @@
-from gps3 import gps3
+import sys
+import os
+import time
+import re
+import serial
+import configparser
+import aprs
+from datetime import datetime
+import socket
+from Display import OLED
+from watchdog import reset_watchdog
+from watchdog import boot_watchdog
+import GNSS_NMAE
+from Radio_GPIO import read_gpio
 
-def fetch_gps_data():
-    """通过 gps3 获取 GPS 数据"""
-    gps_socket = gps3.GPSDSocket()
-    data_stream = gps3.DataStream()
-    
-    # 连接到 GPSd
-    gps_socket.connect(host="127.0.0.1", port=2947)
-    gps_socket.watch()
 
+# 设置全局的socket超时时间，例如10秒
+socket.setdefaulttimeout(5)
+
+CONFIG_FILE='/etc/GPS_config.ini'
+LOG_FILE='/var/log/GPS_NMEA.log'
+VERSION='main_0117.01'
+Radio_ENABLE_PIN=33
+
+def save_log(result):
     try:
-        for new_data in gps_socket:
-            if new_data:
-                print(new_data)
-                data_stream.unpack(new_data)
-                print(data_stream)
-                latitude = data_stream.TPV['lat']
-                longitude = data_stream.TPV['lon']
-                altitude = data_stream.TPV['alt']
-                speed = data_stream.TPV['speed']
-                timestamp = data_stream.TPV['time']
+        print(result)
+        now = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
+        f = open(LOG_FILE,'a')
+        f.writelines("\n%s ver %s log:%s" %(now,VERSION,result))
+        f.flush()
+        f.close()
+    except Exception as err:
+        print(err)
 
-                if latitude and longitude:
-                    print(f"Time: {timestamp}")
-                    print(f"Latitude: {latitude}°")
-                    print(f"Longitude: {longitude}°")
-                    print(f"Altitude: {altitude} m")
-                    print(f"Speed: {speed} m/s")
-                else:
-                    print("Waiting for GPS signal...")
-    except KeyboardInterrupt:
-        print("Exiting...")
-    except Exception as e:
-        print(f"Error fetching GPS data: {e}")
 
-if __name__ == "__main__":
-    fetch_gps_data()
+
+if __name__ == '__main__':
+    print(read_gpio(Radio_ENABLE_PIN))
+
+#sudo apt-get update
+#sudo apt-get -y upgrade
+#sudo apt-get -y install i2c-tools python3-smbus python-smbus
+#sudo apt-get -y install python3-pip python3-pil
+#sudo pip3 install --upgrade setuptools
+#sudo pip3 install --upgrade adafruit-python-shell
+#sudo pip3 install adafruit-circuitpython-ssd1306
+
+
+
+
+
