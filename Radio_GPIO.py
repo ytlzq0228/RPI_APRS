@@ -22,4 +22,5 @@ def read_gpio(pin):
         return state
 
 if __name__ == '__main__':
-    print(read_gpio(13))
+    for i in [16,20,21]:
+        print(i,read_gpio(i))
