@@ -20,6 +20,7 @@ socket.setdefaulttimeout(5)
 CONFIG_FILE='/etc/GPS_config.ini'
 LOG_FILE='/var/log/GPS_NMEA.log'
 VERSION='main_0117.01'
+Radio_ENABLE_PIN=33
 
 def save_log(result):
 	try:
@@ -99,7 +100,7 @@ if __name__ == '__main__':
 				update_timestamp=timestamp
 				save_log(f"gpx:{lat,lat_dir,lon,lon_dir,altitude,timestamp,speed,course,GPS_Source}")
 
-			if float(timestamp)-float(report_timestamp)>=30 and read_gpio():
+			if float(timestamp)-float(report_timestamp)>=30 and read_gpio(Radio_ENABLE_PIN):
 				report_timestamp=timestamp
 				frame_text=(f'{SSID}>PYTHON,TCPIP*,qAC,{SSID}:!{lat}{lat_dir}/{lon}{lon_dir}{SSID_ICON}{course}/{speed}/A={altitude} APRS by RPI with GNSS Module using {GNSS_Type} at UTC {timestamp} {Message}').encode()
 				callsign = b'BI1FQO'

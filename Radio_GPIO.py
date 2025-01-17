@@ -19,3 +19,6 @@ def read_gpio(pin):
         # 清理GPIO设置
         GPIO.cleanup()
         return state
+
+if __name__ == '__main__':
+    print(read_gpio(33))
