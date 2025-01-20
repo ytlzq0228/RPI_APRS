@@ -18,7 +18,7 @@ socket.setdefaulttimeout(5)
 
 CONFIG_FILE='/etc/GPS_config.ini'
 LOG_FILE='/var/log/GPS_NMEA.log'
-VERSION='NMEA_0107.01'
+VERSION='NMEA_0120.01'
 
 def save_log(result):
 	try:
@@ -201,14 +201,14 @@ class Get_GNSS_Position:
 			retyr_time=0
 			for new_data in gps_socket:
 				retyr_time+=1
-				if retyr_time>1000:
+				if retyr_time>6000:
 					save_log('GPSd not reply GNSS Signal. Waiting.....')
 					#if OLED_Enable==1:
 					#	try:
 					#		OLED.OLED_Display(oled,'No GNSS Signal Yet')
 					#	except Exception as err:
 					#		save_log(f"No GNSS_OLED: {err}")
-					raise
+					return
 				if new_data:
 					data=json.loads(new_data)
 					data_stream.unpack(new_data)
