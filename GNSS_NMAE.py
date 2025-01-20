@@ -131,7 +131,6 @@ class Get_GNSS_Position:
 			return lat,lat_dir,lon,lon_dir,altitude,timestamp,speed,course,GNSS_Type,lat_raw,lon_raw,GPS_Source
 		except Exception as err:
 			save_log(f"get_gnss_position_COM: {err}")
-			raise
 	
 	def TCP(Test_Flag,tcp_host,tcp_port):
 		"""通过TCP Server获取数据"""
@@ -186,7 +185,6 @@ class Get_GNSS_Position:
 	
 		except Exception as err:
 			save_log(f"get_gnss_position_TCP: {err}")
-			raise
 
 
 	def GPSd(altitude,speed,course):
@@ -202,13 +200,8 @@ class Get_GNSS_Position:
 			for new_data in gps_socket:
 				retyr_time+=1
 				if retyr_time>6000:
-					save_log('GPSd not reply GNSS Signal. Waiting.....')
-					#if OLED_Enable==1:
-					#	try:
-					#		OLED.OLED_Display(oled,'No GNSS Signal Yet')
-					#	except Exception as err:
-					#		save_log(f"No GNSS_OLED: {err}")
-					return
+					save_log('GPSd no GNSS Signal in 60s')
+					retyr_time=0
 				if new_data:
 					data=json.loads(new_data)
 					data_stream.unpack(new_data)
