@@ -1,4 +1,8 @@
 import RPi.GPIO as GPIO
+import configparser
+
+
+CONFIG_FILE='/etc/GPS_config.ini'
 
 def read_gpio(Radio_CONTROL_ENABLE,GPIO_PIN):
 	"""
@@ -26,5 +30,8 @@ def read_gpio(Radio_CONTROL_ENABLE,GPIO_PIN):
 		return state
 
 if __name__ == '__main__':
-	for i in [16,20,21]:
-		print(i,read_gpio(True,i))
+	config = configparser.ConfigParser()
+	config.read(CONFIG_FILE)
+	Radio_CONTROL_ENABLE=config['GPIO_CONTROL']['enable']
+	GPIO_PIN=config['GPIO_CONTROL']['GPIO_PIN']
+	print(read_gpio(Radio_CONTROL_ENABLE,GPIO_PIN))
