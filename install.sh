@@ -14,7 +14,7 @@ mkdir /etc/RPI_APRS
 cp * /etc/RPI_APRS
 
 apt-get update
-apt-get -y install i2c-tools python3-smbus python-sm python3-pip python3-pil libjpeg-dev zlib1g-dev libfreetype6-dev liblcms2-dev libopenjp2-7 libtiff5
+apt-get -y install i2c-tools python3-smbus python-sm python3-pip python3-pil libjpeg-dev zlib1g-dev libfreetype6-dev liblcms2-dev libopenjp2-7 libtiff5 gpsd
 pip3 install --upgrade setuptools
 pip3 install adafruit-circuitpython-ssd1306 adafruit-python-shell luma.oled pillow gps3 aprs
 #安装必要依赖
