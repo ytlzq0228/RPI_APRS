@@ -4,12 +4,10 @@
 sudo mount -o remount,rw / ; sudo mount -o remount,rw /boot
 
 
-cd "$PROJECT_DIR" || exit
-
 git reset --hard
 git pull origin main
 
-echo "Code pulled on $(date)" >> /var/log/git_pull.log
+echo "Code pulled on $(date)"
 
 
 

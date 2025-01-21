@@ -9,6 +9,7 @@ function get_config() {
 }
 
 i2cset -y 1 0x57 0x06 0x18
+#如果存在pi sugar，启用看门狗
 
 PROJECT_DIR="/home/pi-star/RPI_APRS"
 
