@@ -18,7 +18,7 @@ else
     echo "Copied ./GPS_config.ini to /etc/GPS_config.ini."
 fi
 mkdir /etc/RPI_APRS
-cp * /etc/RPI_APRS
+cp -r * /etc/RPI_APRS
 
 # 定义服务文件路径
 SERVICE_FILE="/etc/systemd/system/aprs_reporter.service"
