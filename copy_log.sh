@@ -6,54 +6,7 @@ function get_config() {
     local key=$2
     grep -A 10 "^\[$section\]" "$CONFIG_FILE" | grep "^$key" | awk -F '=' '{print $2}' | sed 's/^[ \t]*//;s/[ \t]*$//'
 }
-
-# 目标IP地址
-TARGET_IP="223.5.5.5"
-
-# 定义最大重试次数
-MAX_RETRIES=3
-
-# 定义当前重试次数
-RETRY_COUNT=0
-
-# Ping目标IP并检查结果
-ping_target() {
-    ping -c 3 -W 2 $TARGET_IP > /dev/null 2>&1
-    return $?
-}
-
-# 循环检查Ping状态并重启VPN服务
-while [ $RETRY_COUNT -lt $MAX_RETRIES ]; do
-    ping_target
-    if [ $? -eq 0 ]; then
-        echo "$(date): Ping $TARGET_IP 成功。"
-        break  # Ping成功，退出循环，继续执行后面的代码
-    else
-        echo "$(date): Ping $TARGET_IP 失败，正在重启openvpn服务... (第$(($RETRY_COUNT + 1))次)"
-        # 重启openvpn服务
-        systemctl restart openvpn.service@ctsdn
-        sleep 30
-    fi
-    RETRY_COUNT=$(($RETRY_COUNT + 1))
-done
-
-# 如果已经尝试3次仍然失败，则重启设备
-if [ $RETRY_COUNT -eq $MAX_RETRIES ]; then
-    ping_target
-    if [ $? -eq 0 ]; then
-        echo "$(date): Ping $TARGET_IP 成功。"
-    else
-        echo "$(date): 已尝试3次，但Ping仍然失败，正在重启设备..."
-        reboot
-    fi
-fi
-
-# 如果ping成功，或者尝试重启VPN之后Ping成功，继续执行后续代码
-echo "$(date): 继续执行脚本的后续部分。"
-# 在这里继续添加后续的命令
-
-
-
+PROJECT_DIR=$(get_config "PROJECT_PATH" "PROJECT_DIR")
 
 # 检查 python3 GPS_NMEA.py 是否在运行
 if ! pgrep -f "python3 APRS_Reporter.py" > /dev/null; then

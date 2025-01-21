@@ -7,11 +7,11 @@ function get_config() {
     local key=$2
     grep -A 10 "^\[$section\]" "$CONFIG_FILE" | grep "^$key" | awk -F '=' '{print $2}' | sed 's/^[ \t]*//;s/[ \t]*$//'
 }
+PROJECT_DIR=$(get_config "PROJECT_PATH" "PROJECT_DIR")
 
 i2cset -y 1 0x57 0x06 0x18
 #如果存在pi sugar，启用看门狗
 
-PROJECT_DIR="/home/pi-star/RPI_APRS"
 
 cd "$PROJECT_DIR" || exit
 
