@@ -20,7 +20,7 @@ socket.setdefaulttimeout(5)
 CONFIG_FILE='/etc/GPS_config.ini'
 LOG_FILE='/var/log/GPS_NMEA.log'
 VERSION='main_0117.01'
-Radio_ENABLE_PIN=20
+
 
 def save_log(result):
 	try:
@@ -50,6 +50,8 @@ if __name__ == '__main__':
 	OLED_Enable=config.getboolean('OLED_Config', 'OLED_Enable')
 	OLED_Address=int(config.get('OLED_Config', 'OLED_Address'), 16)
 	GPS_Device=config['GPS_Config']['GPS_Device']
+	Radio_ENABLE=config['GPIO_CONTROL']['enable']
+	Radio_PIN=config['GPIO_CONTROL']['GPIO_PIN']
 	if GPS_Device[:8]=="/dev/tty":
 		GPS_Method="COM"
 		com_port=GPS_Device
@@ -102,7 +104,7 @@ if __name__ == '__main__':
 				update_timestamp=timestamp
 				save_log(f"gpx:{lat,lat_dir,lon,lon_dir,altitude,timestamp,speed,course,GPS_Source}")
 
-			if float(timestamp)-float(report_timestamp)>=30 and read_gpio(Radio_ENABLE_PIN):
+			if float(timestamp)-float(report_timestamp)>=30 and read_gpio(Radio_ENABLE,Radio_PIN):
 				report_timestamp=timestamp
 				frame_text=(f'{SSID}>PYTHON,TCPIP*,qAC,{SSID}:!{lat}{lat_dir}/{lon}{lon_dir}{SSID_ICON}{course}/{speed}/A={altitude} APRS by RPI with GNSS Module using {GNSS_Type} at UTC {timestamp} {Message}').encode()
 				callsign = CALLSIGN.encode('utf-8')

@@ -9,7 +9,14 @@ git pull origin main
 
 echo "Code pulled on $(date)"
 
-cp ./GPS_config.ini /etc/
+# 检查 /etc/GPS_config.ini 是否存在
+if [ -f "/etc/GPS_config.ini" ]; then
+    echo "/etc/GPS_config.ini already exists. Skipping copy."
+else
+    echo "/etc/GPS_config.ini does not exist. Copying..."
+    cp ./GPS_config.ini /etc/GPS_config.ini
+    echo "Copied ./GPS_config.ini to /etc/GPS_config.ini."
+fi
 mkdir /etc/RPI_APRS
 cp * /etc/RPI_APRS
 
