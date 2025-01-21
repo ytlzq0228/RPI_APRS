@@ -1,7 +1,7 @@
 #!/bin/bash
 
 
-sudo mount -o remount,rw / ; sudo mount -o remount,rw /boot
+mount -o remount,rw / ; sudo mount -o remount,rw /boot
 
 
 git reset --hard
@@ -13,12 +13,12 @@ cp ./GPS_config.ini /etc/
 mkdir /etc/RPI_APRS
 cp *.* /etc/RPI_APRS
 
-sudo apt-get update
-sudo apt-get -y install i2c-tools python3-smbus python-sm python3-pip python3-pil libjpeg-dev zlib1g-dev libfreetype6-dev liblcms2-dev libopenjp2-7 libtiff5
-sudo pip3 install --upgrade setuptools
-sudo pip3 install adafruit-circuitpython-ssd1306 adafruit-python-shell luma.oled pillow gps3 aprs
+apt-get update
+apt-get -y install i2c-tools python3-smbus python-sm python3-pip python3-pil libjpeg-dev zlib1g-dev libfreetype6-dev liblcms2-dev libopenjp2-7 libtiff5
+pip3 install --upgrade setuptools
+pip3 install adafruit-circuitpython-ssd1306 adafruit-python-shell luma.oled pillow gps3 aprs
 #安装必要依赖
 
-sudo sync ; sudo sync ; sudo sync ; sudo mount -o remount,ro / ; sudo mount -o remount,ro /boot
+sync ; sudo sync ; sudo sync ; sudo mount -o remount,ro / ; sudo mount -o remount,ro /boot
 
 
