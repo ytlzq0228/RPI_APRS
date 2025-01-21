@@ -33,5 +33,6 @@ if __name__ == '__main__':
 	config = configparser.ConfigParser()
 	config.read(CONFIG_FILE)
 	Radio_CONTROL_ENABLE=config['GPIO_CONTROL']['enable']
-	GPIO_PIN=config['GPIO_CONTROL']['GPIO_PIN']
+	GPIO_PIN=int(config['GPIO_CONTROL']['GPIO_PIN'])
+	print(Radio_CONTROL_ENABLE,GPIO_PIN)
 	print(read_gpio(Radio_CONTROL_ENABLE,GPIO_PIN))
