@@ -124,7 +124,7 @@ gpsmon
 # 四、GPSd使用TCP GPS源
 我估计很少有人这么用，但是这里还是特别说明一下，如果使用TCP网络GPS服务器。
 GPSd支持通过TCP连接支持网络功能的GPS模块，市面上也有类似的模块可以选择。
-几乎所有支持GNSS的DTU数传模块，都可以讲NMEA语句通过TCP透传。
+几乎所有支持GNSS的DTU数传模块，都可以通过TCP透传NMEA语句。
 ![在这里插入图片描述](https://i-blog.csdnimg.cn/direct/f91ac112717440a381ec580542e5979a.png)
 连接这类模块的时候，在GPSd的配置文件里可以写
 
