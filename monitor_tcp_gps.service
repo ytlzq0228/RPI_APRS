@@ -1,6 +1,7 @@
 [Unit]
 Description=Monitor and reconnect TCP GPS source for gpsd
 After=network.target gpsd.service
+Wants=gpsd.service
 
 [Service]
 Type=simple
@@ -12,6 +13,7 @@ StandardError=syslog
 SyslogIdentifier=monitor_tcp_gps
 User=root
 Environment=CONFIG_FILE=/etc/GPS_config.ini
+ExecStartPre=/bin/sleep 5
 
 [Install]
 WantedBy=multi-user.target
