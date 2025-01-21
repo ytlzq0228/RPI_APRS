@@ -21,9 +21,9 @@ def read_gpio(Radio_CONTROL_ENABLE,GPIO_PIN):
 		if Radio_CONTROL_ENABLE:
 			if not GPIO.input(GPIO_PIN):
 				state = True
+			GPIO.cleanup()
 		else:
 			state=True
-		GPIO.cleanup()
 		return state
 	except Exception as err:
 		print(err)
