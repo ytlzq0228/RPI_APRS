@@ -3,7 +3,6 @@
 
 sudo mount -o remount,rw / ; sudo mount -o remount,rw /boot
 
-PROJECT_DIR="/home/pi-star/RPI_APRS"
 
 cd "$PROJECT_DIR" || exit
 
@@ -25,7 +24,6 @@ sudo pip3 install luma.oled
 sudo pip3 install pillow
 sudo pip3 install gps3
 sudo apt-get -y install libjpeg-dev zlib1g-dev libfreetype6-dev liblcms2-dev libopenjp2-7 libtiff5
-
 sudo apt-get install python3-smbus
 sudo pip3 install aprs
 

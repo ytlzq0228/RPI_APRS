@@ -43,6 +43,8 @@ if __name__ == '__main__':
 
 	Test_Flag=config.getboolean('Test_Flag', 'enable')
 	SSID=config['SSID_Config']['SSID']
+	CALLSIGN=config['SSID_Config']['CALLSIGN']
+	APRS_PASSWORD=config['SSID_Config']['APRS_PASSWORD']
 	Message=config['SSID_Config']['Message']
 	SSID_ICON=config['SSID_Config']['ICON']
 	OLED_Enable=config.getboolean('OLED_Config', 'OLED_Enable')
@@ -103,8 +105,8 @@ if __name__ == '__main__':
 			if float(timestamp)-float(report_timestamp)>=30 and read_gpio(Radio_ENABLE_PIN):
 				report_timestamp=timestamp
 				frame_text=(f'{SSID}>PYTHON,TCPIP*,qAC,{SSID}:!{lat}{lat_dir}/{lon}{lon_dir}{SSID_ICON}{course}/{speed}/A={altitude} APRS by RPI with GNSS Module using {GNSS_Type} at UTC {timestamp} {Message}').encode()
-				callsign = b'BI1FQO'
-				password = b'20898'
+				callsign = CALLSIGN.encode('utf-8')
+				password = APRS_PASSWORD.encode('utf-8')
 				
 				# 定义 APRS 服务器地址和端口（字节形式）
 				server_host = b'china.aprs2.net:14580'  # 使用 rotate.aprs2.net 服务器和端口 14580
