@@ -125,16 +125,8 @@ if __name__ == '__main__':
 		except Exception as err:
 			save_log(f"main: {err}")
 			#raise
-			#切记全部改完了之后这里把raise注释掉
+			#切记全部改完了之后这里把raise注释掉，仅调试期间使用
 
-
-#sudo apt-get update
-#sudo apt-get -y upgrade
-#sudo apt-get -y install i2c-tools python3-smbus python-smbus
-#sudo apt-get -y install python3-pip python3-pil
-#sudo pip3 install --upgrade setuptools
-#sudo pip3 install --upgrade adafruit-python-shell
-#sudo pip3 install adafruit-circuitpython-ssd1306
 
 
 
