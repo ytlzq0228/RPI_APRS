@@ -1,7 +1,10 @@
 还记得之前这个项目嘛，当时作为实验性项目，整了一个脚本在树莓派上运行，自动上报APRS位置。
 [【逗老师的无线电】骚活，GPS热点盒子自动上报APRS位置](https://blog.csdn.net/ytlzq0228/article/details/130228867)
 ![在这里插入图片描述](https://i-blog.csdnimg.cn/direct/d4b51db08b01454f8f8e9e8609f6f7be.png)
-现在，经过1年多的运行，各种优化之后，我们完善了这个项目，并致力于尽可能让各位可以简单的使用它
+当时这个项目写的，纯粹是为了技术验证。所以各种Bug哈哈哈
+现在，经过1年多的各种优化之后，我们完善了这个项目，并致力于尽可能让各位可以简单的使用它
+
+![在这里插入图片描述](https://i-blog.csdnimg.cn/direct/6ce0d72877b840fea050d68935511622.png =600x)
 项目地址传送门：
 代码部分[**https://github.com/ytlzq0228/RPI_APRS**](https://github.com/ytlzq0228/RPI_APRS)
 
@@ -23,7 +26,7 @@ sudo ./install.sh
 sudo nano /etc/GPS_config.ini 
 ```
 
-```shell
+```clike
 [Test_Flag]
 enable=False
 #测试模式，无GPS信号时，串口和TCP模式下可以模拟定位，GPSd模式下无效/Test mode: When there is no GPS signal, simulation is available in serial and TCP modes, but not in GPSd mode
@@ -53,6 +56,7 @@ REMOTE_PORT=
 
 [GPS_Config]
 GPS_Device=GPSd
+GPSd_TCP_SOURCE=tcp://10.0.6.116:12321
 #使用GPSd服务(推荐)/Using GPSd Service (recommended)
 
 #GPS_Device="/dev/ttyAMA0"
@@ -66,6 +70,12 @@ GPS_Device=GPSd
 [PROJECT_PATH]
 PROJECT_DIR=/etc/RPI_APRS
 #项目路径配置/Project path configuration
+
+[GPIO_CONTROL]
+enable=True
+GPIO_PIN=20
+#支持通过GPIO控制是否上报APRS，默认配置BCM GPIO 20，对应树莓派PIN 38。低电平有效。
+#浮空状态不上报APRS，但仍然会记录GPS日志。
 ```
 
 如果使用GPSd服务获取定位，需要配置GPSd服务
@@ -77,8 +87,6 @@ sudo nano /etc/default/gpsd
 ```shell
 # Devices gpsd should collect to at boot time.
 # They need to be read/writeable, either by user gpsd or the group dialout.
-#DEVICES="/dev/ttyAMA0 tcp://10.0.6.116:12321"
-#DEVICES="tcp://10.0.6.116:12321"
 DEVICES="/dev/ttyAMA0"
 
 # Other options you want to pass to gpsd
@@ -90,16 +98,58 @@ USBAUTO="false"
 START_DAEMON="true"
 GPSD_SOCKET="/var/run/gpsd.sock"
 ```
+修改完成之后重启gpsd
+```bash
+sudo systemctl restart gpsd
+```
+
 
 # 三、运行状态
-目前这个脚本已经写成了服务
+## 1、aprs_reporter.service
+目前这个脚本已经写成了服务，检查服务是否正常运行
 
 ```bash
 sudo systemctl status aprs_reporter.service
 ```
 ![在这里插入图片描述](https://i-blog.csdnimg.cn/direct/8358488357964460bda07fd4e5c54d8f.png)
-
-# 四、检查日志
-日志位于/var/log/GPS_NMEA.log 
-
+检查日志，日志位于/var/log/GPS_NMEA.log
 ![在这里插入图片描述](https://i-blog.csdnimg.cn/direct/14562fb86baf421abdd921f566cc6516.png)
+## 2、GPSd
+如果获取GPS的模式为GPSd，可以使用gpsmon来测试GPSd服务时候正常运行，是否可以获取GPS坐标
+
+```xml
+gpsmon
+```
+![在这里插入图片描述](https://i-blog.csdnimg.cn/direct/8b8cbafc5da24fbab5b14d5361983f50.png)
+# 四、GPSd使用TCP GPS源
+我估计很少有人这么用，但是这里还是特别说明一下，如果使用TCP网络GPS服务器。
+GPSd支持通过TCP连接支持网络功能的GPS模块，市面上也有类似的模块可以选择。
+几乎所有支持GNSS的DTU数传模块，都可以讲NMEA语句通过TCP透传。
+![在这里插入图片描述](https://i-blog.csdnimg.cn/direct/f91ac112717440a381ec580542e5979a.png =600x)
+连接这类模块的时候，在GPSd的配置文件里可以写
+
+```clike
+DEVICES="tcp://10.0.6.116:12321"
+```
+但是这种GPSd没有丢失TCP连接后的重连机制，所以本项目提供了检测TCP连接，并在断连后尝试重连。
+如果需要添加TCP GPS模块，编辑/etc/GPS_config.ini
+```bash
+sudo nano /etc/GPS_config.ini 
+```
+修改如下配置，其中GPSd_TCP_SOURCE中写TCP服务器地址
+```clike
+[GPS_Config]
+GPS_Device=GPSd
+GPSd_TCP_SOURCE=tcp://10.0.6.116:12321
+```
+编辑完成后添加一个检测服务
+```shell
+cd /etc/RPI_APRS/
+sudo ./monitor_tcp_gps_add_service.sh 
+```
+监控服务会根据GPSd输出的TPV语句来检测TCP GPS源是否存活，并在检测到TCP GPS源离线后重新添加该GPS源
+![在这里插入图片描述](https://i-blog.csdnimg.cn/direct/6f1423ac064c4304a38de82ffe50b9b4.png)
+# 搞定
+这个项目抠抠搜搜整了1年，现在终于可以向各位交出一个完美的成品了。
+谢谢各位的支持
+这里是BI1FQO，DMR ID：4606666，希望各位HAM通联愉快！
