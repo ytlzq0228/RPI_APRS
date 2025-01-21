@@ -58,6 +58,7 @@ class NMEA_Processing:
 		match=re.match(r'^\$..RMC,.*', sentence)  # 匹配GPRMC语句
 		if match:
 			reset_watchdog()
+			#喂狗
 			parts=sentence.split(',')
 			#print(parts)
 			if len(parts) > 8 and parts[3] and parts[5]:

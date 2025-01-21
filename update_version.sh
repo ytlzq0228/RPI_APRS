@@ -3,7 +3,7 @@
 pkill -f "python3 APRS_Reporter.py"
 
 i2cset -y 1 0x57 0x06 0x18
-#重置pi sugar硬件看门狗
+#关闭pi sugar硬件看门狗
 
 mount -o remount,rw / ; sudo mount -o remount,rw /boot
 
