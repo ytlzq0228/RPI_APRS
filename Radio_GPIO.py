@@ -16,7 +16,7 @@ def read_gpio(Radio_CONTROL_ENABLE,GPIO_PIN):
 		state=False
 		# 读取引脚状态
 		if Radio_CONTROL_ENABLE:
-			if !GPIO.input(GPIO_PIN):
+			if !(GPIO.input(GPIO_PIN)):
 				state = True
 		else:
 			state=True
