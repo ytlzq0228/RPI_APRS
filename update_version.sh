@@ -10,7 +10,7 @@ mount -o remount,rw / ; sudo mount -o remount,rw /boot
 git reset --hard
 git pull origin main
 echo "Code pulled on $(date)"
-cp * /etc/RPI_APRS
+cp -r * /etc/RPI_APRS
 echo "Copy to /etc finished"
 
 systemctl restart aprs_reporter.service
