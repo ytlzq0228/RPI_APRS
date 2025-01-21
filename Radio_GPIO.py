@@ -26,6 +26,7 @@ def read_gpio(Radio_CONTROL_ENABLE,GPIO_PIN):
 		GPIO.cleanup()
 		return state
 	except Exception as err:
+		print(err)
 		return True
 
 if __name__ == '__main__':
