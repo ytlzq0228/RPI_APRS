@@ -11,7 +11,7 @@ echo "Code pulled on $(date)"
 
 cp ./GPS_config.ini /etc/
 mkdir /etc/RPI_APRS
-cp *.* /etc/RPI_APRS
+cp * /etc/RPI_APRS
 
 apt-get update
 apt-get -y install i2c-tools python3-smbus python-sm python3-pip python3-pil libjpeg-dev zlib1g-dev libfreetype6-dev liblcms2-dev libopenjp2-7 libtiff5
