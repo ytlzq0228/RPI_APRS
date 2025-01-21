@@ -51,7 +51,7 @@ if __name__ == '__main__':
 	OLED_Address=int(config.get('OLED_Config', 'OLED_Address'), 16)
 	GPS_Device=config['GPS_Config']['GPS_Device']
 	Radio_CONTROL_ENABLE=config['GPIO_CONTROL']['enable']
-	GPIO_PIN=config['GPIO_CONTROL']['GPIO_PIN']
+	GPIO_PIN=int(config['GPIO_CONTROL']['GPIO_PIN'])
 	if GPS_Device[:8]=="/dev/tty":
 		GPS_Method="COM"
 		com_port=GPS_Device
