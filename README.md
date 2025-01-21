@@ -4,7 +4,7 @@
 当时这个项目写的，纯粹是为了技术验证。所以各种Bug哈哈哈
 现在，经过1年多的各种优化之后，我们完善了这个项目，并致力于尽可能让各位可以简单的使用它
 
-![在这里插入图片描述](https://i-blog.csdnimg.cn/direct/6ce0d72877b840fea050d68935511622.png =600x)
+![在这里插入图片描述](https://i-blog.csdnimg.cn/direct/6ce0d72877b840fea050d68935511622.png)
 项目地址传送门：
 代码部分[**https://github.com/ytlzq0228/RPI_APRS**](https://github.com/ytlzq0228/RPI_APRS)
 
@@ -125,7 +125,7 @@ gpsmon
 我估计很少有人这么用，但是这里还是特别说明一下，如果使用TCP网络GPS服务器。
 GPSd支持通过TCP连接支持网络功能的GPS模块，市面上也有类似的模块可以选择。
 几乎所有支持GNSS的DTU数传模块，都可以讲NMEA语句通过TCP透传。
-![在这里插入图片描述](https://i-blog.csdnimg.cn/direct/f91ac112717440a381ec580542e5979a.png =600x)
+![在这里插入图片描述](https://i-blog.csdnimg.cn/direct/f91ac112717440a381ec580542e5979a.png)
 连接这类模块的时候，在GPSd的配置文件里可以写
 
 ```clike
