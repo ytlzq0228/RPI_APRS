@@ -17,17 +17,16 @@ def read_gpio(Radio_CONTROL_ENABLE,GPIO_PIN):
 		# 设置引脚模式
 		GPIO.setmode(GPIO.BCM)  # 使用BCM逻辑引脚编号
 		GPIO.setup(GPIO_PIN, GPIO.IN)
-		state=False
 		# 读取引脚状态
 		if Radio_CONTROL_ENABLE:
 			if not GPIO.input(GPIO_PIN):
 				state = True
 		else:
 			state=True
-	finally:
-		# 清理GPIO设置
 		GPIO.cleanup()
 		return state
+	except Exception as err:
+		return True
 
 if __name__ == '__main__':
 	config = configparser.ConfigParser()
