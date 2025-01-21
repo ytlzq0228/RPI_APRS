@@ -1,7 +1,16 @@
 #!/bin/bash
 
+
+CONFIG_FILE='/etc/GPS_config.ini'
+# 读取配置函数
+function get_config() {
+    local section=$1
+    local key=$2
+    grep -A 10 "^\[$section\]" "$CONFIG_FILE" | grep "^$key" | awk -F '=' '{print $2}' | sed 's/^[ \t]*//;s/[ \t]*$//'
+}
+
 # 配置 TCP 源地址和监控间隔
-TCP_SOURCE="tcp://10.0.6.116:12321"
+TCP_SOURCE=$(get_config "GPS_Config" "GPSd_TCP_SOURCE")
 CHECK_INTERVAL=10  # 每 10 秒检查一次
 
 # 检查 TCP GPS 源是否丢失
