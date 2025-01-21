@@ -21,10 +21,10 @@ if [ $(get_config "OLED_Config" "OLED_Enable") = "True" ]; then
 fi
 
 # 判断 Test_Flag 是否等于 0
-if [ $(get_config "Test_Flag" "enable") != "True" ]; then
-    # 如果 Test_Flag 是 0，则执行 sleep 30
-    sleep 30
-fi
+#if [ $(get_config "Test_Flag" "enable") != "True" ]; then
+#    # 如果 Test_Flag 是 0，则执行 sleep 30
+#    sleep 30
+#fi
 
 echo $(get_config "SSID_Config" "SSID")
 echo "start python $(date)" >> /var/log/GPS_NMEA.log

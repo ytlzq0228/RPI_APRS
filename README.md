@@ -1,55 +1,105 @@
-# Raspberry使用串口GPS模块上报APRS信息
-关键内容：
-## NMEA读取GPGGS获取位置信息
-## NMEA读取GPRMA获取航向和航速信息
-## Python aprs模块上报GPS信息
-#技术指导参考：
+还记得之前这个项目嘛，当时作为实验性项目，整了一个脚本在树莓派上运行，自动上报APRS位置。
 [【逗老师的无线电】骚活，GPS热点盒子自动上报APRS位置](https://blog.csdn.net/ytlzq0228/article/details/130228867)
-# 三、上报APRS数据
-## 1、APRS基本上报方式
-HTTP方式连接：
-服务器地址：china.aprs2.net
-服务器端口：14580
+![在这里插入图片描述](https://i-blog.csdnimg.cn/direct/d4b51db08b01454f8f8e9e8609f6f7be.png)
+现在，经过1年多的运行，各种优化之后，我们完善了这个项目，并致力于尽可能让各位可以简单的使用它
+项目地址传送门：
+代码部分[**https://github.com/ytlzq0228/RPI_APRS**](https://github.com/ytlzq0228/RPI_APRS)
 
-telnet上去之后输入
-user XXXXXX pass YYYYY(换行回车符)
+# 一、硬件
+1、Raspberry OS，Pi-star OS等其他基于Debian派生的Linux系统均可以运行。
+2、树莓派、香橙派、XX派，X86等，只要能运行上述操作系统的，都能跑。这个项目不挑硬件
+3、串口GPS模块，或者TCP协议网络GPS服务器均可。只要支持NMEA语句的GPS设备，都能支持。
+# 一、安装
 
-XXXXXX为你的呼号，YYYYY为你呼号的passcode
-passcode的生成方式google一下，就有好多在线工具可以帮忙生成。
-下面的网站就是一个可以生成passcode的站点
-
-[https://apps.magicbug.co.uk/passcode/index.php](https://apps.magicbug.co.uk/passcode/index.php)
-
-![在这里插入图片描述](https://i-blog.csdnimg.cn/blog_migrate/e5cb7c8ddc8d28bbef41d2295da14b7f.png)
-
-![在这里插入图片描述](https://i-blog.csdnimg.cn/blog_migrate/a210b145ce89e574491287a1b5468fea.png)
-
-哎，这玩意就是这样，明文生成密码，还没有鉴权，所以，大家自觉遵守道德规范就好。
-
-输入user和pass之后，等待几秒（我设置是等待5秒），收到验证通过的反馈后
-![在这里插入图片描述](https://i-blog.csdnimg.cn/blog_migrate/a84c2a66baac2ed24f8a35a662ecc347.png)
-
-
-之后再发送符合APRS的数据帧字符串即可。
-例如：
-
-`
-BI1FQO-13>APDG03,TCPIP*,qAC,BI1FQO-CS:!4008.22ND11632.89E&/A=000000440 HelloWorld!
-`
-
-![在这里插入图片描述](https://i-blog.csdnimg.cn/blog_migrate/e6ef0a20563d83e1df967917e1c805cc.png)
-
-之后再去APRS网站上查一下，诶嘿，这不就出来啦
-![在这里插入图片描述](https://i-blog.csdnimg.cn/blog_migrate/4962ce2335d7f7216333bf755c756ef2.png)
-
-
-
-## 2、脚本上报
-Python中有一个包，名字就叫aprs，导入此包之后方便了很多，无需构建HTTP Request报文，只需调用时候传递拼好的字符串即可。
-
+```bash
+cd ~
+sudo git clone https://github.com/ytlzq0228/RPI_APRS.git
+cd RPI_APRS
+sudo ./install.sh
 ```
-pip install aprs
+# 二、准备配置文件
+
+```bash
+sudo nano /etc/GPS_config.ini 
 ```
-然后，写个sheel脚本，开机自动运行，就OKK啦
-这个小项目基本就这样了，对于开发者来说，这个项目非常简单。但是对于HAM们来说，如果理解起来费劲的话，也可以私信联系我帮忙处理。
-这里是**BI1FQO**，DMR ID：**4606666**，希望各位HAM通联愉快！
+
+```shell
+[Test_Flag]
+enable=False
+#测试模式，无GPS信号时，串口和TCP模式下可以模拟定位，GPSd模式下无效/Test mode: When there is no GPS signal, simulation is available in serial and TCP modes, but not in GPSd mode
+#模拟定位坐标4104.6300,N,10618.2178,E。要改的话自己去代码里改/Simulated location: 4104.6300,N,10618.2178,E. Modify in the code if needed
+
+[SSID_Config]
+SSID=BI1FQO-ZZ
+CALLSIGN=BI1FQO
+APRS_PASSWORD=20898
+#密码生成/Password generation: https://apps.magicbug.co.uk/passcode/index.php
+ICON = I
+Message=Test
+
+[OLED_Config]
+OLED_Enable=True
+OLED_Address=0x3c
+#OLED配置/OLED configuration
+#支持0.96寸OLED，默认I2C地址0x3c，支持修改地址/Support 0.96-inch OLED, default I2C address 0x3c, support address modification
+
+[SFTP_Config]
+REMOTE_USER=
+REMOTE_HOST=
+REMOTE_DIR=
+REMOTE_PORT=
+#SFTP配置/SFTP configuration
+#支持定时将日志文件发送到SFTP服务器/Supports sending log files to SFTP server at regular intervals
+
+[GPS_Config]
+GPS_Device=GPSd
+#使用GPSd服务(推荐)/Using GPSd Service (recommended)
+
+#GPS_Device="/dev/ttyAMA0"
+#GPS_Option=115200
+#使用串口GPS模块/Using serial GPS module
+
+#GPS_Device=10.0.6.116
+#GPS_Option=12321
+#使用TCP GPS服务器/Using TCP GPS server
+
+[PROJECT_PATH]
+PROJECT_DIR=/etc/RPI_APRS
+#项目路径配置/Project path configuration
+```
+
+如果使用GPSd服务获取定位，需要配置GPSd服务
+
+```bash
+sudo nano /etc/default/gpsd 
+```
+
+```shell
+# Devices gpsd should collect to at boot time.
+# They need to be read/writeable, either by user gpsd or the group dialout.
+#DEVICES="/dev/ttyAMA0 tcp://10.0.6.116:12321"
+#DEVICES="tcp://10.0.6.116:12321"
+DEVICES="/dev/ttyAMA0"
+
+# Other options you want to pass to gpsd
+GPSD_OPTIONS="-n -G -b -s 115200"
+#注意串口波特率与模块波特率匹配/Note that the serial port baud rate matches the GPS module baud rate
+
+# Automatically hot add/remove USB GPS devices via gpsdctl
+USBAUTO="false"
+START_DAEMON="true"
+GPSD_SOCKET="/var/run/gpsd.sock"
+```
+
+# 三、运行状态
+目前这个脚本已经写成了服务
+
+```bash
+sudo systemctl status aprs_reporter.service
+```
+![在这里插入图片描述](https://i-blog.csdnimg.cn/direct/8358488357964460bda07fd4e5c54d8f.png)
+
+# 四、检查日志
+日志位于/var/log/GPS_NMEA.log 
+
+![在这里插入图片描述](https://i-blog.csdnimg.cn/direct/14562fb86baf421abdd921f566cc6516.png)
