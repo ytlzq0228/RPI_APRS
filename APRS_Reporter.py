@@ -71,6 +71,21 @@ if __name__ == '__main__':
 		tcp_port=config.getint('GPS_Config', 'GPS_Option')
 
 	OLED_Enable,oled=OLED.OLED_Init(OLED_Enable,OLED_Address)
+
+	save_log(f"Test_Flag:{Test_Flag}")
+	save_log(f"SSID:{SSID}")
+	save_log(f"CALLSIGN:{CALLSIGN}")
+	save_log(f"APRS_PASSWORD:{APRS_PASSWORD}")
+	save_log(f"Message:{Message}")
+	save_log(f"SSID_ICON:{SSID_ICON}")
+	save_log(f"APRS_Server:{APRS_Server}")
+	save_log(f"OLED_Enable:{OLED_Enable}")
+	save_log(f"OLED_Address:{OLED_Address}")
+	save_log(f"GPS_Device:{GPS_Device}")
+	save_log(f"Radio_CONTROL_ENABLE:{Radio_CONTROL_ENABLE}")
+	save_log(f"GPIO_PIN:{GPIO_PIN}")
+	save_log(f"GPIO_PIN:{GPIO_PIN}")
+	
 	update_time=datetime.min
 	update_timestamp=report_timestamp='0'
 	altitude='000000'
