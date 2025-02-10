@@ -94,7 +94,7 @@ for FILE in ${USB_DIR}/*.log; do
     [ -e "$FILE" ] || continue
     
     # 跳过已上传的文件（_uploaded 后缀）
-    if [[ "$FILE" == *_uploaded.log ]]; then
+    if [[ "$FILE" == uploaded_* ]]; then
         echo "$(date) - Skipping already uploaded file: $FILE"
         continue
     fi
@@ -111,8 +111,8 @@ for FILE in ${USB_DIR}/*.log; do
         echo "$(date) - Successfully uploaded: $FILE"
         
         # 重命名文件，标记为已上传
-        mv "$FILE" "${FILE}_uploaded.log"
-        echo "$(date) - Marked as uploaded: ${FILE}_uploaded.log"
+        mv "$FILE" "uploaded_${FILE}"
+        echo "$(date) - Marked as uploaded: uploaded_${FILE}uploaded"
     else
         echo "$(date) - Failed to upload: $FILE"
     fi
