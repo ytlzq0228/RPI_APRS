@@ -101,6 +101,11 @@ for FILE in ${USB_DIR}/*.log; do
         echo "$(date) - Skipping already uploaded file: $FILE"
         continue
     fi
+
+    if [[ "$FILE" == "$LOG_FILE" ]]; then
+        echo "$(date) - Skipping LOCAL_LOG_FILE_SOURCE: $FILE"
+        continue
+    fi
     
     # 生成远程存储文件名
     REMOTE_FILE="${REMOTE_DIR}/${FILE_BASENAME}"
