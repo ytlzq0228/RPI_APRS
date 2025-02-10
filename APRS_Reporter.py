@@ -72,7 +72,8 @@ if __name__ == '__main__':
 
 	OLED_Enable,oled=OLED.OLED_Init(OLED_Enable,OLED_Address)
 
-	save_log("Get config params:")
+	save_log(f"APRS Repoeter {VERSION} Starting...")
+	save_log("Get Config Params:")
 	save_log(f"Param Test_Flag:{Test_Flag}")
 	save_log(f"Param SSID:{SSID}")
 	save_log(f"Param CALLSIGN:{CALLSIGN}")
