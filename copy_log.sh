@@ -61,7 +61,7 @@ USB_DIR="/mnt/usb"
 LOG_FILE="/var/log/GPS_NMEA.log"
 
 # 获取当前时间戳（格式：YYYYMMDDHHMMSS）
-DATE_PREFIX=$(date +"%Y%m%d%H%M%S")
+DATE_PREFIX=$(date +"%Y-%m-%d-%H-%M-%S")
 
 # 获取 SSID（可选）
 SSID=$(get_config "SSID_Config" "SSID")
