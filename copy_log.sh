@@ -55,13 +55,12 @@ log_system_info() {
 log_system_info
 
 
-
 # 日志存储目录
 USB_DIR="/mnt/usb"
 LOG_FILE="/var/log/GPS_NMEA.log"
 
 # 获取当前时间戳（格式：YYYYMMDDHHMMSS）
-DATE_PREFIX=$(date +"%Y-%m-%d-%H-%M-%S")
+DATE_PREFIX=$(date +"%Y%m%d%H%M%S")
 
 # 获取 SSID（可选）
 SSID=$(get_config "SSID_Config" "SSID")
@@ -93,14 +92,14 @@ for FILE in ${USB_DIR}/*.log; do
     # 检查文件是否存在（避免 glob 为空时出错）
     [ -e "$FILE" ] || continue
     
-    # 跳过已上传的文件（_uploaded 后缀）
-    if [[ "$FILE" == uploaded_* ]]; then
+    # 跳过已上传的文件（前缀为 uploaded_）
+    FILE_BASENAME=$(basename "$FILE")
+    if [[ "$FILE_BASENAME" == uploaded_* ]]; then
         echo "$(date) - Skipping already uploaded file: $FILE"
         continue
     fi
     
     # 生成远程存储文件名
-    FILE_BASENAME=$(basename "$FILE")
     REMOTE_FILE="${REMOTE_DIR}/${FILE_BASENAME}"
 
     # 上传文件到远程服务器
@@ -111,8 +110,8 @@ for FILE in ${USB_DIR}/*.log; do
         echo "$(date) - Successfully uploaded: $FILE"
         
         # 重命名文件，标记为已上传
-        mv "$FILE" "uploaded_${FILE}"
-        echo "$(date) - Marked as uploaded: uploaded_${FILE}uploaded"
+        mv "$FILE" "${USB_DIR}/uploaded_${FILE_BASENAME}"
+        echo "$(date) - Marked as uploaded: uploaded_${FILE_BASENAME}"
     else
         echo "$(date) - Failed to upload: $FILE"
     fi
