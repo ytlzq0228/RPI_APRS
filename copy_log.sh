@@ -12,10 +12,10 @@ PROJECT_DIR=$(get_config "PROJECT_PATH" "PROJECT_DIR")
 if ! pgrep -f "python3 APRS_Reporter.py" > /dev/null; then
     echo "python3 APRS_Reporter.py 未运行，正在执行 pull_APRS_code.sh"
     # 执行命令
-    /home/pi-star/RPI_APRS/APRS_Reporter.sh &
+    systemctl restart aprs_reporter.service
     
 else
-    echo "python3 APRS_Reporter.py 正在运行。"
+    echo "重启服务成功"
 fi
 
 
@@ -40,7 +40,7 @@ get_uptime() {
 
 # 将信息追加到日志文件
 log_system_info() {
-  log_file="/var/log/GPS_NMEA.log"
+  log_file==$(get_config "SFTP_Config" "LOCAL_LOG_FILE_PATH")
   current_time=$(date '+%Y-%m-%d %H:%M:%S')
   cpu_temp=$(get_cpu_temp)
   uptime=$(get_uptime)
