@@ -40,7 +40,7 @@ get_uptime() {
 
 # 将信息追加到日志文件
 log_system_info() {
-  log_file==$(get_config "SFTP_Config" "LOCAL_LOG_FILE_PATH")
+  log_file=$(get_config "SFTP_Config" "LOCAL_LOG_FILE_PATH")
   current_time=$(date '+%Y-%m-%d %H:%M:%S')
   cpu_temp=$(get_cpu_temp)
   uptime=$(get_uptime)
