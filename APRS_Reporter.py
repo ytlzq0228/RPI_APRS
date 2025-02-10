@@ -50,6 +50,7 @@ if __name__ == '__main__':
 	APRS_PASSWORD=config['SSID_Config']['APRS_PASSWORD']
 	Message=config['SSID_Config']['Message']
 	SSID_ICON=config['SSID_Config']['ICON']
+	APRS_Server=config['SSID_Config']['APRS_Server']
 	OLED_Enable=config.getboolean('OLED_Config', 'OLED_Enable')
 	OLED_Address=int(config.get('OLED_Config', 'OLED_Address'), 16)
 	GPS_Device=config['GPS_Config']['GPS_Device']
@@ -114,7 +115,7 @@ if __name__ == '__main__':
 				password = APRS_PASSWORD.encode('utf-8')
 				
 				# 定义 APRS 服务器地址和端口（字节形式）
-				server_host = b'china.aprs2.net:14580'  # 使用 rotate.aprs2.net 服务器和端口 14580
+				server_host = APRS_Server.encode('utf-8')  # 使用 rotate.aprs2.net 服务器和端口 14580
 				
 				# 创建 TCP 对象并传入服务器信息
 				a = aprs.TCP(callsign, password, servers=[server_host])
