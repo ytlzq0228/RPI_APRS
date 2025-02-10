@@ -17,9 +17,16 @@ from Radio_GPIO import read_gpio
 # 设置全局的socket超时时间，例如10秒
 socket.setdefaulttimeout(5)
 
+
+
 CONFIG_FILE='/etc/GPS_config.ini'
-LOG_FILE='/var/log/GPS_NMEA.log'
-VERSION='main_0121.01'
+VERSION='main_0210.01'
+
+# 读取配置文件
+config = configparser.ConfigParser()
+config.read(CONFIG_FILE)
+
+LOG_FILE=config['SFTP_Config']['LOCAL_LOG_FILE_PATH']
 
 
 def save_log(result):
@@ -36,10 +43,6 @@ def save_log(result):
 
 
 if __name__ == '__main__':
-
-	# 读取配置文件
-	config = configparser.ConfigParser()
-	config.read(CONFIG_FILE)
 
 	Test_Flag=config.getboolean('Test_Flag', 'enable')
 	SSID=config['SSID_Config']['SSID']

@@ -17,8 +17,13 @@ from watchdog import reset_watchdog
 socket.setdefaulttimeout(5)
 
 CONFIG_FILE='/etc/GPS_config.ini'
-LOG_FILE='/var/log/GPS_NMEA.log'
-VERSION='NMEA_0120.01'
+VERSION='NMEA_0210.01'
+
+# 读取配置文件
+config = configparser.ConfigParser()
+config.read(CONFIG_FILE)
+
+LOG_FILE=config['SFTP_Config']['LOCAL_LOG_FILE_PATH']
 
 def save_log(result):
 	try:
