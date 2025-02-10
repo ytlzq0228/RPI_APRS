@@ -15,7 +15,7 @@ if ! pgrep -f "python3 APRS_Reporter.py" > /dev/null; then
     systemctl restart aprs_reporter.service
     
 else
-    echo "重启服务成功"
+    echo "Service running...."
 fi
 
 
