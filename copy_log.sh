@@ -57,7 +57,10 @@ log_system_info
 
 # 日志存储目录
 USB_DIR="/mnt/usb"
-LOG_FILE="/var/log/GPS_NMEA.log"
+#LOG_FILE="/var/log/GPS_NMEA.log"
+LOG_FILE=$(get_config "SFTP_Config" "LOCAL_LOG_FILE_PATH")
+
+
 
 # 获取当前时间戳（格式：YYYYMMDDHHMMSS）
 DATE_PREFIX=$(date +"%Y-%m-%d-%H-%M-%S")
