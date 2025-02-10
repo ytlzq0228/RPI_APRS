@@ -55,44 +55,69 @@ log_system_info() {
 log_system_info
 
 
-# 设置日志文件路径
+
+# 日志存储目录
+USB_DIR="/mnt/usb"
 LOG_FILE="/var/log/GPS_NMEA.log"
 
-# 获取当前日期时间作为文件前缀（格式：yyyy-mm-dd-hh-mm-ss）
-DATE_PREFIX=$(date +"%Y-%m-%d-%H-%M-%S")
+# 获取当前时间戳（格式：YYYYMMDDHHMMSS）
+DATE_PREFIX=$(date +"%Y%m%d%H%M%S")
+
+# 获取 SSID（可选）
 SSID=$(get_config "SSID_Config" "SSID")
-echo $SSID
+echo "SSID: $SSID"
 
-REMOTE_FILE="${DATE_PREFIX}_GPS_${SSID}.log"
+# 生成本地归档文件名
+LOCAL_ARCHIVED_FILE="${USB_DIR}/${DATE_PREFIX}_GPS_${SSID}.log"
 
+# 复制日志文件到 USB 目录并添加时间戳
+cp $LOG_FILE $LOCAL_ARCHIVED_FILE
+if [ $? -eq 0 ]; then
+    echo "$(date) - Log file archived: $LOCAL_ARCHIVED_FILE"
+else
+    echo "$(date) - Failed to archive log file to $USB_DIR"
+    exit 1
+fi
 
-
+# 清空原日志文件，保留文件结构
+> $LOG_FILE
 
 # 设置远程服务器信息
 REMOTE_USER=$(get_config "SFTP_Config" "REMOTE_USER")
 REMOTE_HOST=$(get_config "SFTP_Config" "REMOTE_HOST")
-#重要！！！请自行替换成你的SFTP服务器信息，或者删除
 REMOTE_DIR=$(get_config "SFTP_Config" "REMOTE_DIR")
 REMOTE_PORT=$(get_config "SFTP_Config" "REMOTE_PORT")
 
+# 遍历 /mnt/usb/ 目录下未上传的日志文件
+for FILE in ${USB_DIR}/*.log; do
+    # 检查文件是否存在（避免 glob 为空时出错）
+    [ -e "$FILE" ] || continue
+    
+    # 跳过已上传的文件（_uploaded 后缀）
+    if [[ "$FILE" == *_uploaded.log ]]; then
+        echo "$(date) - Skipping already uploaded file: $FILE"
+        continue
+    fi
+    
+    # 生成远程存储文件名
+    FILE_BASENAME=$(basename "$FILE")
+    REMOTE_FILE="${REMOTE_DIR}/${FILE_BASENAME}"
 
-# 拷贝文件到远程服务器
-scp -P $REMOTE_PORT $LOG_FILE ${REMOTE_USER}@${REMOTE_HOST}:${REMOTE_DIR}/${REMOTE_FILE}
-#已经启用auth_key免密认证
-# 检查拷贝是否成功
-if [ $? -eq 0 ]; then
-  echo "File copied successfully to ${REMOTE_USER}@${REMOTE_HOST}:${REMOTE_DIR}/${REMOTE_FILE}"
-  
-  # 删除本地日志文件
-  rm -f $LOG_FILE
-  
-  if [ $? -eq 0 ]; then
-    echo "Local log file deleted successfully."
-  else
-    echo "Failed to delete local log file."
-  fi
-else
-  echo "Failed to copy file to remote server."
-fi
+    # 上传文件到远程服务器
+    scp -P $REMOTE_PORT "$FILE" "${REMOTE_USER}@${REMOTE_HOST}:${REMOTE_FILE}"
+    
+    # 检查上传是否成功
+    if [ $? -eq 0 ]; then
+        echo "$(date) - Successfully uploaded: $FILE"
+        
+        # 重命名文件，标记为已上传
+        mv "$FILE" "${FILE}_uploaded.log"
+        echo "$(date) - Marked as uploaded: ${FILE}_uploaded.log"
+    else
+        echo "$(date) - Failed to upload: $FILE"
+    fi
+done
 
+echo "$(date) - Sync process completed."
+exit 0
 
