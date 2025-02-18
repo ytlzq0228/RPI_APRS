@@ -18,7 +18,7 @@ from watchdog import reset_watchdog
 socket.setdefaulttimeout(5)
 
 CONFIG_FILE='/etc/GPS_config.ini'
-VERSION='NMEA_0210.01'
+VERSION='NMEA_0218.01'
 
 # 读取配置文件
 config = configparser.ConfigParser()
@@ -209,6 +209,12 @@ class Get_GNSS_Position:
 				if retyr_time>6000:
 					save_log('GPSd no GNSS Signal in 60s')
 					retyr_time=0
+					"""通过 gps3 获取 GPS 数据"""
+					gps_socket = gps3.GPSDSocket()
+					data_stream = gps3.DataStream()
+					# 连接到 GPSd
+					gps_socket.connect(host="127.0.0.1", port=2947)
+					gps_socket.watch()
 				if new_data:
 					data=json.loads(new_data)
 					data_stream.unpack(new_data)
