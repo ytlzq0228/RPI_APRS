@@ -20,7 +20,7 @@ socket.setdefaulttimeout(5)
 
 
 CONFIG_FILE='/etc/GPS_config.ini'
-VERSION='main_0210.01'
+VERSION='main_0218.01'
 
 # 读取配置文件
 config = configparser.ConfigParser()
@@ -71,6 +71,9 @@ if __name__ == '__main__':
 		tcp_port=config.getint('GPS_Config', 'GPS_Option')
 
 	OLED_Enable,oled=OLED.OLED_Init(OLED_Enable,OLED_Address)
+	
+	APRS_REPORT_INTERVAL=int(config['SSID_Config']['APRS_REPORT_INTERVAL'])
+	NMEA_LOG_INTERVAL=int(config['SFTP_Config']['NMEA_LOG_INTERVAL'])
 
 	save_log(f"APRS Repoeter {VERSION} Starting...")
 	save_log("Get Config Params:")
@@ -120,11 +123,11 @@ if __name__ == '__main__':
 				except Exception as err:
 					save_log(f"main_OLED: {err}")
 
-			if float(timestamp)-float(update_timestamp)>=10:
+			if float(timestamp)-float(update_timestamp)>=NMEA_LOG_INTERVAL:
 				update_timestamp=timestamp
 				save_log(f"gpx:{lat,lat_dir,lon,lon_dir,altitude,timestamp,speed,course,GPS_Source}")
 
-			if float(timestamp)-float(report_timestamp)>=30 and read_gpio(Radio_CONTROL_ENABLE,GPIO_PIN):
+			if float(timestamp)-float(report_timestamp)>=APRS_REPORT_INTERVAL and read_gpio(Radio_CONTROL_ENABLE,GPIO_PIN):
 				report_timestamp=timestamp
 				frame_text=(f'{SSID}>PYTHON,TCPIP*,qAC,{SSID}:!{lat}{lat_dir}/{lon}{lon_dir}{SSID_ICON}{course}/{speed}/A={altitude} APRS by RPI with GNSS Module using {GNSS_Type} at UTC {timestamp} {Message}').encode()
 				callsign = CALLSIGN.encode('utf-8')
