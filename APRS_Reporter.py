@@ -127,7 +127,7 @@ if __name__ == '__main__':
 
 			if float(timestamp)-float(update_timestamp)>=NMEA_LOG_INTERVAL:
 				update_timestamp=timestamp
-				save_log(f"gpx:{lat,lat_dir,lon,lon_dir,altitude,timestamp,speed,course,GPS_Source}")
+				save_log(f"gpx:{lat_raw,lat_dir,lon_raw,lon_dir,altitude,timestamp,speed,course,GPS_Source}")
 
 			if float(timestamp)-float(report_timestamp)>=APRS_REPORT_INTERVAL and read_gpio(Radio_CONTROL_ENABLE,GPIO_PIN):
 				report_timestamp=timestamp

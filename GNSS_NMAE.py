@@ -215,6 +215,7 @@ class Get_GNSS_Position:
 					if data['class']=='TPV':
 						#save_log(f"GPSd TPV data: {new_data}")##-------------------------testing log------------------
 						if int(data['mode'])>2:
+							#data['lat']和data['lon']使用十进制度，NMEA和APRS使用十进制分
 							# 纬度转换
 							decimal_lat=float(data['lat'])
 							lat_dir = "N" if decimal_lat >= 0 else "S"  # 北纬为 N，南纬为 S
@@ -230,9 +231,13 @@ class Get_GNSS_Position:
 							lon_degrees = int(lon_abs)
 							lon_minutes = (lon_abs - lon_degrees) * 60
 
-							# 格式化为 NMEA 格式
+							# 格式化为 APRS 格式
 							lat = f"{lat_degrees:02d}{lat_minutes:05.2f}"
 							lon = f"{lon_degrees:03d}{lon_minutes:05.2f}"
+
+							# 格式化为 NMEA 格式，高精度
+							lat_raw= f"{lat_degrees:02d}{lat_minutes:09.6f}"
+							lon_raw= f"{lon_degrees:03d}{lon_minutes:09.6f}"
 
 							altitude="%06.0f"%(float(data['alt'])*3.28) if 'alt' in data else altitude#APRS报文海拔数据单位英尺，米转英尺/APRS message altitude data is in feet; convert meters to feet.
 							
@@ -243,8 +248,7 @@ class Get_GNSS_Position:
 							course="%03.0f"%float(data['track']) if 'track' in data else course
 
 							GNSS_Type='TPV'
-							lat_raw=float(data['lat'])*100
-							lon_raw=float(data['lon'])*100
+
 							GPS_Source="GPSd_Device:%s"%data['device']
 							if lat and lon:
 								return lat,lat_dir,lon,lon_dir,altitude,timestamp,speed,course,GNSS_Type,lat_raw,lon_raw,GPS_Source
