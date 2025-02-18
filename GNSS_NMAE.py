@@ -209,6 +209,8 @@ class Get_GNSS_Position:
 				if retyr_time>6000:
 					save_log('GPSd no GNSS Signal in 60s')
 					retyr_time=0
+					#-----6000次无回应，尝试重置gps_socket连接
+					gps_socket.close()
 					"""通过 gps3 获取 GPS 数据"""
 					gps_socket = gps3.GPSDSocket()
 					data_stream = gps3.DataStream()
