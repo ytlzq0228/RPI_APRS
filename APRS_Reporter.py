@@ -89,6 +89,8 @@ if __name__ == '__main__':
 	save_log(f"Param GPS_Device:{GPS_Device}")
 	save_log(f"Param Radio_CONTROL_ENABLE:{Radio_CONTROL_ENABLE}")
 	save_log(f"Param GPIO_PIN:{GPIO_PIN}")
+	save_log(f"Param APRS_REPORT_INTERVAL:{APRS_REPORT_INTERVAL}")
+	save_log(f"Param NMEA_LOG_INTERVAL:{NMEA_LOG_INTERVAL}")
 
 	update_time=datetime.min
 	update_timestamp=report_timestamp='0'
