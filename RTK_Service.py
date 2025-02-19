@@ -14,7 +14,7 @@ Then heavily based on a unavco original.
     GNU General Public License for more details.
 
 """
-SERIAL_PORT='/dev/ttyS0'
+SERIAL_PORT='/dev/ttyAMA0'
 
 
 import socket
@@ -157,7 +157,7 @@ class NtripClient(object):
                     self.socket.sendall(self.getMountPointBytes())
                     while not found_header:
                         casterResponse=self.socket.recv(4096) #All the data
-                        # print(casterResponse)
+                        print(casterResponse)
                         header_lines = casterResponse.decode('utf-8').split("\r\n")
                         
 # header_lines empty, request fail,exit while loop
