@@ -55,11 +55,12 @@ def main():
             if report['class'] == 'TPV':
                 if hasattr(report, 'lat') and hasattr(report, 'lon'):
                     gga_message = generate_gga(report.lat, report.lon, report.time)
+                    print(gga_message)
                     if send_gga_to_ntrip(gga_message, ntrip_socket):
                         response = ntrip_socket.recv(4096)
                         # 安全处理可能的二进制数据
                         try:
-                            print("Received:", response.decode())
+                            print("Received:", response)
                         except UnicodeDecodeError:
                             print("Received binary data.")
         except KeyError:
