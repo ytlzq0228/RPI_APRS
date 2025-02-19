@@ -1,23 +1,55 @@
-import gps
+import socket
+import time
+from gps import gps, WATCH_ENABLE, WATCH_NEWSTYLE
 
-# 连接到gpsd
-session = gps.gps("localhost", "2947")
-session.stream(gps.WATCH_ENABLE | gps.WATCH_NEWSTYLE)
+def generate_gga(latitude, longitude, timestamp):
+    # 简单的GGA消息生成示例，需要根据实际情况调整格式和精度
+    gga = f"GPGGA,{timestamp},{latitude:.6f},N,{longitude:.6f},E,1,12,1.0,0.0,M,0.0,M,,"
+    checksum = 0
+    for char in gga:
+        checksum ^= ord(char)
+    return f"${gga}*{checksum:02X}"
+
+def send_gga_to_ntrip(gga, ntrip_socket):
+    # 发送GGA消息到NTRIP服务器以获取RTK修正信息
+    try:
+        ntrip_socket.sendall(gga.encode('ascii') + b'\r\n')
+    except socket.error as e:
+        print("Socket error:", e)
+        return False
+    return True
+
+def connect_to_ntrip_server(user, password, server, port, mountpoint):
+    # 连接到NTRIP服务器
+    s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+    s.connect((server, port))
+    # 基础的NTRIP请求格式
+    ntrip_request = f"GET /{mountpoint} HTTP/1.0\r\nUser-Agent: NTRIP PythonClient/0.1\r\nAuthorization: Basic {user}:{password}\r\n\r\n"
+    s.sendall(ntrip_request.encode('ascii'))
+    return s
+
+# 设置GPSD连接
+session = gps(mode=WATCH_ENABLE | WATCH_NEWSTYLE)
+ntrip_socket = connect_to_ntrip_server("qxymtq002", "c4bcfd9", "rtk.ntrip.qxwz.com", 8002, "AUTO")
 
 while True:
     try:
         report = session.next()
-        # 检查报告类型是否为TPV，表明位置数据
+        # 当我们从GPSD获得一个定位报告时
         if report['class'] == 'TPV':
             if hasattr(report, 'lat') and hasattr(report, 'lon'):
-                # 这里生成GGA消息，具体格式依据你的需求调整
-                gga_data = f"$GPGGA,,,,{report.lat},{report.lon},1,08,0.9,{report.alt},M,,M,,*47"
-                print(gga_data)
-                # 发送GGA数据到NTRIP服务器的代码放在这里
+                # 生成GGA消息
+                gga_message = generate_gga(report.lat, report.lon, report.time)
+                # 发送GGA消息到NTRIP服务器
+                if send_gga_to_ntrip(gga_message, ntrip_socket):
+                    # 读取服务器返回的数据
+                    response = ntrip_socket.recv(4096)
+                    print(response.decode('ascii'))
     except KeyError:
         pass
     except KeyboardInterrupt:
-        quit()
+        ntrip_socket.close()
+        break
     except StopIteration:
         session = None
         print("GPSD has terminated")
