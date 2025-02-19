@@ -3,6 +3,7 @@ import base64
 from gps import gps, WATCH_ENABLE, WATCH_NEWSTYLE
 import smbus2
 import time
+from datetime import datetime
 
 # 设置I2C总线
 bus = smbus2.SMBus(1)  # Raspberry Pi通常是1
