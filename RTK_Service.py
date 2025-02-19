@@ -1,5 +1,5 @@
 import socket
-import time
+import base64
 from gps import gps, WATCH_ENABLE, WATCH_NEWSTYLE
 
 def generate_gga(latitude, longitude, timestamp):
@@ -44,9 +44,8 @@ def connect_to_ntrip_server(user, password, server, port, mountpoint):
         print("Retrying in 5 seconds...")
         time.sleep(5)
 
-
-# 主逻辑
-try:
+def main():
+    # 设置GPSD连接
     session = gps(mode=WATCH_ENABLE | WATCH_NEWSTYLE)
     ntrip_socket = connect_to_ntrip_server("qxymtq002", "c4bcfd9", "rtk.ntrip.qxwz.com", 8002, "AUTO")
 
@@ -68,7 +67,11 @@ try:
             print(f"Socket error: {e}")
             ntrip_socket.close()
             ntrip_socket = connect_to_ntrip_server("qxymtq002", "c4bcfd9", "rtk.ntrip.qxwz.com", 8002, "AUTO")
-except KeyboardInterrupt:
-    print("Script stopped by user.")
-    ntrip_socket.close()
-    print("NTRIP connection closed.")
+        except KeyboardInterrupt:
+            print("Script stopped by user.")
+            ntrip_socket.close()
+            print("NTRIP connection closed.")
+            break
+
+if __name__ == '__main__':
+    main()
