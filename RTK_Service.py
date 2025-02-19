@@ -23,10 +23,14 @@ def connect_to_ntrip_server(user, password, server, port, mountpoint):
     # 连接到NTRIP服务器
     s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
     s.connect((server, port))
-    # 基础的NTRIP请求格式
-    ntrip_request = f"GET /{mountpoint} HTTP/1.0\r\nUser-Agent: NTRIP PythonClient/0.1\r\nAuthorization: Basic {user}:{password}\r\n\r\n"
+    # HTTP 0.9基本请求格式，适用于早期的简单NTRIP服务器
+    auth = f"{user}:{password}".encode('ascii')
+    import base64
+    auth_encoded = base64.b64encode(auth).decode('ascii')
+    ntrip_request = f"GET /{mountpoint}\r\nAuthorization: Basic {auth_encoded}\r\n\r\n"
     s.sendall(ntrip_request.encode('ascii'))
     return s
+
 
 # 设置GPSD连接
 session = gps(mode=WATCH_ENABLE | WATCH_NEWSTYLE)
