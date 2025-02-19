@@ -59,7 +59,7 @@ def main():
                         response = ntrip_socket.recv(4096)
                         # 安全处理可能的二进制数据
                         try:
-                            print("Received:", response.decode('ascii'))
+                            print("Received:", response.decode())
                         except UnicodeDecodeError:
                             print("Received binary data.")
         except KeyError:
