@@ -1,82 +1,25 @@
-import socket
-import base64
-from gps import gps, WATCH_ENABLE, WATCH_NEWSTYLE
+import smbus2
+import time
 
-def generate_gga(latitude, longitude, timestamp):
-    # GGA消息生成，确保格式正确
-    gga = f"GPGGA,{timestamp},{latitude:.6f},N,{longitude:.6f},E,1,12,1.0,0.0,M,0.0,M,,"
-    checksum = 0
-    for char in gga:
-        checksum ^= ord(char)
-    return f"${gga}*{checksum:02X}"
+# 设置I2C总线
+bus = smbus2.SMBus(1)  # Raspberry Pi通常是1
 
-def send_gga_to_ntrip(gga, ntrip_socket):
+# 模块的I2C地址和寄存器
+I2C_ADDRESS = 0x50
+WRITE_REGISTER = 0x58  # 根据文档，用于写入数据的寄存器地址
+
+def write_data_to_gnss(data):
     try:
-        ntrip_socket.sendall(gga.encode('ascii') + b'\r\n')
-        return True
-    except socket.error as e:
-        print(f"Socket error while sending GGA: {e}")
-        return False
+        # 将数据分解为单个字节，并发送
+        for byte in data:
+            bus.write_byte_data(I2C_ADDRESS, WRITE_REGISTER, byte)
+            time.sleep(0.01)  # 为稳定通信，添加短暂延时
+        print("Data written to GNSS module successfully.")
+    except Exception as e:
+        print(f"Failed to write data: {e}")
 
-def connect_to_ntrip_server(user, password, server, port, mountpoint):
-    while True:
-        try:
-            s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-            s.settimeout(10)
-            print(f"Attempting to connect to NTRIP server at {server}:{port}")
-            s.connect((server, port))
-            auth = f"{user}:{password}"
-            auth_encoded = base64.b64encode(auth.encode('ascii')).decode('ascii')
-            ntrip_request = f"GET /{mountpoint} HTTP/1.1\r\nHost: {server}:{port}\r\nAuthorization: Basic {auth_encoded}\r\nUser-Agent: PythonNtripClient/1.0\r\nAccept: */*\r\n\r\n"
-            s.sendall(ntrip_request.encode('ascii'))
-            resp = s.recv(1024)
-            if resp:
-                print(f"Server response: {resp.decode('ascii')}")
-                if b'200 OK' in resp or b'ICY 200 OK' in resp:
-                    print("Connected to NTRIP server successfully.")
-                    return s
-                else:
-                    print(f"Failed to connect, server response: {resp.decode('ascii')}")
-            else:
-                print("No response received from server.")
-        except Exception as e:
-            print(f"Failed to connect to NTRIP server: {e}")
-        print("Retrying in 5 seconds...")
-        time.sleep(5)
+# 示例数据：从NTRIP客户端接收的RTK修正数据
+rtk_correction_data = [0xAA, 0x51, 0x20, 0x00]  # 示例数据，应替换为实际RTK数据
 
-def main():
-    # 设置GPSD连接
-    session = gps(mode=WATCH_ENABLE | WATCH_NEWSTYLE)
-    ntrip_socket = connect_to_ntrip_server("qxymtq002", "c4bcfd9", "rtk.ntrip.qxwz.com", 8002, "AUTO")
-
-    while True:
-        try:
-            report = session.next()
-            if report['class'] == 'TPV':
-                if hasattr(report, 'lat') and hasattr(report, 'lon'):
-                    gga_message = generate_gga(report.lat, report.lon, report.time)
-                    print(gga_message)
-                    if send_gga_to_ntrip(gga_message, ntrip_socket):
-                        response = ntrip_socket.recv(4096)
-                        # 安全处理可能的二进制数据
-                        try:
-                            print("Received:", response)
-                        except UnicodeDecodeError:
-                            print("Received binary data.")
-        except KeyError:
-            pass
-        except StopIteration:
-            session = None
-            print("GPSD has terminated")
-        except socket.error as e:
-            print(f"Socket error: {e}")
-            ntrip_socket.close()
-            ntrip_socket = connect_to_ntrip_server("qxymtq002", "c4bcfd9", "rtk.ntrip.qxwz.com", 8002, "AUTO")
-        except KeyboardInterrupt:
-            print("Script stopped by user.")
-            ntrip_socket.close()
-            print("NTRIP connection closed.")
-            break
-
-if __name__ == '__main__':
-    main()
+# 将RTK修正数据写入GNSS模块
+write_data_to_gnss(rtk_correction_data)
