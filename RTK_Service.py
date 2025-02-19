@@ -6,7 +6,7 @@ bus = smbus2.SMBus(1)  # Raspberry Pi通常是1
 
 # GNSS模块的I2C地址
 I2C_ADDRESS = 0x50
-I2C_READ_ADDRESS = 0x54
+I2C_READ_ADDRESS = 0x50
 
 def read_buffer_length():
     # 读取缓冲区长度
