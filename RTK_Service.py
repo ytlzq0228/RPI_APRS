@@ -12,11 +12,16 @@ I2C_ADDRESS = 0x50
 WRITE_REGISTER = 0x58  # 根据文档，用于写入数据的寄存器地址
 
 def generate_gga(latitude, longitude, timestamp):
+    # 将ISO 8601格式的时间转换为HHMMSS格式
+    time_struct = datetime.strptime(timestamp, "%Y-%m-%dT%H:%M:%S.%fZ")
+    formatted_time = time_struct.strftime("%H%M%S")
+    
     # GGA消息生成，确保格式正确
-    gga = f"GPGGA,{timestamp},{latitude:.6f},N,{longitude:.6f},E,1,12,1.0,0.0,M,0.0,M,,"
+    gga = f"GPGGA,{formatted_time},{latitude:.6f},N,{longitude:.6f},E,1,12,1.0,0.0,M,0.0,M,,"
     checksum = 0
     for char in gga:
-        checksum ^= ord(char)
+        if char != '$' and char != '*':
+            checksum ^= ord(char)
     return f"${gga}*{checksum:02X}"
 
 def send_gga_to_ntrip(gga, ntrip_socket):
