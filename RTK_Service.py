@@ -157,7 +157,7 @@ class NtripClient(object):
                     self.socket.sendall(self.getMountPointBytes())
                     while not found_header:
                         casterResponse=self.socket.recv(4096) #All the data
-                        print(casterResponse)
+                        #print(casterResponse)
                         header_lines = casterResponse.decode('utf-8').split("\r\n")
                         
 # header_lines empty, request fail,exit while loop
@@ -203,6 +203,7 @@ class NtripClient(object):
                         try:
                             data=self.socket.recv(self.buffer)
                             # self.out.buffer.write(data)
+                            print(data)
                             self.stream.write(data)
                             (raw_data, parsed_data) = self.nmr.read()
                             if bytes("GNGGA",'ascii') in raw_data :
