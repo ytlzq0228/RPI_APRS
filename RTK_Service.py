@@ -57,7 +57,11 @@ def main():
                     gga_message = generate_gga(report.lat, report.lon, report.time)
                     if send_gga_to_ntrip(gga_message, ntrip_socket):
                         response = ntrip_socket.recv(4096)
-                        print(response.decode('ascii'))
+                        # 安全处理可能的二进制数据
+                        try:
+                            print("Received:", response.decode('ascii'))
+                        except UnicodeDecodeError:
+                            print("Received binary data.")
         except KeyError:
             pass
         except StopIteration:
