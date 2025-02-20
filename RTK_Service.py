@@ -1,28 +1,54 @@
-import smbus2
-import time
+import socket
+import serial
+import threading
 
-# 初始化I2C总线
-bus_number = 1
-device_address = 0x50  # I2C设备地址
-bus = smbus2.SMBus(bus_number)
+# 打开串行端口
+ser = serial.Serial('/dev/ttyAMA0', 115200, timeout=1)
 
-def write_data_to_device(address, data):
-    """向指定的I2C地址写入数据"""
-    for reg_addr, value in data:
-        bus.write_byte_data(address, reg_addr, value)
-        print(f"Written value {value:#04x} to register {reg_addr:#04x}")
-        time.sleep(0.02)  # 延时100ms，确保数据稳定写入
+# 服务器设置
+host = '0.0.0.0'
+port_read_only = 12321  # 只读端口
+port_read_write = 12322  # 读写端口
 
-# 数据准备，(寄存器地址, 数据)
-commands = [
-    (0x08, 0x00),
-    (0x51, 0xAA),
-    (0x04, 0x00),
-    (0x00, 0x00)  # 根据设备手册调整这些值
-]
+def handle_read_only_client(conn, addr):
+    print(f"Connected by {addr} for read-only access")
+    try:
+        while True:
+            data = ser.read(ser.in_waiting or 1)
+            if data:
+                conn.sendall(data)
+    except socket.error as e:
+        print(f"Read-only client {addr} disconnected: {e}")
+    finally:
+        conn.close()
 
-try:
-    write_data_to_device(device_address, commands)
-finally:
-    bus.close()
-    print("I2C bus closed.")
+def handle_read_write_client(conn, addr):
+    print(f"Connected by {addr} for read-write access")
+    try:
+        while True:
+            # 发送数据到客户端
+            data = ser.read(ser.in_waiting or 1)
+            if data:
+                conn.sendall(data)
+            # 读取来自客户端的数据
+            data = conn.recv(1024)
+            if data:
+                ser.write(data)
+    except socket.error as e:
+        print(f"Read-write client {addr} disconnected: {e}")
+    finally:
+        conn.close()
+
+def start_server(port, handler):
+    with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
+        s.bind((host, port))
+        s.listen()
+        print(f"Listening on {host}:{port}")
+        while True:
+            conn, addr = s.accept()
+            client_thread = threading.Thread(target=handler, args=(conn, addr))
+            client_thread.start()
+
+# 启动服务器
+threading.Thread(target=start_server, args=(port_read_only, handle_read_only_client)).start()
+threading.Thread(target=start_server, args=(port_read_write, handle_read_write_client)).start()
