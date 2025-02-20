@@ -1,67 +1,69 @@
 import socket
-import serial
 import threading
-from queue import Queue
+import serial
 import time
 
-# 打开串行端口
-ser = serial.Serial('/dev/ttyAMA0', 115200, timeout=1)
+# 串行端口配置
+serial_port = '/dev/ttyAMA0'
+baud_rate = 115200
 
 # 服务器设置
 host = '0.0.0.0'
 port_read_only = 12321  # 只读端口
 port_read_write = 12322  # 读写端口
 
+# 初始化串行端口
+ser = serial.Serial(serial_port, baud_rate, timeout=1)
 
-# 全局数据队列
-data_queue = Queue()
-
-def distribute_data():
-    while True:
-        if not data_queue.empty():
-            data = data_queue.get()
-            # 分发数据给读写客户端
-            for conn in read_write_clients:
-                conn.sendall(data)
-            # 分发数据给只读客户端
-            for conn in read_only_clients:
-                conn.sendall(data)
-
-# 客户端集合
-read_only_clients = set()
+# 客户端集合和锁
+clients_lock = threading.Lock()
 read_write_clients = set()
 
-def handle_client(conn, addr, client_set):
+def distribute_serial_data():
+    """从串行端口读取数据并分发给所有TCP客户端"""
+    while True:
+        if ser.in_waiting > 0:
+            data = ser.read(ser.in_waiting)
+            with clients_lock:
+                for conn in read_write_clients:
+                    conn.sendall(data)
+        time.sleep(0.1)
+
+def handle_client(conn, addr):
+    """处理读写客户端，允许它们写入到串行端口"""
+    with clients_lock:
+        read_write_clients.add(conn)
     print(f"Connected by {addr}")
-    client_set.add(conn)
+
     try:
         while True:
-            data = ser.read(ser.in_waiting or 1)
-            if data:
-                data_queue.put(data)
-            # 特定于读写客户端的逻辑
-            if client_set is read_write_clients:
-                data = conn.recv(1024)
-                if data:
-                    ser.write(data)
+            data = conn.recv(1024)
+            if not data:
+                break
+            ser.write(data)  # 写入到串行端口
     except socket.error as e:
         print(f"Client {addr} disconnected: {e}")
     finally:
+        with clients_lock:
+            read_write_clients.remove(conn)
         conn.close()
-        client_set.remove(conn)
 
-def start_server(port, handler, client_set):
+def start_server(port):
+    """启动TCP服务器"""
     with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
+        s.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
         s.bind((host, port))
         s.listen()
         print(f"Listening on {host}:{port}")
+
         while True:
             conn, addr = s.accept()
-            threading.Thread(target=handler, args=(conn, addr, client_set)).start()
+            threading.Thread(target=handle_client, args=(conn, addr)).start()
 
-# 启动数据分发线程
-threading.Thread(target=distribute_data).start()
+def main():
+    """启动串行数据分发和TCP服务器"""
+    threading.Thread(target=distribute_serial_data).start()  # 开始分发串行数据
+    start_server(port_read_write)  # 只启动读写端口
 
-# 启动服务器
-threading.Thread(target=start_server, args=(port_read_only, handle_client, read_only_clients)).start()
-threading.Thread(target=start_server, args=(port_read_write, handle_client, read_write_clients)).start()
+if __name__ == '__main__':
+    main()
