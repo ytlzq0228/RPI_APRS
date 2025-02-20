@@ -85,7 +85,7 @@ def main():
                     print(gga_message)
                     if send_gga_to_ntrip(gga_message, ntrip_socket):
                         response = ntrip_socket.recv(4096)  # 接收RTK修正数据
-                        print(response)
+                        print(response.decode())
                         # 将RTK数据通过I2C写入到GNSS模块
                         write_data_to_gnss(response)
         except KeyError:
