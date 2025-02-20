@@ -40,9 +40,11 @@ def write_data_to_gnss(data):
     data_length = len(data)
     write_length_command = WRITE_COMMAND + list(data_length.to_bytes(4, 'little'))
     bus.write_i2c_block_data(I2C_ADDRESS, 0x00, write_length_command)
+    print("write_length_command")
     
     # 写入实际的数据
     bus.write_i2c_block_data(I2C_WRITE_ADDRESS, 0x00, list(data))
+    print(data)
 
 def connect_to_ntrip_server(user, password, server, port, mountpoint):
     while True:
