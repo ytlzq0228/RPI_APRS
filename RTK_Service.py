@@ -1,107 +1,28 @@
-import socket
-import base64
-from gps import gps, WATCH_ENABLE, WATCH_NEWSTYLE
 import smbus2
 import time
-from datetime import datetime
 
-# 设置I2C总线
-bus = smbus2.SMBus(1)  # Raspberry Pi通常是1
+# 初始化I2C总线
+bus_number = 1
+device_address = 0x50  # I2C设备地址
+bus = smbus2.SMBus(bus_number)
 
-# GNSS模块的I2C地址和寄存器
-I2C_ADDRESS = 0x50
-I2C_READ_ADDRESS = 0x54  # 根据文档，用于读取数据的寄存器地址
-I2C_WRITE_ADDRESS = 0x58  # 根据文档，用于写入数据的寄存器地址
-WRITE_COMMAND = [0xAA, 0x53, 0x10, 0x00]  # 写入命令前缀，具体命令可能需要调整
+def write_data_to_device(address, data):
+    """向指定的I2C地址写入数据"""
+    for reg_addr, value in data:
+        bus.write_byte_data(address, reg_addr, value)
+        print(f"Written value {value:#04x} to register {reg_addr:#04x}")
+        time.sleep(0.02)  # 延时100ms，确保数据稳定写入
 
-def generate_gga(latitude, longitude, timestamp):
-    # 将ISO 8601格式的时间转换为HHMMSS格式
-    time_struct = datetime.strptime(timestamp, "%Y-%m-%dT%H:%M:%S.%fZ")
-    formatted_time = time_struct.strftime("%H%M%S")
-    
-    # GGA消息生成，确保格式正确
-    gga = f"GPGGA,{formatted_time},{latitude:.6f},N,{longitude:.6f},E,1,12,1.0,0.0,M,0.0,M,,"
-    checksum = 0
-    for char in gga:
-        if char != '$' and char != '*':
-            checksum ^= ord(char)
-    return f"${gga}*{checksum:02X}"
+# 数据准备，(寄存器地址, 数据)
+commands = [
+    (0x08, 0x00),
+    (0x51, 0xAA),
+    (0x04, 0x00),
+    (0x00, 0x00)  # 根据设备手册调整这些值
+]
 
-def send_gga_to_ntrip(gga, ntrip_socket):
-    try:
-        ntrip_socket.sendall(gga.encode('ascii') + b'\r\n')
-        return True
-    except socket.error as e:
-        print(f"Socket error while sending GGA: {e}")
-        return False
-
-def write_data_to_gnss(data):
-    # 首先发送写入长度的配置指令
-    data_length = len(data)
-    write_length_command = WRITE_COMMAND + list(data_length.to_bytes(4, 'little'))
-    bus.write_i2c_block_data(I2C_ADDRESS, 0x00, write_length_command)
-    print("write_length_command")
-    
-    # 写入实际的数据
-    bus.write_i2c_block_data(I2C_WRITE_ADDRESS, 0x00, list(data))
-    print(data)
-
-def connect_to_ntrip_server(user, password, server, port, mountpoint):
-    while True:
-        try:
-            s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-            s.settimeout(10)
-            print(f"Attempting to connect to NTRIP server at {server}:{port}")
-            s.connect((server, port))
-            auth = f"{user}:{password}"
-            auth_encoded = base64.b64encode(auth.encode('ascii')).decode('ascii')
-            ntrip_request = f"GET /{mountpoint} HTTP/1.1\r\nHost: {server}:{port}\r\nAuthorization: Basic {auth_encoded}\r\nUser-Agent: PythonNtripClient/1.0\r\nAccept: */*\r\n\r\n"
-            s.sendall(ntrip_request.encode('ascii'))
-            resp = s.recv(1024)
-            if resp:
-                print(f"Server response: {resp.decode('ascii')}")
-                if b'200 OK' in resp or b'ICY 200 OK' in resp:
-                    print("Connected to NTRIP server successfully.")
-                    return s
-                else:
-                    print(f"Failed to connect, server response: {resp.decode('ascii')}")
-            else:
-                print("No response received from server.")
-        except Exception as e:
-            print(f"Failed to connect to NTRIP server: {e}")
-        print("Retrying in 5 seconds...")
-        time.sleep(5)
-
-def main():
-    session = gps(mode=WATCH_ENABLE | WATCH_NEWSTYLE)
-    ntrip_socket = connect_to_ntrip_server("qxymtq002", "c4bcfd9", "rtk.ntrip.qxwz.com", 8002, "AUTO")
-
-    while True:
-        try:
-            report = session.next()
-            if report['class'] == 'TPV':
-                if hasattr(report, 'lat') and hasattr(report, 'lon'):
-                    gga_message = generate_gga(report.lat, report.lon, report.time)
-                    print(gga_message)
-                    if send_gga_to_ntrip(gga_message, ntrip_socket):
-                        response = ntrip_socket.recv(4096)  # 接收RTK修正数据
-                        print(response.decode())
-                        # 将RTK数据通过I2C写入到GNSS模块
-                        write_data_to_gnss(response)
-        except KeyError:
-            pass
-        except StopIteration:
-            session = None
-            print("GPSD has terminated")
-        except socket.error as e:
-            print(f"Socket error: {e}")
-            ntrip_socket.close()
-            ntrip_socket = connect_to_ntrip_server("qxymtq002", "c4bcfd9", "rtk.ntrip.qxwz.com", 8002, "AUTO")
-        except KeyboardInterrupt:
-            print("Script stopped by user.")
-            ntrip_socket.close()
-            print("NTRIP connection closed.")
-            break
-
-if __name__ == '__main__':
-    main()
+try:
+    write_data_to_device(device_address, commands)
+finally:
+    bus.close()
+    print("I2C bus closed.")
