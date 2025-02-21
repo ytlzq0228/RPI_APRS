@@ -8,4 +8,7 @@ function get_config() {
     grep -A 10 "^\[$section\]" "$CONFIG_FILE" | grep "^$key" | awk -F '=' '{print $2}' | sed 's/^[ \t]*//;s/[ \t]*$//'
 }
 
-python3 /etc/RPI_APRS/RTK_Service.py -u $(get_config "RTK_CONFIG" "USERNAME") -p $(get_config "RTK_CONFIG" "PASSWORD") $(get_config "RTK_CONFIG" "NTRIP_SERVER") $(get_config "RTK_CONFIG" "NTRIP_PORT") $(get_config "RTK_CONFIG" "MOUNTPOINT")
+if [ $(get_config "RTK_CONFIG" "enable") = "True" ]; then
+    python3 /etc/RPI_APRS/RTK_Service.py -P $(get_config "RTK_CONFIG" "RTK_PORT") -u $(get_config "RTK_CONFIG" "USERNAME") -p $(get_config "RTK_CONFIG" "PASSWORD") $(get_config "RTK_CONFIG" "NTRIP_SERVER") $(get_config "RTK_CONFIG" "NTRIP_PORT") $(get_config "RTK_CONFIG" "MOUNTPOINT")
+fi
+
