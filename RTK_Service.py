@@ -26,6 +26,10 @@ from optparse import OptionParser
 import serial
 from pynmeagps import NMEAReader
 
+import logging
+
+logging.basicConfig(level=logging.ERROR)  
+
 version=0.2
 useragent="NTRIP JCMBsoftPythonClient/%.1f" % version
 
