@@ -23,7 +23,7 @@ WantedBy=multi-user.target
 EOF
 
 systemctl daemon-reload
-systemctl enable RTK_Service.service
-systemctl start RTK_Service.service
-systemctl status RTK_Service.service
+systemctl enable Quectel_RTK.service
+systemctl start Quectel_RTK.service
+systemctl status Quectel_RTK.service
 sync ; sudo sync ; sudo sync ; sudo mount -o remount,ro / ; sudo mount -o remount,ro /boot
