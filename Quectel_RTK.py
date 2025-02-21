@@ -206,11 +206,7 @@ class NtripClient(object):
                             data=self.socket.recv(self.buffer)
                             # self.out.buffer.write(data)
                             self.stream.write(data)
-                            
-                            try:
-                                (raw_data, parsed_data) = self.nmr.read()
-                            except Exception as e:
-                                break
+                            (raw_data, parsed_data) = self.nmr.read()
                             if bytes("GNGGA",'ascii') in raw_data :
                                 print(raw_data)
 
