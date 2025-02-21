@@ -210,7 +210,7 @@ class NtripClient(object):
                             try:
                                 (raw_data, parsed_data) = self.nmr.read()
                             except Exception as e:
-                                continue
+                                break
                             if bytes("GNGGA",'ascii') in raw_data :
                                 print(raw_data)
 
