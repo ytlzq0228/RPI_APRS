@@ -9,8 +9,8 @@ Description=NTRIP Client Service for GNSS RTK Correction
 After=network.target gpsd.service
 
 [Service]
-ExecStart=/etc/RPI_APRS/RTK_Service.sh
-ExecStop=/usr/bin/pkill -f RTK_Service.py
+ExecStart=/etc/RPI_APRS/Quectel_RTK.sh
+ExecStop=/usr/bin/pkill -f Quectel_RTK.py
 Restart=always
 RestartSec=5
 User=root
