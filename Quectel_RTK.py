@@ -206,7 +206,14 @@ class NtripClient(object):
                             data=self.socket.recv(self.buffer)
                             # self.out.buffer.write(data)
                             self.stream.write(data)
-                            (raw_data, parsed_data) = self.nmr.read()
+                            
+                            try:
+                                (raw_data, parsed_data) = self.nmr.read()
+                            except Exception as e:
+                                if "invalid checksum" in str(e).lower():
+                                    continue  # 直接忽略校验和错误
+                                else:
+                                    print(f"Unexpected NMEA error: {e}")  # 仅记录其他错误
                             if bytes("GNGGA",'ascii') in raw_data :
                                 print(raw_data)
 
