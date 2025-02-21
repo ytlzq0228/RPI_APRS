@@ -210,10 +210,7 @@ class NtripClient(object):
                             try:
                                 (raw_data, parsed_data) = self.nmr.read()
                             except Exception as e:
-                                if "invalid checksum" in str(e).lower():
-                                    continue  # 直接忽略校验和错误
-                                else:
-                                    print(f"Unexpected NMEA error: {e}")  # 仅记录其他错误
+                                continue
                             if bytes("GNGGA",'ascii') in raw_data :
                                 print(raw_data)
 
