@@ -26,9 +26,9 @@ from optparse import OptionParser
 import serial
 from pynmeagps import NMEAReader
 
-import logging
-
-logging.basicConfig(level=logging.ERROR)  
+#import logging
+#
+#logging.basicConfig(level=logging.ERROR)  
 
 version=0.2
 useragent="NTRIP JCMBsoftPythonClient/%.1f" % version
@@ -129,11 +129,11 @@ class NtripClient(object):
 
     def getGGABytes(self):
         while True:
-            #(raw_data, parsed_data) = self.nmr.read()
-            try:
-                (raw_data, parsed_data) = self.nmr.read()
-            except Exception as e:
-                continue
+            (raw_data, parsed_data) = self.nmr.read()
+            #try:
+            #    (raw_data, parsed_data) = self.nmr.read()
+            #except Exception as e:
+            #    continue
             if bytes("GNGGA",'ascii') in raw_data :
                 # print(parsed_data)
                 return raw_data
@@ -210,11 +210,11 @@ class NtripClient(object):
                             data=self.socket.recv(self.buffer)
                             # self.out.buffer.write(data)
                             self.stream.write(data)
-                            #(raw_data, parsed_data) = self.nmr.read()
-                            try:
-                                (raw_data, parsed_data) = self.nmr.read()
-                            except Exception as e:
-                                continue
+                            (raw_data, parsed_data) = self.nmr.read()
+                            #try:
+                            #    (raw_data, parsed_data) = self.nmr.read()
+                            #except Exception as e:
+                            #    continue
                             if bytes("GNGGA",'ascii') in raw_data :
                                 print(raw_data)
 
