@@ -247,7 +247,19 @@ class Get_GNSS_Position:
 							
 							course="%03.0f"%float(data['track']) if 'track' in data else course
 
-							GNSS_Type='TPV'
+							
+							if data['status'] == 0:
+							    GNSS_Type = "NO_SINGAL"
+							elif data['status'] == 1:
+							    GNSS_Type = "NOT FIX"
+							elif data['status'] == 2:
+							    GNSS_Type = "2D FIX"
+							elif data['status'] == 3:
+							    GNSS_Type = "3D FIX"
+							elif data['status'] == 4:
+							    GNSS_Type = "RTK FIX"
+							elif data['status'] == 5:
+							    GNSS_Type = "RTK FLOAT"
 
 							GPS_Source="GPSd_Device:%s"%data['device']
 							if lat and lon:
