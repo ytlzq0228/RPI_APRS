@@ -22,6 +22,7 @@ StandardError=journal
 WantedBy=multi-user.target
 EOF
 
+python3 -m pip install pynmeagps
 systemctl daemon-reload
 systemctl enable Quectel_RTK.service
 systemctl start Quectel_RTK.service

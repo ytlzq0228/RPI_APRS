@@ -52,7 +52,7 @@ log_system_info() {
 }
 
 # 执行记录信息
-log_system_info
+#log_system_info
 
 
 # 日志存储目录
