@@ -11,7 +11,7 @@ config.read(CONFIG_FILE)
 
 LOG_FILE_PATH=config['SFTP_Config']['LOCAL_LOG_FILE_PATH']
 SSID=config['SSID_Config']['SSID']
-LOG_FILE = f"{datetime.now().strftime('%Y-%m-%d')}-{LOG_FILE_PATH}-{SSID}"
+LOG_FILE = f"{LOG_FILE_PATH}/{datetime.now().strftime('%Y-%m-%d')}-GPS-{SSID}"
 
 
 def save_log(result):
