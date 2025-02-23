@@ -112,7 +112,9 @@ for FILE in ${USB_DIR}/*.log; do
     REMOTE_FILE="${REMOTE_DIR}/${FILE_BASENAME}"
 
     # 上传文件到远程服务器
-    scp -P $REMOTE_PORT "$FILE" "${REMOTE_USER}@${REMOTE_HOST}:${REMOTE_FILE}"
+    #scp -P $REMOTE_PORT "$FILE" "${REMOTE_USER}@${REMOTE_HOST}:${REMOTE_FILE}"
+    rsync -avz --inplace -e "ssh -P $REMOTE_PORT" "$FILE" "${REMOTE_USER}@${REMOTE_HOST}:${REMOTE_FILE}"
+    #rsync -avz -e "ssh -p 2222" /local/path/ pi-star@nas.ctsdn.com:/remote/path/
     
     # 检查上传是否成功
     if [ $? -eq 0 ]; then
