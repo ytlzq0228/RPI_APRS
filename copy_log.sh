@@ -90,43 +90,45 @@ REMOTE_HOST=$(get_config "SFTP_Config" "REMOTE_HOST")
 REMOTE_DIR=$(get_config "SFTP_Config" "REMOTE_DIR")
 REMOTE_PORT=$(get_config "SFTP_Config" "REMOTE_PORT")
 
-# 遍历 /mnt/usb/ 目录下未上传的日志文件
-for FILE in ${USB_DIR}/*.log; do
-    #echo $FILE
-    # 检查文件是否存在（避免 glob 为空时出错）
-    [ -e "$FILE" ] || continue
-    
-    # 跳过已上传的文件（前缀为 uploaded_）
-    FILE_BASENAME=$(basename "$FILE")
-    if [[ "$FILE_BASENAME" == uploaded_* ]]; then
-        echo "$(date) - Skipping already uploaded file: $FILE"
-        continue
-    fi
+rsync -avz --inplace -e "ssh -p $REMOTE_PORT" ${USB_DIR}/*.log "${REMOTE_USER}@${REMOTE_HOST}:${REMOTE_DIR}"
 
-    #if [[ "$FILE" == "$LOG_FILE" ]]; then
-    #    echo "$(date) - Skipping LOCAL_LOG_FILE_SOURCE: $FILE"
-    #    continue
-    #fi
-    
-    # 生成远程存储文件名
-    REMOTE_FILE="${REMOTE_DIR}/${FILE_BASENAME}"
-
-    # 上传文件到远程服务器
-    #scp -P $REMOTE_PORT "$FILE" "${REMOTE_USER}@${REMOTE_HOST}:${REMOTE_FILE}"
-    rsync -avz --inplace -e "ssh -p $REMOTE_PORT" "$FILE" "${REMOTE_USER}@${REMOTE_HOST}:${REMOTE_FILE}"
-    #rsync -avz -e "ssh -p 2222" /local/path/ pi-star@nas.ctsdn.com:/remote/path/
-    
-    # 检查上传是否成功
-    if [ $? -eq 0 ]; then
-        echo "$(date) - Successfully uploaded: $FILE"
-        
-        # 重命名文件，标记为已上传
-        mv "$FILE" "${USB_DIR}/uploaded_${FILE_BASENAME}"
-        echo "$(date) - Marked as uploaded: uploaded_${FILE_BASENAME}"
-    else
-        echo "$(date) - Failed to upload: $FILE"
-    fi
-done
+## 遍历 /mnt/usb/ 目录下未上传的日志文件
+#for FILE in ${USB_DIR}/*.log; do
+#    #echo $FILE
+#    # 检查文件是否存在（避免 glob 为空时出错）
+#    [ -e "$FILE" ] || continue
+#    
+#    # 跳过已上传的文件（前缀为 uploaded_）
+#    FILE_BASENAME=$(basename "$FILE")
+#    if [[ "$FILE_BASENAME" == uploaded_* ]]; then
+#        echo "$(date) - Skipping already uploaded file: $FILE"
+#        continue
+#    fi
+#
+#    #if [[ "$FILE" == "$LOG_FILE" ]]; then
+#    #    echo "$(date) - Skipping LOCAL_LOG_FILE_SOURCE: $FILE"
+#    #    continue
+#    #fi
+#    
+#    # 生成远程存储文件名
+#    REMOTE_FILE="${REMOTE_DIR}/${FILE_BASENAME}"
+#
+#    # 上传文件到远程服务器
+#    #scp -P $REMOTE_PORT "$FILE" "${REMOTE_USER}@${REMOTE_HOST}:${REMOTE_FILE}"
+#    rsync -avz --inplace -e "ssh -p $REMOTE_PORT" "$FILE" "${REMOTE_USER}@${REMOTE_HOST}:${REMOTE_FILE}"
+#    #rsync -avz -e "ssh -p 2222" /local/path/ pi-star@nas.ctsdn.com:/remote/path/
+#    
+#    # 检查上传是否成功
+#    if [ $? -eq 0 ]; then
+#        echo "$(date) - Successfully uploaded: $FILE"
+#        
+#        # 重命名文件，标记为已上传
+#        #mv "$FILE" "${USB_DIR}/uploaded_${FILE_BASENAME}"
+#        #echo "$(date) - Marked as uploaded: uploaded_${FILE_BASENAME}"
+#    else
+#        echo "$(date) - Failed to upload: $FILE"
+#    fi
+#done
 
 echo "$(date) - Sync process completed."
 exit 0
