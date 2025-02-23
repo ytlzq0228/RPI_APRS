@@ -56,7 +56,7 @@ log_system_info() {
 
 
 # 日志存储目录
-USB_DIR="/mnt/usb"
+USB_DIR=$(get_config "SFTP_Config" "LOCAL_LOG_FILE_PATH")
 #LOG_FILE="/var/log/GPS_NMEA.log"
 LOG_FILE=$(get_config "SFTP_Config" "LOCAL_LOG_FILE_PATH")
 
@@ -72,17 +72,17 @@ echo "SSID: $SSID"
 # 生成本地归档文件名
 LOCAL_ARCHIVED_FILE="${USB_DIR}/${DATE_PREFIX}_GPS_${SSID}.log"
 
-# 复制日志文件到 USB 目录并添加时间戳
-cp $LOG_FILE $LOCAL_ARCHIVED_FILE
-if [ $? -eq 0 ]; then
-    echo "$(date) - Log file archived: $LOCAL_ARCHIVED_FILE"
-else
-    echo "$(date) - Failed to archive log file to $USB_DIR"
-    exit 1
-fi
-
-# 清空原日志文件，保留文件结构
-> $LOG_FILE
+## 复制日志文件到 USB 目录并添加时间戳
+#cp $LOG_FILE $LOCAL_ARCHIVED_FILE
+#if [ $? -eq 0 ]; then
+#    echo "$(date) - Log file archived: $LOCAL_ARCHIVED_FILE"
+#else
+#    echo "$(date) - Failed to archive log file to $USB_DIR"
+#    exit 1
+#fi
+#
+## 清空原日志文件，保留文件结构
+#> $LOG_FILE
 
 # 设置远程服务器信息
 REMOTE_USER=$(get_config "SFTP_Config" "REMOTE_USER")
@@ -102,10 +102,10 @@ for FILE in ${USB_DIR}/*.log; do
         continue
     fi
 
-    if [[ "$FILE" == "$LOG_FILE" ]]; then
-        echo "$(date) - Skipping LOCAL_LOG_FILE_SOURCE: $FILE"
-        continue
-    fi
+    #if [[ "$FILE" == "$LOG_FILE" ]]; then
+    #    echo "$(date) - Skipping LOCAL_LOG_FILE_SOURCE: $FILE"
+    #    continue
+    #fi
     
     # 生成远程存储文件名
     REMOTE_FILE="${REMOTE_DIR}/${FILE_BASENAME}"
