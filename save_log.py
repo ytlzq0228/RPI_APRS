@@ -19,7 +19,7 @@ def save_log(result):
 		print(result)
 		now = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
 		f = open(LOG_FILE,'a')
-		f.writelines("\n%s log:%s" %(now,VERSION,result))
+		f.writelines("\n%s log:%s" %(now,result))
 		f.flush()
 		f.close()
 	except Exception as err:
