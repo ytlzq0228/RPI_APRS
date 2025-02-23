@@ -92,6 +92,7 @@ REMOTE_PORT=$(get_config "SFTP_Config" "REMOTE_PORT")
 
 # 遍历 /mnt/usb/ 目录下未上传的日志文件
 for FILE in ${USB_DIR}/*.log; do
+    echo FILE
     # 检查文件是否存在（避免 glob 为空时出错）
     [ -e "$FILE" ] || continue
     
