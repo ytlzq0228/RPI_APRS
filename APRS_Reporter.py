@@ -45,25 +45,25 @@ config.read(CONFIG_FILE)
 #		print(err)
 
 
-#def get_cpu_temperature():
-#    try:
-#        with open("/sys/class/thermal/thermal_zone0/temp", "r") as f:
-#            temp = int(f.read().strip()) / 1000.0  # 单位是毫摄氏度，需要转换
-#        return f"{temp:.2f}°C"
-#    except Exception as e:
-#        return f"获取温度失败: {e}"
-#
-#def get_uptime():
-#    try:
-#        # 方法 1：使用 uptime 命令
-#        uptime_cmd = os.popen("uptime -p").read().strip()
-#        
-#        # 方法 2：使用 psutil 获取开机时间
-#        boot_time = time.strftime('%Y-%m-%d %H:%M:%S', time.localtime(psutil.boot_time()))
-#        
-#        return f"系统已运行: {uptime_cmd}\n开机时间: {boot_time}"
-#    except Exception as e:
-#        return f"获取开机时间失败: {e}"
+def get_cpu_temperature():
+    try:
+        with open("/sys/class/thermal/thermal_zone0/temp", "r") as f:
+            temp = int(f.read().strip()) / 1000.0  # 单位是毫摄氏度，需要转换
+        return f"{temp:.2f}°C"
+    except Exception as e:
+        return f"获取温度失败: {e}"
+
+def get_uptime():
+    try:
+        # 方法 1：使用 uptime 命令
+        uptime_cmd = os.popen("uptime -p").read().strip()
+        
+        # 方法 2：使用 psutil 获取开机时间
+        boot_time = time.strftime('%Y-%m-%d %H:%M:%S', time.localtime(psutil.boot_time()))
+        
+        return f"系统已运行: {uptime_cmd}\n开机时间: {boot_time}"
+    except Exception as e:
+        return f"获取开机时间失败: {e}"
 
 
 if __name__ == '__main__':
@@ -151,7 +151,7 @@ if __name__ == '__main__':
 
 			if float(timestamp)-float(update_timestamp)>=NMEA_LOG_INTERVAL:
 				update_timestamp=timestamp
-				save_log(f"gpx:{lat_raw,lat_dir,lon_raw,lon_dir,altitude,timestamp,speed,course,GPS_Source}")
+				save_log(f"gpx:{lat_raw,lat_dir,lon_raw,lon_dir,altitude,timestamp,speed,course,GPS_Source,get_cpu_temperature(),get_uptime()}")
 
 			if float(timestamp)-float(report_timestamp)>=APRS_REPORT_INTERVAL and read_gpio(Radio_CONTROL_ENABLE,GPIO_PIN):
 				report_timestamp=timestamp
