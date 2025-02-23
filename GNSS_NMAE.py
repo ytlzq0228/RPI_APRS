@@ -194,80 +194,163 @@ class Get_GNSS_Position:
 			save_log(f"get_gnss_position_TCP: {err}")
 
 
-	def GPSd(altitude,speed,course):
-		"""通过 gps3 获取 GPS 数据"""
-		gps_socket = gps3.GPSDSocket()
-		data_stream = gps3.DataStream()
-		# 连接到 GPSd
-		gps_socket.connect(host="127.0.0.1", port=2947)
-		gps_socket.watch()
-		
-		try:
-			retyr_time=0
-			for new_data in gps_socket:
-				retyr_time+=1
-				if retyr_time>6000:
-					save_log('GPSd no GNSS Signal in 60s')
-					return
-				if new_data:
-					data=json.loads(new_data)
-					data_stream.unpack(new_data)
-					if data['class']=='TPV':
-						#save_log(f"GPSd TPV data: {new_data}")##-------------------------testing log------------------
-						if int(data['mode'])>2:
-							#data['lat']和data['lon']使用十进制度，NMEA和APRS使用十进制分
-							# 纬度转换
-							decimal_lat=float(data['lat'])
-							lat_dir = "N" if decimal_lat >= 0 else "S"  # 北纬为 N，南纬为 S
-							lat_abs = abs(decimal_lat)
-							lat_degrees = int(lat_abs)
-							lat_minutes = (lat_abs - lat_degrees) * 60
-							
+#	def GPSd(altitude,speed,course):
+#		"""通过 gps3 获取 GPS 数据"""
+#		gps_socket = gps3.GPSDSocket()
+#		data_stream = gps3.DataStream()
+#		# 连接到 GPSd
+#		gps_socket.connect(host="127.0.0.1", port=2947)
+#		gps_socket.watch()
+#		timeout = time.time() + 60  # 60秒超时
+#		try:
+#			retry_time=0
+#			for new_data in gps_socket:
+#				retry_time+=1
+#				if retry_time>6000:
+#					save_log('GPSd no GNSS Signal in 60s')
+#					return
+#				if new_data:
+#					data=json.loads(new_data)
+#					data_stream.unpack(new_data)
+#					if data['class']=='TPV':
+#						#save_log(f"GPSd TPV data: {new_data}")##-------------------------testing log------------------
+#						if int(data['mode'])>2:
+#							#data['lat']和data['lon']使用十进制度，NMEA和APRS使用十进制分
+#							# 纬度转换
+#							decimal_lat=float(data['lat'])
+#							lat_dir = "N" if decimal_lat >= 0 else "S"  # 北纬为 N，南纬为 S
+#							lat_abs = abs(decimal_lat)
+#							lat_degrees = int(lat_abs)
+#							lat_minutes = (lat_abs - lat_degrees) * 60
+#							
+#
+#							# 经度转换
+#							decimal_lon=float(data['lon'])
+#							lon_dir = "E" if decimal_lon >= 0 else "W"  # 东经为 E，西经为 W
+#							lon_abs = abs(decimal_lon)
+#							lon_degrees = int(lon_abs)
+#							lon_minutes = (lon_abs - lon_degrees) * 60
+#
+#							# 格式化为 APRS 格式
+#							lat = f"{lat_degrees:02d}{lat_minutes:05.2f}"
+#							lon = f"{lon_degrees:03d}{lon_minutes:05.2f}"
+#
+#							# 格式化为 NMEA 格式，高精度
+#							lat_raw= f"{lat_degrees:02d}{lat_minutes:09.6f}"
+#							lon_raw= f"{lon_degrees:03d}{lon_minutes:09.6f}"
+#
+#							altitude="%06.0f"%(float(data['alt'])*3.28) if 'alt' in data else altitude#APRS报文海拔数据单位英尺，米转英尺/APRS message altitude data is in feet; convert meters to feet.
+#							
+#							timestamp = datetime.strptime(data['time'], "%Y-%m-%dT%H:%M:%S.%fZ").strftime("%H%M%S.00") if 'time' in data else '000000.00'#时间戳"2025-01-02T09:01:10.000Z"转为NMEA语句格式的时间戳090110.00
+#							
+#							speed="%03.0f"%(float(data['speed'])*3600/1852) if 'speed' in data else speed#NMEA APRS速度数据单位均为海里每小时，GPSd报告的为米/秒。/The speed data unit for both NMEA and APRS is knots, no conversion needed.
+#							
+#							course="%03.0f"%float(data['track']) if 'track' in data else course
+#
+#							
+#							if data['status'] == 0:
+#							    GNSS_Type = "NO_SINGAL"
+#							elif data['status'] == 1:
+#							    GNSS_Type = "NOT FIX"
+#							elif data['status'] == 2:
+#							    GNSS_Type = "2D FIX"
+#							elif data['status'] == 3:
+#							    GNSS_Type = "3D FIX"
+#							elif data['status'] == 4:
+#							    GNSS_Type = "RTK FIX"
+#							elif data['status'] == 5:
+#							    GNSS_Type = "RTK FLOAT"
+#
+#							GPS_Source="GPSd_Device:%s"%data['device']
+#							if lat and lon:
+#								return lat,lat_dir,lon,lon_dir,altitude,timestamp,speed,course,GNSS_Type,lat_raw,lon_raw,GPS_Source
+#									  #4004.83 N 11619.38 E    000211   092344.00 000   066    GPRMC     4004.829687 11619.375852
+#				time.sleep(0.01)
+#		except Exception as e:
+#			save_log(f"Error fetching GPSd data: {e}")
 
-							# 经度转换
-							decimal_lon=float(data['lon'])
-							lon_dir = "E" if decimal_lon >= 0 else "W"  # 东经为 E，西经为 W
-							lon_abs = abs(decimal_lon)
-							lon_degrees = int(lon_abs)
-							lon_minutes = (lon_abs - lon_degrees) * 60
 
-							# 格式化为 APRS 格式
-							lat = f"{lat_degrees:02d}{lat_minutes:05.2f}"
-							lon = f"{lon_degrees:03d}{lon_minutes:05.2f}"
-
-							# 格式化为 NMEA 格式，高精度
-							lat_raw= f"{lat_degrees:02d}{lat_minutes:09.6f}"
-							lon_raw= f"{lon_degrees:03d}{lon_minutes:09.6f}"
-
-							altitude="%06.0f"%(float(data['alt'])*3.28) if 'alt' in data else altitude#APRS报文海拔数据单位英尺，米转英尺/APRS message altitude data is in feet; convert meters to feet.
-							
-							timestamp = datetime.strptime(data['time'], "%Y-%m-%dT%H:%M:%S.%fZ").strftime("%H%M%S.00") if 'time' in data else '000000.00'#时间戳"2025-01-02T09:01:10.000Z"转为NMEA语句格式的时间戳090110.00
-							
-							speed="%03.0f"%(float(data['speed'])*3600/1852) if 'speed' in data else speed#NMEA APRS速度数据单位均为海里每小时，GPSd报告的为米/秒。/The speed data unit for both NMEA and APRS is knots, no conversion needed.
-							
-							course="%03.0f"%float(data['track']) if 'track' in data else course
-
-							
-							if data['status'] == 0:
-							    GNSS_Type = "NO_SINGAL"
-							elif data['status'] == 1:
-							    GNSS_Type = "NOT FIX"
-							elif data['status'] == 2:
-							    GNSS_Type = "2D FIX"
-							elif data['status'] == 3:
-							    GNSS_Type = "3D FIX"
-							elif data['status'] == 4:
-							    GNSS_Type = "RTK FIX"
-							elif data['status'] == 5:
-							    GNSS_Type = "RTK FLOAT"
-
-							GPS_Source="GPSd_Device:%s"%data['device']
-							if lat and lon:
-								return lat,lat_dir,lon,lon_dir,altitude,timestamp,speed,course,GNSS_Type,lat_raw,lon_raw,GPS_Source
-									  #4004.83 N 11619.38 E    000211   092344.00 000   066    GPRMC     4004.829687 11619.375852
-				time.sleep(0.01)
-		except Exception as e:
-			save_log(f"Error fetching GPSd data: {e}")
+	def GPSd(altitude, speed, course):
+	    """通过 gps3 获取 GPS 数据"""
+	    gps_socket = gps3.GPSDSocket()
+	    data_stream = gps3.DataStream()
+	    
+	    # 连接到 GPSD
+	    gps_socket.connect(host="127.0.0.1", port=2947)
+	    gps_socket.watch()
+	
+	    timeout = time.time() + 60  # 60秒超时
+	    try:
+	        for new_data in gps_socket:
+	            if time.time() > timeout:
+	                save_log('GPSd no GNSS Signal in 60s')
+	                return None
+	            
+	            if not new_data:  # 跳过空数据
+	                continue
+	
+	            try:
+	                data = json.loads(new_data)
+	            except json.JSONDecodeError:
+	                save_log("GPSd received invalid JSON")
+	                continue
+	
+	            data_stream.unpack(new_data)
+	
+	            if data.get('class') == 'TPV' and int(data.get('mode', 0)) > 2:
+	                # 纬度转换
+	                decimal_lat = float(data.get('lat', 0))
+	                lat_dir = "N" if decimal_lat >= 0 else "S"
+	                lat_degrees = int(abs(decimal_lat))
+	                lat_minutes = (abs(decimal_lat) - lat_degrees) * 60
+	
+	                # 经度转换
+	                decimal_lon = float(data.get('lon', 0))
+	                lon_dir = "E" if decimal_lon >= 0 else "W"
+	                lon_degrees = int(abs(decimal_lon))
+	                lon_minutes = (abs(decimal_lon) - lon_degrees) * 60
+	
+	                # 格式化 APRS 格式
+	                lat = f"{lat_degrees:02d}{lat_minutes:05.2f}"
+	                lon = f"{lon_degrees:03d}{lon_minutes:05.2f}"
+	
+	                # 格式化 NMEA 格式
+	                lat_raw = f"{lat_degrees:02d}{lat_minutes:09.6f}"
+	                lon_raw = f"{lon_degrees:03d}{lon_minutes:09.6f}"
+	
+	                # 处理海拔数据
+	                altitude = f"{float(data.get('alt', 0)) * 3.28:06.0f}"
+	
+	                # 处理时间戳
+	                timestamp = datetime.strptime(
+	                    data.get('time', "1970-01-01T00:00:00.000Z"),
+	                    "%Y-%m-%dT%H:%M:%S.%fZ"
+	                ).strftime("%H%M%S.00")
+	
+	                # 处理速度和航向
+	                speed = f"{float(data.get('speed', 0)) * 3600 / 1852:03.0f}"
+	                course = f"{float(data.get('track', 0)):03.0f}"
+	
+	                # 处理 GNSS 状态
+	                status_map = {
+	                    0: "NO_SIGNAL",
+	                    1: "NOT FIX",
+	                    2: "2D FIX",
+	                    3: "3D FIX",
+	                    4: "RTK FIX",
+	                    5: "RTK FLOAT"
+	                }
+	                GNSS_Type = status_map.get(data.get('status', 0), "UNKNOWN")
+	
+	                GPS_Source = f"GPSd_Device:{data.get('device', 'Unknown')}"
+	
+	                return lat, lat_dir, lon, lon_dir, altitude, timestamp, speed, course, GNSS_Type, lat_raw, lon_raw, GPS_Source
+	            
+	            time.sleep(0.01)  # 避免 CPU 100% 占用
+	
+	    except Exception as e:
+	        save_log(f"Error fetching GPSd data: {e}")
+	        return None
 
 
 def add_gps_source(source):
