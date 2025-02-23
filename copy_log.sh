@@ -128,3 +128,23 @@ done
 echo "$(date) - Sync process completed."
 exit 0
 
+
+##!/bin/bash
+#
+#LOG_FILE="/var/log/GPS.log"
+#REMOTE_USER="user"
+#REMOTE_HOST="remote-server"
+#REMOTE_DIR="/path/to/logs/"
+#
+## 监听文件变化，秒级触发
+#inotifywait -m -e modify "$LOG_FILE" | while read path action file; do
+#    while true; do
+#        TIMESTAMP=$(date +'%Y%m%d%H%M%S')
+#        rsync -avz --inplace "$LOG_FILE" "$REMOTE_USER@$REMOTE_HOST:$REMOTE_DIR/GPS.log"
+#        if [ $? -eq 0 ]; then
+#            break  # 传输成功，退出循环
+#        else
+#            sleep 5  # 传输失败，5 秒后重试
+#        fi
+#    done
+#done
