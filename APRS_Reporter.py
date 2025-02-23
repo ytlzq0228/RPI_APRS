@@ -13,7 +13,6 @@ from watchdog import boot_watchdog
 import GNSS_NMAE
 from Radio_GPIO import read_gpio
 from save_log import save_log
-import psutil
 
 
 # 设置全局的socket超时时间，例如10秒
@@ -59,10 +58,7 @@ def get_uptime():
         # 方法 1：使用 uptime 命令
         uptime_cmd = os.popen("uptime -p").read().strip()
         
-        # 方法 2：使用 psutil 获取开机时间
-        boot_time = time.strftime('%Y-%m-%d %H:%M:%S', time.localtime(psutil.boot_time()))
-        
-        return f"系统已运行: {uptime_cmd}\n开机时间: {boot_time}"
+        return uptime_cmd
     except Exception as e:
         return f"获取开机时间失败: {e}"
 

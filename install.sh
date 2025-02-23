@@ -83,7 +83,7 @@ sudo systemctl status aprs_reporter.service --no-pager
 apt-get update
 apt-get -y install i2c-tools python3-smbus python-sm python3-pip python3-pil libjpeg-dev zlib1g-dev libfreetype6-dev liblcms2-dev libopenjp2-7 libtiff5 gpsd
 pip3 install --upgrade setuptools
-pip3 install adafruit-circuitpython-ssd1306 adafruit-python-shell luma.oled pillow gps3 aprs
+pip3 install adafruit-circuitpython-ssd1306 adafruit-python-shell luma.oled pillow gps3 aprs psutil
 #安装必要依赖
 
 sync ; sudo sync ; sudo sync ; sudo mount -o remount,ro / ; sudo mount -o remount,ro /boot
