@@ -12,6 +12,7 @@ from watchdog import reset_watchdog
 from watchdog import boot_watchdog
 import GNSS_NMAE
 from Radio_GPIO import read_gpio
+from save_log import save_log
 
 
 # 设置全局的socket超时时间，例如10秒
@@ -26,20 +27,43 @@ VERSION='main_0218.01'
 config = configparser.ConfigParser()
 config.read(CONFIG_FILE)
 
-LOG_FILE=config['SFTP_Config']['LOCAL_LOG_FILE_PATH']
+#LOG_FILE_PATH=config['SFTP_Config']['LOCAL_LOG_FILE_PATH']
+#SSID=config['SSID_Config']['SSID']
+#LOG_FILE = f"{datetime.now().strftime('%Y-%m-%d')}-{LOG_FILE_PATH}-{SSID}"
+#
+#
+#
+#def save_log(result):
+#	try:
+#		print(result)
+#		now = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
+#		f = open(LOG_FILE,'a')
+#		f.writelines("\n%s ver %s log:%s" %(now,VERSION,result))
+#		f.flush()
+#		f.close()
+#	except Exception as err:
+#		print(err)
 
 
-def save_log(result):
-	try:
-		print(result)
-		now = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
-		f = open(LOG_FILE,'a')
-		f.writelines("\n%s ver %s log:%s" %(now,VERSION,result))
-		f.flush()
-		f.close()
-	except Exception as err:
-		print(err)
-
+#def get_cpu_temperature():
+#    try:
+#        with open("/sys/class/thermal/thermal_zone0/temp", "r") as f:
+#            temp = int(f.read().strip()) / 1000.0  # 单位是毫摄氏度，需要转换
+#        return f"{temp:.2f}°C"
+#    except Exception as e:
+#        return f"获取温度失败: {e}"
+#
+#def get_uptime():
+#    try:
+#        # 方法 1：使用 uptime 命令
+#        uptime_cmd = os.popen("uptime -p").read().strip()
+#        
+#        # 方法 2：使用 psutil 获取开机时间
+#        boot_time = time.strftime('%Y-%m-%d %H:%M:%S', time.localtime(psutil.boot_time()))
+#        
+#        return f"系统已运行: {uptime_cmd}\n开机时间: {boot_time}"
+#    except Exception as e:
+#        return f"获取开机时间失败: {e}"
 
 
 if __name__ == '__main__':
