@@ -44,13 +44,12 @@ def get_uptime():
 
 
 def aprs_report():
-	global report_timestamp, update_time, timestamp, lat, lat_dir, lon, lon_dir, course, speed, altitude, GNSS_Type, SSID, CALLSIGN, APRS_PASSWORD, SSID_ICON, APRS_Server
-	timestamp='0'
+	global report_NMEA_timestamp, disp_update_time, NMEA_timestamp, lat, lat_dir, lon, lon_dir, course, speed, altitude, GNSS_Type, SSID, CALLSIGN, APRS_PASSWORD, SSID_ICON, APRS_Server
 	while True:
 		try:
-			if float(timestamp)-float(report_timestamp)>=APRS_REPORT_INTERVAL and read_gpio(Radio_CONTROL_ENABLE,GPIO_PIN):
-				report_timestamp=timestamp
-				frame_text=(f'{SSID}>PYTHON,TCPIP*,qAC,{SSID}:!{lat}{lat_dir}/{lon}{lon_dir}{SSID_ICON}{course}/{speed}/A={altitude} APRS by RPI with GNSS Module using {GNSS_Type} at UTC {timestamp} {Message}').encode()
+			if float(NMEA_timestamp)-float(report_NMEA_timestamp)>=APRS_REPORT_INTERVAL and read_gpio(Radio_CONTROL_ENABLE,GPIO_PIN):
+				report_NMEA_timestamp=NMEA_timestamp
+				frame_text=(f'{SSID}>PYTHON,TCPIP*,qAC,{SSID}:!{lat}{lat_dir}/{lon}{lon_dir}{SSID_ICON}{course}/{speed}/A={altitude} APRS by RPI with GNSS Module using {GNSS_Type} at UTC {NMEA_timestamp} {Message}').encode()
 				callsign = CALLSIGN.encode('utf-8')
 				password = APRS_PASSWORD.encode('utf-8')
 				
@@ -63,11 +62,11 @@ def aprs_report():
 				aprs_return=a.send(frame_text)
 				if aprs_return==len(frame_text)+2:
 					save_log('APRS Report Good Length:%s'%aprs_return)
-					update_time=datetime.now()
+					disp_update_time=datetime.now()
 				else:
 					save_log('APRS Report Return:%s Frame Length: %s Retrying..'%(aprs_return,frame_text))
-					update_time=datetime.min
-				time.sleep(APRS_REPORT_INTERVAL)  # 按照设定间隔等待
+					disp_update_time=datetime.min
+			time.sleep(1)  # 按照设定间隔等待
 		except Exception as err:
 			save_log(f"APRS Report Error: {err}")
 
@@ -128,23 +127,21 @@ if __name__ == '__main__':
 	aprs_thread.daemon = True  # 设为守护线程，确保主程序退出时线程也会退出
 	aprs_thread.start()
 	#--------------------
-
-	update_time=datetime.min
-	update_timestamp=report_timestamp='0'
+	disp_update_time=datetime.min
+	update_NMEA_timestamp=report_NMEA_timestamp=NMEA_timestamp='0'
 	altitude='000000'
 	speed='000'
 	course='000'
-	timestamp='0'
 	while True:
 		try:
 			while True:
 				try:
 					if GPS_Method=="COM":
-						lat,lat_dir,lon,lon_dir,altitude,timestamp,speed,course,GNSS_Type,lat_raw,lon_raw,GPS_Source = GNSS_NMAE.Get_GNSS_Position.COM(Test_Flag,com_port,baud_rate)
+						lat,lat_dir,lon,lon_dir,altitude,NMEA_timestamp,speed,course,GNSS_Type,lat_raw,lon_raw,GPS_Source = GNSS_NMAE.Get_GNSS_Position.COM(Test_Flag,com_port,baud_rate)
 					if GPS_Method=="TCP":
-						lat,lat_dir,lon,lon_dir,altitude,timestamp,speed,course,GNSS_Type,lat_raw,lon_raw,GPS_Source = GNSS_NMAE.Get_GNSS_Position.TCP(Test_Flag,tcp_host,tcp_port)
+						lat,lat_dir,lon,lon_dir,altitude,NMEA_timestamp,speed,course,GNSS_Type,lat_raw,lon_raw,GPS_Source = GNSS_NMAE.Get_GNSS_Position.TCP(Test_Flag,tcp_host,tcp_port)
 					if GPS_Method=="GPSd":
-						lat,lat_dir,lon,lon_dir,altitude,timestamp,speed,course,GNSS_Type,lat_raw,lon_raw,GPS_Source = GNSS_NMAE.Get_GNSS_Position.GPSd(altitude,speed,course)
+						lat,lat_dir,lon,lon_dir,altitude,NMEA_timestamp,speed,course,GNSS_Type,lat_raw,lon_raw,GPS_Source = GNSS_NMAE.Get_GNSS_Position.GPSd(altitude,speed,course)
 					break  # 成功获取GNSS数据时退出循环
 				except Exception as err:
 					save_log(f"Retrying get_gnss_position with {GPS_Method}")
@@ -154,24 +151,24 @@ if __name__ == '__main__':
 				try:
 					lat_disp=lat_dir+" "+"%08.4f"%(float(lat_raw)/100)
 					lon_disp=lon_dir+" "+"%08.4f"%(float(lon_raw)/100)
-					if update_time==datetime.min:
+					if disp_update_time==datetime.min:
 						time_diff="00"
 					else:
-						time_diff="%02.0f"%(datetime.now()-update_time).total_seconds()
+						time_diff="%02.0f"%(datetime.now()-disp_update_time).total_seconds()
 					invert=False
-					OLED.OLED_Position(oled,lat_disp,lon_disp,GNSS_Type,update_time.strftime('%H:%M:%S'),time_diff,speed,invert)
+					OLED.OLED_Position(oled,lat_disp,lon_disp,GNSS_Type,disp_update_time.strftime('%H:%M:%S'),time_diff,speed,invert)
 				except Exception as err:
 					save_log(f"main_OLED: {err}")
 
-			if float(timestamp)-float(update_timestamp)>=NMEA_LOG_INTERVAL:
-				update_timestamp=timestamp
-				save_log(f"gpx:{lat_raw,lat_dir,lon_raw,lon_dir,altitude,timestamp,speed,course,GPS_Source,GNSS_Type,get_cpu_temperature(),get_uptime()}")
+			if float(NMEA_timestamp)-float(update_NMEA_timestamp)>=NMEA_LOG_INTERVAL:
+				update_NMEA_timestamp=NMEA_timestamp
+				save_log(f"gpx:{lat_raw,lat_dir,lon_raw,lon_dir,altitude,NMEA_timestamp,speed,course,GPS_Source,GNSS_Type,get_cpu_temperature(),get_uptime()}")
 
-			#global report_timestamp, update_time, timestamp, lat, lat_dir, lon, lon_dir, course, speed, altitude, GNSS_Type, SSID, CALLSIGN, APRS_PASSWORD, SSID_ICON, APRS_Server
+			#global report_NMEA_timestamp, disp_update_time, NMEA_timestamp, lat, lat_dir, lon, lon_dir, course, speed, altitude, GNSS_Type, SSID, CALLSIGN, APRS_PASSWORD, SSID_ICON, APRS_Server
 
-			#if float(timestamp)-float(report_timestamp)>=APRS_REPORT_INTERVAL and read_gpio(Radio_CONTROL_ENABLE,GPIO_PIN):
-			#	report_timestamp=timestamp
-			#	frame_text=(f'{SSID}>PYTHON,TCPIP*,qAC,{SSID}:!{lat}{lat_dir}/{lon}{lon_dir}{SSID_ICON}{course}/{speed}/A={altitude} APRS by RPI with GNSS Module using {GNSS_Type} at UTC {timestamp} {Message}').encode()
+			#if float(NMEA_timestamp)-float(report_NMEA_timestamp)>=APRS_REPORT_INTERVAL and read_gpio(Radio_CONTROL_ENABLE,GPIO_PIN):
+			#	report_NMEA_timestamp=NMEA_timestamp
+			#	frame_text=(f'{SSID}>PYTHON,TCPIP*,qAC,{SSID}:!{lat}{lat_dir}/{lon}{lon_dir}{SSID_ICON}{course}/{speed}/A={altitude} APRS by RPI with GNSS Module using {GNSS_Type} at UTC {NMEA_timestamp} {Message}').encode()
 			#	callsign = CALLSIGN.encode('utf-8')
 			#	password = APRS_PASSWORD.encode('utf-8')
 			#	
@@ -184,10 +181,10 @@ if __name__ == '__main__':
 			#	aprs_return=a.send(frame_text)
 			#	if aprs_return==len(frame_text)+2:
 			#		save_log('APRS Report Good Length:%s'%aprs_return)
-			#		update_time=datetime.now()
+			#		disp_update_time=datetime.now()
 			#	else:
 			#		save_log('APRS Report Return:%s Frame Length: %s Retrying..'%(aprs_return,frame_text))
-			#		update_time=datetime.min
+			#		disp_update_time=datetime.min
 
 		except Exception as err:
 			save_log(f"main: {err}")
