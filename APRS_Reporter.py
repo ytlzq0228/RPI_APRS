@@ -162,7 +162,7 @@ if __name__ == '__main__':
 				update_timestamp=timestamp
 				save_log(f"gpx:{lat_raw,lat_dir,lon_raw,lon_dir,altitude,timestamp,speed,course,GPS_Source,GNSS_Type,get_cpu_temperature(),get_uptime()}")
 
-			global report_timestamp, update_time, timestamp, lat, lat_dir, lon, lon_dir, course, speed, altitude, GNSS_Type, SSID, CALLSIGN, APRS_PASSWORD, SSID_ICON, APRS_Server
+			#global report_timestamp, update_time, timestamp, lat, lat_dir, lon, lon_dir, course, speed, altitude, GNSS_Type, SSID, CALLSIGN, APRS_PASSWORD, SSID_ICON, APRS_Server
 
 			#if float(timestamp)-float(report_timestamp)>=APRS_REPORT_INTERVAL and read_gpio(Radio_CONTROL_ENABLE,GPIO_PIN):
 			#	report_timestamp=timestamp
