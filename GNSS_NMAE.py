@@ -335,12 +335,12 @@ class Get_GNSS_Position:
 	
 	                # 处理 GNSS 状态
 	                status_map = {
-	                    0: "NO_SIGNAL",
-	                    1: "NOT FIX",
-	                    2: "2D FIX",
-	                    3: "3D FIX",
-	                    4: "RTK FIX",
-	                    5: "RTK FLOAT"
+	                    0: "NOT FIX",
+	                    1: "2D FIX",
+	                    2: "3D FIX",
+	                    3: "RTK FIX",
+	                    4: "RTK FLOAT",
+	                    5: "DR FIX"
 	                }
 	                GNSS_Type = status_map.get(data.get('status', 0), "UNKNOWN")
 	
