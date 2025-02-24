@@ -120,16 +120,18 @@ if __name__ == '__main__':
 	save_log(f"Param APRS_REPORT_INTERVAL:{APRS_REPORT_INTERVAL}")
 	save_log(f"Param NMEA_LOG_INTERVAL:{NMEA_LOG_INTERVAL}")
 
-	update_time=datetime.min
-	update_timestamp=report_timestamp='0'
-	altitude='000000'
-	speed='000'
-	course='000'
+
 	#--------------------
 	aprs_thread = threading.Thread(target=aprs_report)
 	aprs_thread.daemon = True  # 设为守护线程，确保主程序退出时线程也会退出
 	aprs_thread.start()
 	#--------------------
+
+	update_time=datetime.min
+	update_timestamp=report_timestamp='0'
+	altitude='000000'
+	speed='000'
+	course='000'
 	while True:
 		try:
 			while True:
