@@ -44,30 +44,30 @@ def get_uptime():
 
 
 def aprs_report():
-    global report_timestamp, update_time, timestamp, lat, lat_dir, lon, lon_dir, course, speed, altitude, GNSS_Type, SSID, CALLSIGN, APRS_PASSWORD, SSID_ICON, APRS_Server
-    while True:
-        try:
-            # 确保时间戳是最新的，并检查是否达到了上报间隔
-            current_timestamp = float(timestamp)
-            if current_timestamp - float(report_timestamp) >= APRS_REPORT_INTERVAL and read_gpio(Radio_CONTROL_ENABLE, GPIO_PIN):
-                report_timestamp = timestamp  # 更新上报时间戳
-                # 构建APRS消息
-                frame_text = f'{SSID}>PYTHON,TCPIP*,qAC,{SSID}:!{lat}{lat_dir}/{lon}{lon_dir}{SSID_ICON}{course}/{speed}/A={altitude} APRS by RPI with GNSS Module using {GNSS_Type} at UTC {timestamp} {Message}'
-                callsign = CALLSIGN.encode('utf-8')
-                password = APRS_PASSWORD.encode('utf-8')
-                server_host = APRS_Server.encode('utf-8')  # 将服务器地址转换为字节
+	global report_timestamp, update_time, timestamp, lat, lat_dir, lon, lon_dir, course, speed, altitude, GNSS_Type, SSID, CALLSIGN, APRS_PASSWORD, SSID_ICON, APRS_Server
+	while True:
+		try:
+			# 确保时间戳是最新的，并检查是否达到了上报间隔
+			current_timestamp = float(timestamp)
+			if current_timestamp - float(report_timestamp) >= APRS_REPORT_INTERVAL and read_gpio(Radio_CONTROL_ENABLE, GPIO_PIN):
+				report_timestamp = timestamp  # 更新上报时间戳
+				# 构建APRS消息
+				frame_text = f'{SSID}>PYTHON,TCPIP*,qAC,{SSID}:!{lat}{lat_dir}/{lon}{lon_dir}{SSID_ICON}{course}/{speed}/A={altitude} APRS by RPI with GNSS Module using {GNSS_Type} at UTC {timestamp} {Message}'
+				callsign = CALLSIGN.encode('utf-8')
+				password = APRS_PASSWORD.encode('utf-8')
+				server_host = APRS_Server.encode('utf-8')  # 将服务器地址转换为字节
 
-                # 使用APRS库建立TCP连接并发送数据
-                with aprs.TCP(callsign, password, servers=[server_host]) as a:
-                    aprs_return = a.send(frame_text)
-                    if aprs_return:
-                        save_log(f'APRS Report Success: {aprs_return}')
-                        update_time = datetime.now()
-                    else:
-                        save_log(f'APRS Report Failed: Retrying..')
-                time.sleep(APRS_REPORT_INTERVAL)  # 按照设定间隔等待
-        except Exception as err:
-            save_log(f"APRS Report Error: {err}")
+				# 使用APRS库建立TCP连接并发送数据
+				with aprs.TCP(callsign, password, servers=[server_host]) as a:
+					aprs_return = a.send(frame_text)
+					if aprs_return:
+						save_log(f'APRS Report Success: {aprs_return}')
+						update_time = datetime.now()
+					else:
+						save_log(f'APRS Report Failed: Retrying..')
+				time.sleep(APRS_REPORT_INTERVAL)  # 按照设定间隔等待
+		except Exception as err:
+			save_log(f"APRS Report Error: {err}")
 
 
 if __name__ == '__main__':
@@ -127,8 +127,8 @@ if __name__ == '__main__':
 	course='000'
 	#--------------------
 	aprs_thread = threading.Thread(target=aprs_report)
-    aprs_thread.daemon = True  # 设为守护线程，确保主程序退出时线程也会退出
-    aprs_thread.start()
+	aprs_thread.daemon = True  # 设为守护线程，确保主程序退出时线程也会退出
+	aprs_thread.start()
 	#--------------------
 	while True:
 		try:
