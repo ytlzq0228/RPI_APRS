@@ -45,6 +45,7 @@ def get_uptime():
 
 def aprs_report():
 	global report_timestamp, update_time, timestamp, lat, lat_dir, lon, lon_dir, course, speed, altitude, GNSS_Type, SSID, CALLSIGN, APRS_PASSWORD, SSID_ICON, APRS_Server
+	timestamp='0'
 	while True:
 		try:
 			if float(timestamp)-float(report_timestamp)>=APRS_REPORT_INTERVAL and read_gpio(Radio_CONTROL_ENABLE,GPIO_PIN):
@@ -133,7 +134,7 @@ if __name__ == '__main__':
 	altitude='000000'
 	speed='000'
 	course='000'
-	timestamp='000000'
+	timestamp='0'
 	while True:
 		try:
 			while True:
