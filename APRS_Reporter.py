@@ -47,24 +47,25 @@ def aprs_report():
 	global report_timestamp, update_time, timestamp, lat, lat_dir, lon, lon_dir, course, speed, altitude, GNSS_Type, SSID, CALLSIGN, APRS_PASSWORD, SSID_ICON, APRS_Server
 	while True:
 		try:
-			# 确保时间戳是最新的，并检查是否达到了上报间隔
-			current_timestamp = float(timestamp)
-			if current_timestamp - float(report_timestamp) >= APRS_REPORT_INTERVAL and read_gpio(Radio_CONTROL_ENABLE, GPIO_PIN):
-				report_timestamp = timestamp  # 更新上报时间戳
-				# 构建APRS消息
-				frame_text = f'{SSID}>PYTHON,TCPIP*,qAC,{SSID}:!{lat}{lat_dir}/{lon}{lon_dir}{SSID_ICON}{course}/{speed}/A={altitude} APRS by RPI with GNSS Module using {GNSS_Type} at UTC {timestamp} {Message}'
+			if float(timestamp)-float(report_timestamp)>=APRS_REPORT_INTERVAL and read_gpio(Radio_CONTROL_ENABLE,GPIO_PIN):
+				report_timestamp=timestamp
+				frame_text=(f'{SSID}>PYTHON,TCPIP*,qAC,{SSID}:!{lat}{lat_dir}/{lon}{lon_dir}{SSID_ICON}{course}/{speed}/A={altitude} APRS by RPI with GNSS Module using {GNSS_Type} at UTC {timestamp} {Message}').encode()
 				callsign = CALLSIGN.encode('utf-8')
 				password = APRS_PASSWORD.encode('utf-8')
-				server_host = APRS_Server.encode('utf-8')  # 将服务器地址转换为字节
-
-				# 使用APRS库建立TCP连接并发送数据
-				with aprs.TCP(callsign, password, servers=[server_host]) as a:
-					aprs_return = a.send(frame_text)
-					if aprs_return:
-						save_log(f'APRS Report Success: {aprs_return}')
-						update_time = datetime.now()
-					else:
-						save_log(f'APRS Report Failed: Retrying..')
+				
+				# 定义 APRS 服务器地址和端口（字节形式）
+				server_host = APRS_Server.encode('utf-8')  # 使用 rotate.aprs2.net 服务器和端口 14580
+				
+				# 创建 TCP 对象并传入服务器信息
+				a = aprs.TCP(callsign, password, servers=[server_host])
+				a.start()
+				aprs_return=a.send(frame_text)
+				if aprs_return==len(frame_text)+2:
+					save_log('APRS Report Good Length:%s'%aprs_return)
+					update_time=datetime.now()
+				else:
+					save_log('APRS Report Return:%s Frame Length: %s Retrying..'%(aprs_return,frame_text))
+					update_time=datetime.min
 				time.sleep(APRS_REPORT_INTERVAL)  # 按照设定间隔等待
 		except Exception as err:
 			save_log(f"APRS Report Error: {err}")
