@@ -9,6 +9,7 @@ import configparser
 from gps3 import gps3
 from datetime import datetime
 import socket
+from save_log import save_log
 
 from Display import OLED
 
@@ -24,20 +25,20 @@ VERSION='NMEA_0218.01'
 config = configparser.ConfigParser()
 config.read(CONFIG_FILE)
 
-LOG_FILE_PATH=config['SFTP_Config']['LOCAL_LOG_FILE_PATH']
-SSID=config['SSID_Config']['SSID']
-LOG_FILE = f"{datetime.now().strftime('%Y-%m-%d')}-{LOG_FILE_PATH}-{SSID}"
-
-def save_log(result):
-	try:
-		print(result)
-		now = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
-		f = open(LOG_FILE,'a')
-		f.writelines("\n%s ver %s log:%s" %(now,VERSION,result))
-		f.flush()
-		f.close()
-	except Exception as err:
-		print(err)
+#LOG_FILE_PATH=config['SFTP_Config']['LOCAL_LOG_FILE_PATH']
+#SSID=config['SSID_Config']['SSID']
+#LOG_FILE = f"{datetime.now().strftime('%Y-%m-%d')}-{LOG_FILE_PATH}-{SSID}"
+#
+#def save_log(result):
+#	try:
+#		print(result)
+#		now = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
+#		f = open(LOG_FILE,'a')
+#		f.writelines("\n%s ver %s log:%s" %(now,VERSION,result))
+#		f.flush()
+#		f.close()
+#	except Exception as err:
+#		print(err)
 
 class NMEA_Processing:
 	def NMEA_GGA(sentence,timestamp):
