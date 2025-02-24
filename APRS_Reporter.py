@@ -13,7 +13,7 @@ from watchdog import boot_watchdog
 import GNSS_NMAE
 from Radio_GPIO import read_gpio
 from save_log import save_log
-
+import threading
 
 # 设置全局的socket超时时间，例如10秒
 socket.setdefaulttimeout(5)
