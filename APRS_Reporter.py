@@ -132,6 +132,7 @@ if __name__ == '__main__':
 	altitude='000000'
 	speed='000'
 	course='000'
+	timestamp='000000'
 	while True:
 		try:
 			while True:
