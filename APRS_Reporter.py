@@ -54,7 +54,7 @@ def aprs_report():
 
 			if float(NMEA_timestamp)-float(report_NMEA_timestamp)>=APRS_REPORT_INTERVAL and read_gpio(Radio_CONTROL_ENABLE,GPIO_PIN):
 				report_NMEA_timestamp=NMEA_timestamp
-				frame_text=(f'{SSID}>PYTHON,TCPIP*,qAC,{SSID}:!{lat}{lat_dir}/{lon}{lon_dir}{SSID_ICON}{course}/{speed}/A={altitude} APRS by RPI with GNSS Module using {GNSS_Type} at UTC {NMEA_timestamp} {Message}').encode()
+				frame_text=(f'{SSID}>PYTHON,TCPIP*,qAC,{SSID}:!{lat}{lat_dir}/{lon}{lon_dir}{SSID_ICON}{course}/{speed}/A={altitude} APRS by RPI with GNSS {GNSS_Type} at UTC {NMEA_timestamp} {Message}').encode()
 				callsign = CALLSIGN.encode('utf-8')
 				password = APRS_PASSWORD.encode('utf-8')
 				
