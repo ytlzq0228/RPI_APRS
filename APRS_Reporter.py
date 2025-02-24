@@ -47,6 +47,11 @@ def aprs_report():
 	global report_NMEA_timestamp, disp_update_time, NMEA_timestamp, lat, lat_dir, lon, lon_dir, course, speed, altitude, GNSS_Type, SSID, CALLSIGN, APRS_PASSWORD, SSID_ICON, APRS_Server
 	while True:
 		try:
+			# 确保 NMEA_timestamp 已经被定义
+			if 'NMEA_timestamp' not in globals():
+				time.sleep(1)  # 等待1秒再检查
+				continue
+
 			if float(NMEA_timestamp)-float(report_NMEA_timestamp)>=APRS_REPORT_INTERVAL and read_gpio(Radio_CONTROL_ENABLE,GPIO_PIN):
 				report_NMEA_timestamp=NMEA_timestamp
 				frame_text=(f'{SSID}>PYTHON,TCPIP*,qAC,{SSID}:!{lat}{lat_dir}/{lon}{lon_dir}{SSID_ICON}{course}/{speed}/A={altitude} APRS by RPI with GNSS Module using {GNSS_Type} at UTC {NMEA_timestamp} {Message}').encode()
