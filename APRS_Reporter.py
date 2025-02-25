@@ -19,7 +19,7 @@ import threading
 socket.setdefaulttimeout(5)
 
 CONFIG_FILE='/etc/GPS_config.ini'
-VERSION='main_0218.01'
+VERSION='main_0225.01'
 
 # 读取配置文件
 config = configparser.ConfigParser()
