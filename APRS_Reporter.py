@@ -48,12 +48,12 @@ def aprs_report():
 	while True:
 		try:
 			# 确保 NMEA_timestamp 已经被定义
-			if 'NMEA_timestamp' not in globals():
+			if 'current_timestamp' not in globals():
 				time.sleep(1)  # 等待1秒再检查
 				continue
 
-			if float(NMEA_timestamp)-float(report_NMEA_timestamp)>=APRS_REPORT_INTERVAL and read_gpio(Radio_CONTROL_ENABLE,GPIO_PIN):
-				report_NMEA_timestamp=NMEA_timestamp
+			if float(current_timestamp)-float(report_APRS_timestamp)>=APRS_REPORT_INTERVAL and read_gpio(Radio_CONTROL_ENABLE,GPIO_PIN):
+				report_APRS_timestamp=current_timestamp
 				frame_text=(f'{SSID}>PYTHON,TCPIP*,qAC,{SSID}:!{lat}{lat_dir}/{lon}{lon_dir}{SSID_ICON}{course}/{speed}/A={altitude} APRS by RPI with GNSS {GNSS_Type} at UTC {NMEA_timestamp} {Message}').encode()
 				callsign = CALLSIGN.encode('utf-8')
 				password = APRS_PASSWORD.encode('utf-8')
@@ -151,7 +151,7 @@ if __name__ == '__main__':
 				except Exception as err:
 					save_log(f"Retrying get_gnss_position with {GPS_Method}")
 					time.sleep(0.1)  # 等待0.1秒后重试
-			
+			current_timestamp=time.time()
 			if OLED_Enable:
 				try:
 					lat_disp=lat_dir+" "+"%08.4f"%(float(lat_raw)/100)
@@ -165,8 +165,8 @@ if __name__ == '__main__':
 				except Exception as err:
 					save_log(f"main_OLED: {err}")
 
-			if float(NMEA_timestamp)-float(update_NMEA_timestamp)>=NMEA_LOG_INTERVAL:
-				update_NMEA_timestamp=NMEA_timestamp
+			if float(current_timestamp)-float(log_timestamp)>=NMEA_LOG_INTERVAL:
+				log_timestamp=current_timestamp
 				save_log(f"gpx:{lat_raw,lat_dir,lon_raw,lon_dir,altitude,NMEA_timestamp,speed,course,GPS_Source,GNSS_Type,get_cpu_temperature(),get_uptime()}")
 
 			#global report_NMEA_timestamp, disp_update_time, NMEA_timestamp, lat, lat_dir, lon, lon_dir, course, speed, altitude, GNSS_Type, SSID, CALLSIGN, APRS_PASSWORD, SSID_ICON, APRS_Server
