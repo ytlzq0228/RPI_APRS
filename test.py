@@ -28,3 +28,4 @@ for new_data in gps_socket:
     data_stream.unpack(new_data)
     data = data_stream.TPV
     print(data)
+    print(int(data.get('mode', 0)))
