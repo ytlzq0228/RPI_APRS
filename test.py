@@ -1,5 +1,15 @@
-import gps  # 导入gps模块
-
+import sys
+import os
+import time
+import re
+import serial
+import json
+import subprocess
+import configparser
+from gps3 import gps3
+from datetime import datetime
+import socket
+from save_log import save_log
 # 创建一个gps会话
 gps_socket = gps3.GPSDSocket()
 data_stream = gps3.DataStream()
