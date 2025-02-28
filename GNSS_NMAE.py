@@ -292,13 +292,8 @@ class Get_GNSS_Position:
 				if not new_data:  # 跳过空数据
 					continue
 	
-				try:
-					data = json.loads(new_data)
-				except json.JSONDecodeError:
-					save_log("GPSd received invalid JSON")
-					continue
-	
 				data_stream.unpack(new_data)
+				data = data_stream.TPV
 	
 				if data.get('class') == 'TPV':
 					# 纬度转换
