@@ -1,52 +1,22 @@
-import sys
-import os
-import time
-import re
-import serial
-import configparser
-import aprs
-from datetime import datetime
-import socket
-from Display import OLED
-from watchdog import reset_watchdog
-from watchdog import boot_watchdog
-import GNSS_NMAE
-from Radio_GPIO import read_gpio
+import gps  # 导入gps模块
 
+# 创建一个gps会话
+session = gps.gps("localhost", "2947")
+session.stream(gps.WATCH_ENABLE | gps.WATCH_NEWSTYLE)
 
-# 设置全局的socket超时时间，例如10秒
-socket.setdefaulttimeout(5)
-
-CONFIG_FILE='/etc/GPS_config.ini'
-LOG_FILE='/var/log/GPS_NMEA.log'
-VERSION='main_0117.01'
-Radio_ENABLE_PIN=13
-
-def save_log(result):
-    try:
-        print(result)
-        now = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
-        f = open(LOG_FILE,'a')
-        f.writelines("\n%s ver %s log:%s" %(now,VERSION,result))
-        f.flush()
-        f.close()
-    except Exception as err:
-        print(err)
-
-
-
-if __name__ == '__main__':
-    print(read_gpio(Radio_ENABLE_PIN))
-
-#sudo apt-get update
-#sudo apt-get -y upgrade
-#sudo apt-get -y install i2c-tools python3-smbus python-smbus
-#sudo apt-get -y install python3-pip python3-pil
-#sudo pip3 install --upgrade setuptools
-#sudo pip3 install --upgrade adafruit-python-shell
-#sudo pip3 install adafruit-circuitpython-ssd1306
-
-
-
-
-
+try:
+    while True:
+        try:
+            report = session.next()  # 从gpsd获取下一条报告
+            # 检查报告是否是NMEA原始数据
+            if report['class'] == 'RAW' and 'nmea' in report:
+                print(report['nmea'])  # 打印NMEA原始句子
+        except KeyError:
+            pass  # 忽略关键字错误
+        except KeyboardInterrupt:
+            break  # 允许手动中断程序
+        except StopIteration:
+            session = None
+            print("GPSD has terminated")
+except Exception as e:
+    print("Error occurred:", e)

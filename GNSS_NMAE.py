@@ -252,108 +252,108 @@ class Get_GNSS_Position:
 
 							
 							if data['status'] == 0:
-							    GNSS_Type = "NO_SINGAL"
+								GNSS_Type = "NO_SINGAL"
 							elif data['status'] == 1:
-							    GNSS_Type = "NOT FIX"
+								GNSS_Type = "NOT FIX"
 							elif data['status'] == 2:
-							    GNSS_Type = "2D FIX"
+								GNSS_Type = "2D FIX"
 							elif data['status'] == 3:
-							    GNSS_Type = "3D FIX"
+								GNSS_Type = "3D FIX"
 							elif data['status'] == 4:
-							    GNSS_Type = "RTK FIX"
+								GNSS_Type = "RTK FIX"
 							elif data['status'] == 5:
-							    GNSS_Type = "RTK FLOAT"
+								GNSS_Type = "RTK FLOAT"
 
 							GPS_Source="GPSd_Device:%s"%data['device']
 							if lat and lon:
 								return lat,lat_dir,lon,lon_dir,altitude,timestamp,speed,course,GNSS_Type,lat_raw,lon_raw,GPS_Source
-									  #4004.83 N 11619.38 E    000211   092344.00 000   066    GPRMC     4004.829687 11619.375852
+									  #4004.83 N 11619.38 E	000211   092344.00 000   066	GPRMC	 4004.829687 11619.375852
 				time.sleep(0.01)
 		except Exception as e:
 			save_log(f"Error fetching GPSd data: {e}")
 
 
 	def GPSd(altitude, speed, course):
-	    """通过 gps3 获取 GPS 数据"""
-	    gps_socket = gps3.GPSDSocket()
-	    data_stream = gps3.DataStream()
-	    
-	    # 连接到 GPSD
-	    gps_socket.connect(host="127.0.0.1", port=2947)
-	    gps_socket.watch()
+		"""通过 gps3 获取 GPS 数据"""
+		gps_socket = gps3.GPSDSocket()
+		data_stream = gps3.DataStream()
+		
+		# 连接到 GPSD
+		gps_socket.connect(host="127.0.0.1", port=2947)
+		gps_socket.watch()
 	
-	    timeout = time.time() + 60  # 60秒超时
-	    try:
-	        for new_data in gps_socket:
-	            if time.time() > timeout:
-	                save_log('GPSd no GNSS Signal in 60s')
-	                return None
-	            
-	            if not new_data:  # 跳过空数据
-	                continue
+		timeout = time.time() + 60  # 60秒超时
+		try:
+			for new_data in gps_socket:
+				if time.time() > timeout:
+					save_log('GPSd no GNSS Signal in 60s')
+					return None
+				
+				if not new_data:  # 跳过空数据
+					continue
 	
-	            try:
-	                data = json.loads(new_data)
-	            except json.JSONDecodeError:
-	                save_log("GPSd received invalid JSON")
-	                continue
+				try:
+					data = json.loads(new_data)
+				except json.JSONDecodeError:
+					save_log("GPSd received invalid JSON")
+					continue
 	
-	            data_stream.unpack(new_data)
+				data_stream.unpack(new_data)
 	
-	            if data.get('class') == 'TPV' and int(data.get('mode', 0)) > 2:
-	                # 纬度转换
-	                decimal_lat = float(data.get('lat', 0))
-	                lat_dir = "N" if decimal_lat >= 0 else "S"
-	                lat_degrees = int(abs(decimal_lat))
-	                lat_minutes = (abs(decimal_lat) - lat_degrees) * 60
+				if data.get('class') == 'TPV':
+					# 纬度转换
+					decimal_lat = float(data.get('lat', 0))
+					lat_dir = "N" if decimal_lat >= 0 else "S"
+					lat_degrees = int(abs(decimal_lat))
+					lat_minutes = (abs(decimal_lat) - lat_degrees) * 60
 	
-	                # 经度转换
-	                decimal_lon = float(data.get('lon', 0))
-	                lon_dir = "E" if decimal_lon >= 0 else "W"
-	                lon_degrees = int(abs(decimal_lon))
-	                lon_minutes = (abs(decimal_lon) - lon_degrees) * 60
+					# 经度转换
+					decimal_lon = float(data.get('lon', 0))
+					lon_dir = "E" if decimal_lon >= 0 else "W"
+					lon_degrees = int(abs(decimal_lon))
+					lon_minutes = (abs(decimal_lon) - lon_degrees) * 60
 	
-	                # 格式化 APRS 格式
-	                lat = f"{lat_degrees:02d}{lat_minutes:05.2f}"
-	                lon = f"{lon_degrees:03d}{lon_minutes:05.2f}"
+					# 格式化 APRS 格式
+					lat = f"{lat_degrees:02d}{lat_minutes:05.2f}"
+					lon = f"{lon_degrees:03d}{lon_minutes:05.2f}"
 	
-	                # 格式化 NMEA 格式
-	                lat_raw = f"{lat_degrees:02d}{lat_minutes:09.6f}"
-	                lon_raw = f"{lon_degrees:03d}{lon_minutes:09.6f}"
+					# 格式化 NMEA 格式
+					lat_raw = f"{lat_degrees:02d}{lat_minutes:09.6f}"
+					lon_raw = f"{lon_degrees:03d}{lon_minutes:09.6f}"
 	
-	                # 处理海拔数据
-	                altitude = f"{float(data.get('alt', 0)) * 3.28:06.0f}"
+					# 处理海拔数据
+					altitude = f"{float(data.get('alt', 0)) * 3.28:06.0f}"
 	
-	                # 处理时间戳
-	                timestamp = datetime.strptime(
-	                    data.get('time', "1970-01-01T00:00:00.000Z"),
-	                    "%Y-%m-%dT%H:%M:%S.%fZ"
-	                ).strftime("%H%M%S.00")
+					# 处理时间戳
+					timestamp = datetime.strptime(
+						data.get('time', "1970-01-01T00:00:00.000Z"),
+						"%Y-%m-%dT%H:%M:%S.%fZ"
+					).strftime("%H%M%S.00")
 	
-	                # 处理速度和航向
-	                speed = f"{float(data.get('speed', 0)) * 3600 / 1852:03.0f}"
-	                course = f"{float(data.get('track', 0)):03.0f}"
+					# 处理速度和航向
+					speed = f"{float(data.get('speed', 0)) * 3600 / 1852:03.0f}"
+					course = f"{float(data.get('track', 0)):03.0f}"
 	
-	                # 处理 GNSS 状态
-	                status_map = {
-	                    0: "NOT FIX",
-	                    1: "2D FIX",
-	                    2: "3D FIX",
-	                    3: "RTK FIX",
-	                    4: "RTK FLOAT",
-	                    5: "DR FIX"
-	                }
-	                GNSS_Type = status_map.get(data.get('status', 0), "UNKNOWN")
+					# 处理 GNSS 状态
+					status_map = {
+						0: "NOT FIX",
+						1: "2D FIX",
+						2: "3D FIX",
+						3: "RTK FIX",
+						4: "RTK FLOAT",
+						5: "DR FIX"
+					}
+					GNSS_Type = status_map.get(data.get('status', 0), "UNKNOWN")
 	
-	                GPS_Source = f"GPSd_Device:{data.get('device', 'Unknown')}"
+					GPS_Source = f"GPSd_Device:{data.get('device', 'Unknown')}"
 	
-	                return lat, lat_dir, lon, lon_dir, altitude, timestamp, speed, course, GNSS_Type, lat_raw, lon_raw, GPS_Source
-	            
-	            time.sleep(0.01)  # 避免 CPU 100% 占用
+					return lat, lat_dir, lon, lon_dir, altitude, timestamp, speed, course, GNSS_Type, lat_raw, lon_raw, GPS_Source
+				
+				time.sleep(0.01)  # 避免 CPU 100% 占用
 	
-	    except Exception as e:
-	        save_log(f"Error fetching GPSd data: {e}")
-	        return None
+		except Exception as e:
+			save_log(f"Error fetching GPSd data: {e}")
+			return None
 
 
 def add_gps_source(source):
