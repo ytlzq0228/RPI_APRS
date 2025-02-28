@@ -10,6 +10,7 @@ from gps3 import gps3
 from datetime import datetime
 import socket
 from save_log import save_log
+
 # 创建一个gps会话
 gps_socket = gps3.GPSDSocket()
 data_stream = gps3.DataStream()

@@ -295,7 +295,7 @@ class Get_GNSS_Position:
 				data_stream.unpack(new_data)
 				data = data_stream.TPV
 	
-				if data.get('class') == 'TPV':
+				if data and data.get('mode', 0)>1:
 					# 纬度转换
 					decimal_lat = float(data.get('lat', 0))
 					lat_dir = "N" if decimal_lat >= 0 else "S"
