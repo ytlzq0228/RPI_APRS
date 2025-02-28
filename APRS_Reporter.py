@@ -19,7 +19,7 @@ import threading
 socket.setdefaulttimeout(5)
 
 CONFIG_FILE='/etc/GPS_config.ini'
-VERSION='main_0225.01'
+VERSION='main_0228.01'
 
 # 读取配置文件
 config = configparser.ConfigParser()
@@ -133,7 +133,7 @@ if __name__ == '__main__':
 	aprs_thread.start()
 	#--------------------
 	disp_update_time=datetime.min
-	update_NMEA_timestamp=report_NMEA_timestamp=NMEA_timestamp='0'
+	log_timestamp=report_APRS_timestamp='0'
 	altitude='000000'
 	speed='000'
 	course='000'

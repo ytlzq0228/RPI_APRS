@@ -300,7 +300,7 @@ class Get_GNSS_Position:
 	
 				data_stream.unpack(new_data)
 	
-				if data.get('class') == 'TPV' and int(data.get('mode', 0)) > 2:
+				if data.get('class') == 'TPV' and int(data.get('mode', 0)) > 1:
 					# 纬度转换
 					decimal_lat = float(data.get('lat', 0))
 					lat_dir = "N" if decimal_lat >= 0 else "S"
