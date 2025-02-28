@@ -26,4 +26,4 @@ for new_data in gps_socket:
         continue
     data_stream.unpack(new_data)
     data = data_stream.TPV
-    print(date)
+    print(data)
