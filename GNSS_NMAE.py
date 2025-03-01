@@ -276,7 +276,7 @@ class Get_GNSS_Position:
 	def GPSd(altitude, speed, course):
 		"""通过 gps3 获取 GPS 数据"""
 		gps_socket = gps3.GPSDSocket()
-		data_stream = gps3.DataStream()
+		#data_stream = gps3.DataStream()
 		
 		# 连接到 GPSD
 		gps_socket.connect(host="127.0.0.1", port=2947)
@@ -298,7 +298,7 @@ class Get_GNSS_Position:
 					save_log("GPSd received invalid JSON")
 					continue
 	
-				data_stream.unpack(new_data)
+				#data_stream.unpack(new_data)
 	
 				if data.get('class') == 'TPV' and int(data.get('mode', 0)) > 1:
 					# 纬度转换
