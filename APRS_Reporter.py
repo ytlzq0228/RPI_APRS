@@ -44,10 +44,10 @@ def get_uptime():
 
 
 def aprs_report():
-	global report_NMEA_timestamp, disp_update_time, NMEA_timestamp, lat, lat_dir, lon, lon_dir, course, speed, altitude, GNSS_Type, SSID, CALLSIGN, APRS_PASSWORD, SSID_ICON, APRS_Server
+	global report_APRS_timestamp, disp_update_time, NMEA_timestamp, lat, lat_dir, lon, lon_dir, course, speed, altitude, GNSS_Type, SSID, CALLSIGN, APRS_PASSWORD, SSID_ICON, APRS_Server
 	while True:
 		try:
-			# 确保 NMEA_timestamp 已经被定义
+			# 确保 current_timestamp 已经被定义
 			if 'current_timestamp' not in globals():
 				time.sleep(1)  # 等待1秒再检查
 				continue
