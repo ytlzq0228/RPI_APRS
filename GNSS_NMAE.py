@@ -19,7 +19,7 @@ from watchdog import reset_watchdog
 socket.setdefaulttimeout(5)
 
 CONFIG_FILE='/etc/GPS_config.ini'
-VERSION='NMEA_0218.01'
+VERSION='NMEA_0301.01'
 
 # 读取配置文件
 config = configparser.ConfigParser()
