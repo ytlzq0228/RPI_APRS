@@ -133,7 +133,7 @@ if __name__ == '__main__':
 	aprs_thread.start()
 	#--------------------
 	disp_update_time=datetime.min
-	#log_timestamp=report_APRS_timestamp='0'
+	log_timestamp=report_APRS_timestamp='0'
 	altitude='000000'
 	speed='000'
 	course='000'
