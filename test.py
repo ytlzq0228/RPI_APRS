@@ -30,10 +30,11 @@ def index():
 
 def gps_data():
     try:
-        new_data = gps_socket.next()  # 获取新的GPS数据
+        new_data = gps_socket  # 获取新的GPS数据
         if new_data:
             try:
                 data = json.loads(new_data)
+                print(data)
             except json.JSONDecodeError:
                 print("GPSd received invalid JSON")
     except Exception as e:
