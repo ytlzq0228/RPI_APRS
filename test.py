@@ -34,12 +34,12 @@ def gps_data():
             if new_data:
                 try:
                     data = json.loads(new_data)
-                    print(data)
+                    return jsonify(data)
                 except json.JSONDecodeError:
                     print("GPSd received invalid JSON")
     except Exception as e:
         data = {'error': str(e)}
-    return jsonify(data)
+    
 
 if __name__ == '__main__':
     app.run(debug=True, host='0.0.0.0')
