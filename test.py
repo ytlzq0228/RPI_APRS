@@ -31,13 +31,11 @@ def gps_data():
     try:
         new_data = gps_socket.next()  # 获取新的GPS数据
         if new_data:
-            data_stream.unpack(new_data)
-            data = {
-                'latitude': data_stream.TPV['lat'],
-                'longitude': data_stream.TPV['lon'],
-                'altitude': data_stream.TPV['alt'],
-                'speed': data_stream.TPV['speed']
-            }
+            try:
+                data = json.loads(new_data)
+            except json.JSONDecodeError:
+                save_log("GPSd received invalid JSON")
+                continue
     except Exception as e:
         data = {'error': str(e)}
     return jsonify(data)
