@@ -26,6 +26,7 @@ def index():
     '''
 
 @app.route('/gps-data')
+
 def gps_data():
     try:
         new_data = gps_socket.next()  # 获取新的GPS数据
@@ -35,8 +36,7 @@ def gps_data():
                 'latitude': data_stream.TPV['lat'],
                 'longitude': data_stream.TPV['lon'],
                 'altitude': data_stream.TPV['alt'],
-                'speed': data_stream.TPV['speed'],
-                'satellites': len(data_stream.satellites)
+                'speed': data_stream.TPV['speed']
             }
     except Exception as e:
         data = {'error': str(e)}
