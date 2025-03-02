@@ -1,4 +1,4 @@
-from flask import Flask, jsonify, render_template_string
+from flask import Flask, jsonify
 from gps3 import gps3
 import json
 
@@ -13,93 +13,59 @@ app = Flask(__name__)
 @app.route('/')
 def index():
     return '''
-        <h1>GPS and PPS Data</h1>
-        <h2>GPS Data</h2>
-        <table id="gps-data">
-            <tr>
-                <th>Latitude</th>
-                <th>Longitude</th>
-                <th>Altitude</th>
-                <th>Speed</th>
-                <th>Time</th>
-            </tr>
-        </table>
-        <h2>PPS Data</h2>
-        <table id="pps-data">
-            <tr>
-                <th>Time</th>
-                <th>Precision</th>
-            </tr>
-        </table>
+        <h1>GPS Satellite SNR Chart</h1>
+        <div>
+            <canvas id="snrChart" width="800" height="400"></canvas>
+        </div>
+        <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
         <script>
-            async function fetchData() {
-                const gpsResponse = await fetch('/gps-data');
-                const gpsData = await gpsResponse.json();
-                const gpsTable = document.getElementById('gps-data');
-                if (gpsData.class === 'TPV') {
-                    gpsTable.innerHTML = `
-                        <tr>
-                            <th>Latitude</th>
-                            <th>Longitude</th>
-                            <th>Altitude</th>
-                            <th>Speed</th>
-                            <th>Time</th>
-                        </tr>
-                        <tr>
-                            <td>${gpsData.lat || 'N/A'}</td>
-                            <td>${gpsData.lon || 'N/A'}</td>
-                            <td>${gpsData.alt || 'N/A'} m</td>
-                            <td>${gpsData.speed || 'N/A'} m/s</td>
-                            <td>${gpsData.time || 'N/A'}</td>
-                        </tr>
-                    `;
+            const ctx = document.getElementById('snrChart').getContext('2d');
+            const snrChart = new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: [],
+                    datasets: [{
+                        label: 'Satellite SNR',
+                        data: [],
+                        backgroundColor: 'rgba(255, 99, 132, 0.2)',
+                        borderColor: 'rgba(255, 99, 132, 1)',
+                        borderWidth: 1
+                    }]
+                },
+                options: {
+                    scales: {
+                        y: {
+                            beginAtZero: true
+                        }
+                    }
                 }
-                
-                const ppsResponse = await fetch('/pps-data');
-                const ppsData = await ppsResponse.json();
-                const ppsTable = document.getElementById('pps-data');
-                if (ppsData.class === 'PPS') {
-                    ppsTable.innerHTML = `
-                        <tr>
-                            <th>Time</th>
-                            <th>Precision</th>
-                        </tr>
-                        <tr>
-                            <td>${ppsData.time || 'N/A'}</td>
-                            <td>${ppsData.precision || 'N/A'}</td>
-                        </tr>
-                    `;
-                }
+            });
 
-                setTimeout(fetchData, 1000);  // 更新频率为1秒
+            async function fetchSNRData() {
+                const response = await fetch('/sky-data');
+                const data = await response.json();
+                if (data.satellites) {
+                    snrChart.data.labels = data.satellites.map(sat => `PRN ${sat.PRN}`);
+                    snrChart.data.datasets[0].data = data.satellites.map(sat => sat.snr || 0);
+                    snrChart.update();
+                }
+                setTimeout(fetchSNRData, 5000);  // 每5秒更新一次
             }
-            fetchData(); // 初始化调用
+            fetchSNRData();
         </script>
     '''
 
-@app.route('/gps-data')
-def gps_data():
+@app.route('/sky-data')
+def sky_data():
     for new_data in gps_socket:
         if new_data:
             try:
                 data = json.loads(new_data)
-                if data.get('class') == 'TPV':
+                if data.get('class') == 'SKY':
                     return jsonify(data)
             except json.JSONDecodeError:
                 print("GPSd received invalid JSON")
-    return jsonify({'error': 'No TPV data available'})
-
-@app.route('/pps-data')
-def pps_data():
-    for new_data in gps_socket:
-        if new_data:
-            try:
-                data = json.loads(new_data)
-                if data.get('class') == 'PPS':
-                    return jsonify(data)
-            except json.JSONDecodeError:
-                print("GPSd received invalid JSON")
-    return jsonify({'error': 'No PPS data available'})
+    return jsonify({'error': 'No SKY data available'})
 
 if __name__ == '__main__':
     app.run(debug=True, host='0.0.0.0')
