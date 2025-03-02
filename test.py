@@ -1,5 +1,6 @@
 from flask import Flask, jsonify
 from gps3 import gps3
+import json
 
 # 创建GPSD连接
 gps_socket = gps3.GPSDSocket()
