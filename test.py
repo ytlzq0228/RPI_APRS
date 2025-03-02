@@ -20,7 +20,7 @@ def index():
                 const response = await fetch('/gps-data');
                 const data = await response.json();
                 document.getElementById('gps-data').innerHTML = `<pre>${JSON.stringify(data, null, 2)}</pre>`;
-                setTimeout(fetchGPSData, 1000);  // 每秒更新数据
+                setTimeout(fetchGPSData, 500);  // 每500ms更新数据
             }
             fetchGPSData();
         </script>
