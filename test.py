@@ -14,23 +14,21 @@ app = Flask(__name__)
 def index():
     return '''
         <h1>GPS Data</h1>
-        <div id="gps-data"></div>
-        <div id="pps-data"></div>
+        <div id="gps-data">Waiting for GPS data...</div>
+        <div id="pps-data">Waiting for PPS data...</div>
         <script>
-            async function fetchGPSData() {
-                const response = await fetch('/gps-data');
-                const data = await response.json();
-                document.getElementById('gps-data').innerHTML = `<pre>${JSON.stringify(data, null, 2)}</pre>`;
-                setTimeout(fetchGPSData, 500);  // 每500ms更新GPS数据
+            async function fetchData() {
+                const gpsResponse = await fetch('/gps-data');
+                const gpsData = await gpsResponse.json();
+                document.getElementById('gps-data').innerHTML = `<pre>${JSON.stringify(gpsData, null, 2)}</pre>`;
+                
+                const ppsResponse = await fetch('/pps-data');
+                const ppsData = await ppsResponse.json();
+                document.getElementById('pps-data').innerHTML = `<pre>${JSON.stringify(ppsData, null, 2)}</pre>`;
+
+                setTimeout(fetchData, 500);  // 更新频率为1秒
             }
-            async function fetchPPSData() {
-                const response = await fetch('/pps-data');
-                const data = await response.json();
-                document.getElementById('pps-data').innerHTML = `<pre>${JSON.stringify(data, null, 2)}</pre>`;
-                setTimeout(fetchPPSData, 500);  // 每1000ms更新PPS数据
-            }
-            fetchGPSData();
-            fetchPPSData();
+            fetchData(); // 初始化调用
         </script>
     '''
 
