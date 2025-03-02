@@ -13,20 +13,65 @@ app = Flask(__name__)
 @app.route('/')
 def index():
     return '''
-        <h1>GPS Data</h1>
-        <div id="gps-data">Waiting for GPS data...</div>
-        <div id="pps-data">Waiting for PPS data...</div>
+        <h1>GPS and PPS Data</h1>
+        <h2>GPS Data</h2>
+        <table id="gps-data">
+            <tr>
+                <th>Latitude</th>
+                <th>Longitude</th>
+                <th>Altitude</th>
+                <th>Speed</th>
+                <th>Time</th>
+            </tr>
+        </table>
+        <h2>PPS Data</h2>
+        <table id="pps-data">
+            <tr>
+                <th>Time</th>
+                <th>Precision</th>
+            </tr>
+        </table>
         <script>
             async function fetchData() {
                 const gpsResponse = await fetch('/gps-data');
                 const gpsData = await gpsResponse.json();
-                document.getElementById('gps-data').innerHTML = `<pre>${JSON.stringify(gpsData, null, 2)}</pre>`;
+                const gpsTable = document.getElementById('gps-data');
+                if (gpsData.class === 'TPV') {
+                    gpsTable.innerHTML = `
+                        <tr>
+                            <th>Latitude</th>
+                            <th>Longitude</th>
+                            <th>Altitude</th>
+                            <th>Speed</th>
+                            <th>Time</th>
+                        </tr>
+                        <tr>
+                            <td>${gpsData.lat || 'N/A'}</td>
+                            <td>${gpsData.lon || 'N/A'}</td>
+                            <td>${gpsData.alt || 'N/A'} m</td>
+                            <td>${gpsData.speed || 'N/A'} m/s</td>
+                            <td>${gpsData.time || 'N/A'}</td>
+                        </tr>
+                    `;
+                }
                 
                 const ppsResponse = await fetch('/pps-data');
                 const ppsData = await ppsResponse.json();
-                document.getElementById('pps-data').innerHTML = `<pre>${JSON.stringify(ppsData, null, 2)}</pre>`;
+                const ppsTable = document.getElementById('pps-data');
+                if (ppsData.class === 'PPS') {
+                    ppsTable.innerHTML = `
+                        <tr>
+                            <th>Time</th>
+                            <th>Precision</th>
+                        </tr>
+                        <tr>
+                            <td>${ppsData.time || 'N/A'}</td>
+                            <td>${ppsData.precision || 'N/A'}</td>
+                        </tr>
+                    `;
+                }
 
-                setTimeout(fetchData, 500);  // 更新频率为1秒
+                setTimeout(fetchData, 1000);  // 更新频率为1秒
             }
             fetchData(); // 初始化调用
         </script>
@@ -57,4 +102,4 @@ def pps_data():
     return jsonify({'error': 'No PPS data available'})
 
 if __name__ == '__main__':
-    app.run(debug=False, host='0.0.0.0')
+    app.run(debug=True, host='0.0.0.0')
