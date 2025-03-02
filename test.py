@@ -24,13 +24,7 @@ def index():
                 type: 'bar',
                 data: {
                     labels: [],
-                    datasets: [{
-                        label: 'Satellite SNR',
-                        data: [],
-                        backgroundColor: 'rgba(255, 99, 132, 0.2)',
-                        borderColor: 'rgba(255, 99, 132, 1)',
-                        borderWidth: 1
-                    }]
+                    datasets: []
                 },
                 options: {
                     scales: {
@@ -43,12 +37,21 @@ def index():
 
             async function fetchSNRData() {
                 const response = await fetch('/sky-data');
-                const data = await response.json();
-                if (data.satellites) {
-                    snrChart.data.labels = data.satellites.map(sat => `PRN ${sat.PRN}`);
-                    snrChart.data.datasets[0].data = data.satellites.map(sat => sat.snr || 0);
-                    snrChart.update();
-                }
+                const { satellites } = await response.json();
+                snrChart.data.labels = satellites.map(sat => `PRN ${sat.PRN}`);
+                satellites.forEach((sat, index) => {
+                    if (!snrChart.data.datasets[index]) {
+                        snrChart.data.datasets.push({
+                            label: `SNR for PRN ${sat.PRN}`,
+                            data: [],
+                            backgroundColor: `rgba(${Math.random()*255}, ${Math.random()*255}, ${Math.random()*255}, 0.2)`,
+                            borderColor: `rgba(${Math.random()*255}, ${Math.random()*255}, ${Math.random()*255}, 1)`,
+                            borderWidth: 1
+                        });
+                    }
+                    snrChart.data.datasets[index].data.push(sat.snr || 0);
+                });
+                snrChart.update();
                 setTimeout(fetchSNRData, 5000);  // 每5秒更新一次
             }
             fetchSNRData();
@@ -57,14 +60,19 @@ def index():
 
 @app.route('/sky-data')
 def sky_data():
+    sky_records = []
     for new_data in gps_socket:
         if new_data:
             try:
                 data = json.loads(new_data)
                 if data.get('class') == 'SKY':
-                    return jsonify(data)
+                    sky_records.append(data)
             except json.JSONDecodeError:
                 print("GPSd received invalid JSON")
+    if sky_records:
+        # 处理多条SKY记录，选择最近的一条或者聚合它们
+        latest_sky = max(sky_records, key=lambda x: x.get('time', ''))
+        return jsonify({'satellites': latest_sky.get('satellites', [])})
     return jsonify({'error': 'No SKY data available'})
 
 if __name__ == '__main__':
