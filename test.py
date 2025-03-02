@@ -34,9 +34,11 @@ def gps_data():
             if new_data:
                 try:
                     data = json.loads(new_data)
-                    return jsonify(data)
+                    
                 except json.JSONDecodeError:
                     print("GPSd received invalid JSON")
+            if data.get('class') == 'TPV':
+                return jsonify(data)
     except Exception as e:
         data = {'error': str(e)}
     
