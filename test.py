@@ -1,31 +1,41 @@
-import sys
-import os
-import time
-import re
-import serial
-import json
-import subprocess
-import configparser
-from gps3 import gps3
-from datetime import datetime
-import socket
-from save_log import save_log
+from flask import Flask, jsonify
+import gpsd
 
-# 创建一个gps会话
-gps_socket = gps3.GPSDSocket()
-data_stream = gps3.DataStream()
+# 连接到本地GPSd
+gpsd.connect()
 
-# 连接到 GPSD
-gps_socket.connect(host="127.0.0.1", port=2947)
-gps_socket.watch()
+app = Flask(__name__)
 
+@app.route('/')
+def index():
+    return '''
+        <h1>GPS Data</h1>
+        <div id="gps-data"></div>
+        <script>
+            async function fetchGPSData() {
+                const response = await fetch('/gps-data');
+                const data = await response.json();
+                document.getElementById('gps-data').innerHTML = `<pre>${JSON.stringify(data, null, 2)}</pre>`;
+                setTimeout(fetchGPSData, 1000);  // 每秒更新数据
+            }
+            fetchGPSData();
+        </script>
+    '''
 
+@app.route('/gps-data')
+def gps_data():
+    try:
+        packet = gpsd.get_current()
+        data = {
+            'latitude': packet.lat,
+            'longitude': packet.lon,
+            'altitude': packet.alt,
+            'speed': packet.hspeed,
+            'satellites': packet.sats
+        }
+    except Exception as e:
+        data = {'error': str(e)}
+    return jsonify(data)
 
-for new_data in gps_socket:
-    
-    if not new_data:  # 跳过空数据
-        continue
-    data_stream.unpack(new_data)
-    data = data_stream.TPV
-    print(data)
-    print(int(data.get('mode', 0)))
+if __name__ == '__main__':
+    app.run(debug=True, host='0.0.0.0')
