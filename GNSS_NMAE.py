@@ -11,7 +11,7 @@ from datetime import datetime
 import socket
 from save_log import save_log
 
-from Display import OLED
+from OLED_Driver.Display import OLED
 
 from watchdog import reset_watchdog
 
