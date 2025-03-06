@@ -7,7 +7,7 @@ import configparser
 import aprs
 from datetime import datetime
 import socket
-from Display import OLED
+from OLED_Driver.Display import OLED
 from watchdog import reset_watchdog
 from watchdog import boot_watchdog
 import GNSS_NMAE

@@ -17,7 +17,7 @@ cd "$PROJECT_DIR" || exit
 
 if [ $(get_config "OLED_Config" "OLED_Enable") = "True" ]; then
     echo "booting $(date)" >> /var/log/GPS_NMEA.log
-    python3 SSD1306_booting.py
+    python3 /etc/OLED_Driver/SSD1306_booting.py
 fi
 
 # 判断 Test_Flag 是否等于 0
