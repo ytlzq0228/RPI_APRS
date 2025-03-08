@@ -9,6 +9,6 @@ function get_config() {
 }
 
 if [ $(get_config "RTK_CONFIG" "enable") = "True" ]; then
-    python3 /etc/RPI_APRS/Quectel_RTK.py -P $(get_config "RTK_CONFIG" "RTK_PORT") -u $(get_config "RTK_CONFIG" "USERNAME") -p $(get_config "RTK_CONFIG" "PASSWORD") $(get_config "RTK_CONFIG" "NTRIP_SERVER") $(get_config "RTK_CONFIG" "NTRIP_PORT") $(get_config "RTK_CONFIG" "MOUNTPOINT")
+    python3 /etc/RPI_APRS/Quectel_RTK_Service/Quectel_RTK.py -P $(get_config "RTK_CONFIG" "RTK_PORT") -u $(get_config "RTK_CONFIG" "USERNAME") -p $(get_config "RTK_CONFIG" "PASSWORD") $(get_config "RTK_CONFIG" "NTRIP_SERVER") $(get_config "RTK_CONFIG" "NTRIP_PORT") $(get_config "RTK_CONFIG" "MOUNTPOINT")
 fi
 
