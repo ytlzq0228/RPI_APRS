@@ -54,7 +54,7 @@ def aprs_report():
 				time.sleep(1)  # 等待1秒再检查
 				continue
 
-			if float(current_timestamp)-float(report_APRS_timestamp)>=APRS_REPORT_INTERVAL and read_gpio(Radio_CONTROL_ENABLE,GPIO_PIN):
+			if current_timestamp-report_APRS_timestamp>=APRS_REPORT_INTERVAL and read_gpio(Radio_CONTROL_ENABLE,GPIO_PIN):
 				report_APRS_timestamp=current_timestamp
 				frame_text=(f'{SSID}>PYTHON,TCPIP*,qAC,{SSID}:!{lat}{lat_dir}/{lon}{lon_dir}{SSID_ICON}{course}/{speed}/A={altitude} APRS by RPI with GNSS {GNSS_Type} at UTC {NMEA_timestamp} {Message}').encode()
 				callsign = CALLSIGN.encode('utf-8')
@@ -140,7 +140,7 @@ if __name__ == '__main__':
 	aprs_thread.start()
 	#--------------------
 	disp_update_time=datetime.min
-	log_timestamp=report_APRS_timestamp='0'
+	log_timestamp=report_APRS_timestamp=0
 	last_still_log_time = 0
 	altitude='000000'
 	speed='000'
