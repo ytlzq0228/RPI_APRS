@@ -25,22 +25,24 @@ VERSION='main_0301.01'
 config = configparser.ConfigParser()
 config.read(CONFIG_FILE)
 
+
+
 def get_cpu_temperature():
-    try:
-        with open("/sys/class/thermal/thermal_zone0/temp", "r") as f:
-            temp = int(f.read().strip()) / 1000.0  # 单位是毫摄氏度，需要转换
-        return f"{temp:.2f}°C"
-    except Exception as e:
-        return f"获取温度失败: {e}"
+	try:
+		with open("/sys/class/thermal/thermal_zone0/temp", "r") as f:
+			temp = int(f.read().strip()) / 1000.0  # 单位是毫摄氏度，需要转换
+		return f"{temp:.2f}°C"
+	except Exception as e:
+		return f"获取温度失败: {e}"
 
 def get_uptime():
-    try:
-        # 方法 1：使用 uptime 命令
-        uptime_cmd = os.popen("uptime -p").read().strip()
-        
-        return uptime_cmd
-    except Exception as e:
-        return f"获取开机时间失败: {e}"
+	try:
+		# 方法 1：使用 uptime 命令
+		uptime_cmd = os.popen("uptime -p").read().strip()
+		
+		return uptime_cmd
+	except Exception as e:
+		return f"获取开机时间失败: {e}"
 
 
 def aprs_report():
@@ -108,6 +110,8 @@ if __name__ == '__main__':
 	
 	APRS_REPORT_INTERVAL=int(config['SSID_Config']['APRS_REPORT_INTERVAL'])
 	NMEA_LOG_INTERVAL=int(config['SFTP_Config']['NMEA_LOG_INTERVAL'])
+	STILL_LOG_INTERVALL=int(config['SFTP_Config']['STILL_LOG_INTERVALL'])
+	STILL_SPEED_THRESHOLD=int(config['SFTP_Config']['STILL_SPEED_THRESHOLD'])
 
 	save_log(f"APRS Repoeter {VERSION} Starting...")
 	save_log("Get Config Params:")
@@ -125,6 +129,9 @@ if __name__ == '__main__':
 	save_log(f"Param GPIO_PIN:{GPIO_PIN}")
 	save_log(f"Param APRS_REPORT_INTERVAL:{APRS_REPORT_INTERVAL}")
 	save_log(f"Param NMEA_LOG_INTERVAL:{NMEA_LOG_INTERVAL}")
+	save_log(f"Param STILL_LOG_INTERVALL:{STILL_LOG_INTERVALL}")
+	save_log(f"Param STILL_SPEED_THRESHOLD:{STILL_SPEED_THRESHOLD}")
+
 
 
 	#--------------------
@@ -134,6 +141,7 @@ if __name__ == '__main__':
 	#--------------------
 	disp_update_time=datetime.min
 	log_timestamp=report_APRS_timestamp='0'
+	last_still_log_time = 0
 	altitude='000000'
 	speed='000'
 	course='000'
@@ -165,10 +173,24 @@ if __name__ == '__main__':
 				except Exception as err:
 					save_log(f"main_OLED: {err}")
 
-			if float(current_timestamp)-float(log_timestamp)>=NMEA_LOG_INTERVAL:
-				log_timestamp=current_timestamp
-				save_log(f"gpx:{lat_raw,lat_dir,lon_raw,lon_dir,altitude,NMEA_timestamp,speed,course,GPS_Source,GNSS_Type,get_cpu_temperature(),get_uptime()}")
+			# 主判断逻辑
+			if float(speed) > STILL_SPEED_THRESHOLD:
+				# 移动状态，正常记录
+				if current_timestamp - log_timestamp >= NMEA_LOG_INTERVAL:
+					log_timestamp = current_timestamp
+					save_log(f"gpx:{lat_raw,lat_dir,lon_raw,lon_dir,altitude,NMEA_timestamp,speed,course,GPS_Source,GNSS_Type,get_cpu_temperature(),get_uptime()}")
+			else:
+				if current_timestamp - log_timestamp >= STILL_LOG_INTERVAL:
+					log_timestamp = current_timestamp
+					save_log(f"gpx:{lat_raw,lat_dir,lon_raw,lon_dir,altitude,NMEA_timestamp,speed,course,GPS_Source,GNSS_Type,get_cpu_temperature(),get_uptime()}")
 
+
+
+
+			#if float(current_timestamp)-float(log_timestamp)>=NMEA_LOG_INTERVAL:
+			#	log_timestamp=current_timestamp
+			#	save_log(f"gpx:{lat_raw,lat_dir,lon_raw,lon_dir,altitude,NMEA_timestamp,speed,course,GPS_Source,GNSS_Type,get_cpu_temperature(),get_uptime()}")
+#
 			#global report_NMEA_timestamp, disp_update_time, NMEA_timestamp, lat, lat_dir, lon, lon_dir, course, speed, altitude, GNSS_Type, SSID, CALLSIGN, APRS_PASSWORD, SSID_ICON, APRS_Server
 
 			#if float(NMEA_timestamp)-float(report_NMEA_timestamp)>=APRS_REPORT_INTERVAL and read_gpio(Radio_CONTROL_ENABLE,GPIO_PIN):
