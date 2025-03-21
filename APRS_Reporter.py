@@ -110,7 +110,7 @@ if __name__ == '__main__':
 	
 	APRS_REPORT_INTERVAL=int(config['SSID_Config']['APRS_REPORT_INTERVAL'])
 	NMEA_LOG_INTERVAL=int(config['SFTP_Config']['NMEA_LOG_INTERVAL'])
-	STILL_LOG_INTERVALL=int(config['SFTP_Config']['STILL_LOG_INTERVALL'])
+	STILL_LOG_INTERVAL=int(config['SFTP_Config']['STILL_LOG_INTERVAL'])
 	STILL_SPEED_THRESHOLD=int(config['SFTP_Config']['STILL_SPEED_THRESHOLD'])
 
 	save_log(f"APRS Repoeter {VERSION} Starting...")
@@ -129,7 +129,7 @@ if __name__ == '__main__':
 	save_log(f"Param GPIO_PIN:{GPIO_PIN}")
 	save_log(f"Param APRS_REPORT_INTERVAL:{APRS_REPORT_INTERVAL}")
 	save_log(f"Param NMEA_LOG_INTERVAL:{NMEA_LOG_INTERVAL}")
-	save_log(f"Param STILL_LOG_INTERVALL:{STILL_LOG_INTERVALL}")
+	save_log(f"Param STILL_LOG_INTERVAL:{STILL_LOG_INTERVAL}")
 	save_log(f"Param STILL_SPEED_THRESHOLD:{STILL_SPEED_THRESHOLD}")
 
 
