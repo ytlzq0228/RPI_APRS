@@ -114,9 +114,9 @@ def traccar_report():
 					"timestamp": ts,
 				}
 				
-				# GPSd 的 speed 是 m/s；多数人希望在 Traccar 里看到 km/h，如需原样上报就把 *3.6 去掉
+				# GPSd 的 speed 是 m/s；多数人希望在 Traccar 上报需要节
 				if GPSd_raw_data.get("speed") is not None:
-					payload["speed"] = f"{float(GPSd_raw_data['speed']) * 3.6:.2f}"
+					payload["speed"] = f"{float(GPSd_raw_data['speed']) * 3600 / 1852:.2f}"
 				
 				if GPSd_raw_data.get("track") is not None:
 					payload["bearing"] = f"{float(GPSd_raw_data['track']):.1f}"
