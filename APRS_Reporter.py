@@ -123,7 +123,7 @@ def traccar_report():
 				
 				if GPSd_raw_data.get("alt") is not None:
 					payload["altitude"] = f"{float(GPSd_raw_data['alt']):.1f}"
-					
+
 				if GPSd_raw_data.get("eph") is not None:
 					payload["accuracy"] = f"{float(GPSd_raw_data['eph']):.1f}"
 
@@ -177,6 +177,7 @@ if __name__ == '__main__':
 	STILL_LOG_INTERVAL=int(config['SFTP_Config']['STILL_LOG_INTERVAL'])
 	STILL_SPEED_THRESHOLD=int(config['SFTP_Config']['STILL_SPEED_THRESHOLD'])
 
+	TRACCAR_ENABLE=config.getboolean('Traccar_Config', 'enable')
 	TRACCAR_URL=config['Traccar_Config']['TRACCAR_URL']
 	TRACCAR_REPORT_INTERVAL=int(config['Traccar_Config']['TRACCAR_REPORT_INTERVAL'])
 
@@ -215,9 +216,10 @@ if __name__ == '__main__':
 	aprs_thread.daemon = True
 	aprs_thread.start()
 	
-	traccar_thread = threading.Thread(target=traccar_report, name="traccar_report")
-	traccar_thread.daemon = True
-	traccar_thread.start()
+	if TRACCAR_ENABLE:
+		traccar_thread = threading.Thread(target=traccar_report, name="traccar_report")
+		traccar_thread.daemon = True
+		traccar_thread.start()
 	#--------------------
 
 	while True:
