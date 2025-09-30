@@ -105,8 +105,8 @@ def traccar_report():
 					continue
 				
 				# Traccar 支持 ISO8601，直接透传 GPSd 的 time；没有就用系统 UTC
-				ts = GPSd_raw_data.get("time") or datetime.utcnow().replace(tzinfo=timezone.utc).isoformat().replace("+00:00","Z")
-				
+				#ts = GPSd_raw_data.get("time") or datetime.utcnow().replace(tzinfo=timezone.utc).isoformat().replace("+00:00","Z")
+				ts = datetime.utcnow().replace(tzinfo=timezone.utc).isoformat().replace("+00:00","Z")
 				payload = {
 					"id": str(SSID),
 					"lat": f"{float(lat):.7f}",
@@ -215,7 +215,7 @@ if __name__ == '__main__':
 	aprs_thread = threading.Thread(target=aprs_report, name="aprs_report")
 	aprs_thread.daemon = True
 	aprs_thread.start()
-	
+
 	if TRACCAR_ENABLE:
 		traccar_thread = threading.Thread(target=traccar_report, name="traccar_report")
 		traccar_thread.daemon = True
