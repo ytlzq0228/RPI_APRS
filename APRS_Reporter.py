@@ -155,6 +155,7 @@ def traccar_report():
                     "lat": f"{float(lat):.7f}",
                     "lon": f"{float(lon):.7f}",
                     "timestamp": ts,
+                    "deviceTemp": f"{float(get_cpu_temperature()):.1f}"
                 }
 
                 # m/s -> knots
