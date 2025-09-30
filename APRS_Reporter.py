@@ -17,6 +17,10 @@ from Radio_GPIO import read_gpio
 from save_log import save_log
 import threading
 
+from collections import deque
+FAILED_QUEUE = deque(maxlen=2000) 
+
+
 # 设置全局的socket超时时间，例如10秒
 socket.setdefaulttimeout(5)
 
@@ -79,67 +83,114 @@ def aprs_report():
 		except Exception as err:
 			save_log(f"APRS Report Error: {err}")
 
-def traccar_report():
-	global report_traccar_timestamp
+ddef traccar_report():
+    global report_traccar_timestamp, FAILED_QUEUE
 
-	# 首次兜底
-	try:
-		report_traccar_timestamp
-	except NameError:
-		report_traccar_timestamp = 0
+    # 首次兜底
+    try:
+        report_traccar_timestamp
+    except NameError:
+        report_traccar_timestamp = 0
 
-	while True:
-		try:
-			if 'current_timestamp' not in globals():
-				time.sleep(1)
-				continue
+    # 简单的状态码是否重试的判定集合
+    RETRYABLE_HTTP = {408, 429, 500, 502, 503, 504}
 
-			if current_timestamp - report_traccar_timestamp >= TRACCAR_REPORT_INTERVAL:
-				report_traccar_timestamp = current_timestamp
+    while True:
+        try:
+            if 'current_timestamp' not in globals():
+                time.sleep(1)
+                continue
 
+            # 1) 先处理重试队列：到时间的条目优先重发
+            now = time.time()
+            q_len = len(FAILED_QUEUE)
+            for _ in range(q_len):
+                item = FAILED_QUEUE.popleft()
+                # item 结构：{"payload": dict, "next_ts": float, "attempts": int}
+                if now < item.get("next_ts", 0):
+                    # 还未到重试时间，放回队尾
+                    FAILED_QUEUE.append(item)
+                    continue
 
-				lat = GPSd_raw_data.get("lat")
-				lon = GPSd_raw_data.get("lon")
-				if lat is None or lon is None:
-					time.sleep(1)
-					continue
-				
-				# Traccar 支持 ISO8601，直接透传 GPSd 的 time；没有就用系统 UTC
-				#ts = GPSd_raw_data.get("time") or datetime.utcnow().replace(tzinfo=timezone.utc).isoformat().replace("+00:00","Z")
-				ts = datetime.utcnow().replace(tzinfo=timezone.utc).isoformat().replace("+00:00","Z")
-				payload = {
-					"id": str(SSID),
-					"lat": f"{float(lat):.7f}",
-					"lon": f"{float(lon):.7f}",
-					"timestamp": ts,
-				}
-				
-				# GPSd 的 speed 是 m/s；多数人希望在 Traccar 上报需要节
-				if GPSd_raw_data.get("speed") is not None:
-					payload["speed"] = f"{float(GPSd_raw_data['speed']) * 3600 / 1852:.2f}"
-				
-				if GPSd_raw_data.get("track") is not None:
-					payload["bearing"] = f"{float(GPSd_raw_data['track']):.1f}"
-				
-				if GPSd_raw_data.get("alt") is not None:
-					payload["altitude"] = f"{float(GPSd_raw_data['alt']):.1f}"
+                # 到了重试时间，尝试重发
+                payload_retry = item.get("payload", {})
+                try:
+                    resp = requests.post(TRACCAR_URL, data=payload_retry, timeout=10)
+                    if 200 <= resp.status_code < 300:
+                        print(f"Traccar Retry OK: id={payload_retry.get('id')} lat={payload_retry.get('lat')} lon={payload_retry.get('lon')} status={resp.status_code}")
+                    elif resp.status_code in RETRYABLE_HTTP:
+                        # 仍可重试：指数退避，封顶 10 分钟
+                        attempts = int(item.get("attempts", 0)) + 1
+                        backoff = min(600, 2 ** min(attempts, 10))  # 1,2,4,8...秒，封顶600秒
+                        item.update({"attempts": attempts, "next_ts": now + backoff})
+                        FAILED_QUEUE.append(item)
+                        print(f"Traccar Retry Defer: http={resp.status_code} attempts={attempts} next={int(backoff)}s queue={len(FAILED_QUEUE)}")
+                    else:
+                        # 认为是不可重试（例如4xx校验失败）；丢弃并记日志
+                        save_log(f"Traccar Retry Drop: HTTP {resp.status_code} Body={str(resp.text).strip()[:200]}")
+                except Exception as e:
+                    # 网络/超时等异常，继续重试
+                    attempts = int(item.get("attempts", 0)) + 1
+                    backoff = min(600, 2 ** min(attempts, 10))
+                    item.update({"attempts": attempts, "next_ts": now + backoff})
+                    FAILED_QUEUE.append(item)
+                    save_log(f"Traccar Retry Error: {e}; attempts={attempts} next={int(backoff)}s queue={len(FAILED_QUEUE)}")
 
-				if GPSd_raw_data.get("eph") is not None:
-					payload["accuracy"] = f"{float(GPSd_raw_data['eph']):.1f}"
+            # 2) 到上报周期则发送新点
+            if current_timestamp - report_traccar_timestamp >= TRACCAR_REPORT_INTERVAL:
+                report_traccar_timestamp = current_timestamp
 
-				try:
-					resp = requests.post(TRACCAR_URL, data=payload, timeout=10)
-					if 200 <= resp.status_code < 300:
-						print(f"Traccar Report OK: id={SSID} lat={payload['lat']} lon={payload['lon']} status={resp.status_code}")
-					else:
-						save_log(f"Traccar Report Fail: HTTP {resp.status_code} Body={str(resp.text).strip()[:200]}")
-				except Exception as req_err:
-					save_log(f"Traccar Report Request Error: {req_err}")
-			time.sleep(0.5)
+                lat = GPSd_raw_data.get("lat")
+                lon = GPSd_raw_data.get("lon")
+                if lat is None or lon is None:
+                    time.sleep(1)
+                    continue
 
-		except Exception as loop_err:
-			save_log(f"Traccar Report Error: {loop_err}")
-			time.sleep(1)
+                # 生成一次性时间戳（用当前 UTC；也可用 GPSd 的 time 透传）
+                ts = datetime.utcnow().replace(tzinfo=timezone.utc).isoformat().replace("+00:00","Z")
+
+                payload = {
+                    "id": str(SSID),
+                    "lat": f"{float(lat):.7f}",
+                    "lon": f"{float(lon):.7f}",
+                    "timestamp": ts,
+                }
+
+                # m/s -> knots（OsmAnd 5055 协议）
+                if GPSd_raw_data.get("speed") is not None:
+                    payload["speed"] = f"{float(GPSd_raw_data['speed']) * 3600 / 1852:.2f}"
+
+                if GPSd_raw_data.get("track") is not None:
+                    payload["bearing"] = f"{float(GPSd_raw_data['track']):.1f}"
+
+                if GPSd_raw_data.get("alt") is not None:
+                    payload["altitude"] = f"{float(GPSd_raw_data['alt']):.1f}"
+
+                if GPSd_raw_data.get("eph") is not None:
+                    payload["accuracy"] = f"{float(GPSd_raw_data['eph']):.1f}"
+
+                # 发送
+                try:
+                    resp = requests.post(TRACCAR_URL, data=payload, timeout=10)
+                    if 200 <= resp.status_code < 300:
+                        print(f"Traccar Report OK: id={SSID} lat={payload['lat']} lon={payload['lon']} status={resp.status_code}")
+                    elif resp.status_code in RETRYABLE_HTTP:
+                        # 入队重试
+                        FAILED_QUEUE.append({"payload": payload, "attempts": 0, "next_ts": time.time() + 1})
+                        save_log(f"Traccar Report Enqueue (HTTP {resp.status_code}) queue={len(FAILED_QUEUE)}")
+                    else:
+                        # 不可重试，直接记日志
+                        save_log(f"Traccar Report Fail: HTTP {resp.status_code} Body={str(resp.text).strip()[:200]}")
+                except Exception as req_err:
+                    # 网络/超时等异常，入队重试
+                    FAILED_QUEUE.append({"payload": payload, "attempts": 0, "next_ts": time.time() + 1})
+                    save_log(f"Traccar Report Request Error: {req_err}; queued={len(FAILED_QUEUE)}")
+
+            time.sleep(0.5)
+
+        except Exception as loop_err:
+            save_log(f"Traccar Report Error: {loop_err}")
+            time.sleep(1)
 
 
 if __name__ == '__main__':
