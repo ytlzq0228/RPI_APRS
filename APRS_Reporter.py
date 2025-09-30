@@ -7,6 +7,7 @@ import configparser
 import aprs
 import socket
 import requests
+import math
 from datetime import datetime, timezone
 from OLED_Driver.Display import OLED
 from watchdog import reset_watchdog
@@ -122,11 +123,14 @@ def traccar_report():
 				
 				if GPSd_raw_data.get("alt") is not None:
 					payload["altitude"] = f"{float(GPSd_raw_data['alt']):.1f}"
+					
+				if GPSd_raw_data.get("eph") is not None:
+					payload["accuracy"] = f"{float(GPSd_raw_data['eph']):.1f}"
 
 				try:
 					resp = requests.post(TRACCAR_URL, data=payload, timeout=10)
 					if 200 <= resp.status_code < 300:
-						save_log(f"Traccar Report OK: id={SSID} lat={payload['lat']} lon={payload['lon']} status={resp.status_code}")
+						print(f"Traccar Report OK: id={SSID} lat={payload['lat']} lon={payload['lon']} status={resp.status_code}")
 					else:
 						save_log(f"Traccar Report Fail: HTTP {resp.status_code} Body={str(resp.text).strip()[:200]}")
 				except Exception as req_err:
