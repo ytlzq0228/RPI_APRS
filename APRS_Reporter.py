@@ -115,7 +115,7 @@ def traccar_report():
                 # 到了重试时间，尝试重发
                 payload_retry = item.get("payload", {})
                 try:
-                    resp = requests.post(TRACCAR_URL, data=payload_retry, timeout=10)
+                    resp = requests.post(TRACCAR_URL, data=payload_retry, timeout=5)
                     if 200 <= resp.status_code < 300:
                         save_log(f"Traccar Retry OK: id={payload_retry.get('id')} lat={payload_retry.get('lat')} lon={payload_retry.get('lon')} status={resp.status_code}")
                     elif resp.status_code in RETRYABLE_HTTP:
@@ -186,7 +186,7 @@ def traccar_report():
                     FAILED_QUEUE.append({"payload": payload, "attempts": 0, "next_ts": time.time() + 1})
                     save_log(f"Traccar Report Request Error: {req_err}; queued={len(FAILED_QUEUE)}")
 
-            time.sleep(0.5)
+            time.sleep(0.1)
 
         except Exception as loop_err:
             save_log(f"Traccar Report Error: {loop_err}")
