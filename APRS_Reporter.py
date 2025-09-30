@@ -37,7 +37,7 @@ def get_cpu_temperature():
 	try:
 		with open("/sys/class/thermal/thermal_zone0/temp", "r") as f:
 			temp = int(f.read().strip()) / 1000.0  # 单位是毫摄氏度，需要转换
-		return f"{temp:.2f}°C"
+		return f"{temp:.2f}"
 	except Exception as e:
 		return f"获取温度失败: {e}"
 
@@ -155,7 +155,7 @@ def traccar_report():
 					"lat": f"{float(lat):.7f}",
 					"lon": f"{float(lon):.7f}",
 					"timestamp": ts,
-					"deviceTemp": f"{float(get_cpu_temperature().replace("°C","")):.1f}",
+					"deviceTemp": f"{float(get_cpu_temperature()):.1f}",
 				}
 
 				# m/s -> knots
