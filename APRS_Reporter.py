@@ -171,7 +171,7 @@ def traccar_report():
                     payload["accuracy"] = f"{float(GPSd_raw_data['eph']):.1f}"
 
                 try:
-                    resp = requests.post(TRACCAR_URL, data=payload, timeout=10)
+                    resp = requests.post(TRACCAR_URL, data=payload, timeout=3)
                     if 200 <= resp.status_code < 300:
                         print(f"Traccar Report OK: id={SSID} lat={payload['lat']} "
                               f"lon={payload['lon']} status={resp.status_code}")
