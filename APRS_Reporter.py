@@ -83,7 +83,7 @@ def aprs_report():
 		except Exception as err:
 			save_log(f"APRS Report Error: {err}")
 
-ddef traccar_report():
+def traccar_report():
     global report_traccar_timestamp, FAILED_QUEUE
 
     # 首次兜底
