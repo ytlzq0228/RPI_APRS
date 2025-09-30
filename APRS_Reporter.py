@@ -117,7 +117,7 @@ def traccar_report():
                 try:
                     resp = requests.post(TRACCAR_URL, data=payload_retry, timeout=10)
                     if 200 <= resp.status_code < 300:
-                        print(f"Traccar Retry OK: id={payload_retry.get('id')} lat={payload_retry.get('lat')} lon={payload_retry.get('lon')} status={resp.status_code}")
+                        save_log(f"Traccar Retry OK: id={payload_retry.get('id')} lat={payload_retry.get('lat')} lon={payload_retry.get('lon')} status={resp.status_code}")
                     elif resp.status_code in RETRYABLE_HTTP:
                         # 仍可重试：指数退避，封顶 10 分钟
                         attempts = int(item.get("attempts", 0)) + 1
