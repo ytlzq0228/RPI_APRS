@@ -84,113 +84,113 @@ def aprs_report():
 			save_log(f"APRS Report Error: {err}")
 
 def traccar_report():
-    global report_traccar_timestamp, FAILED_QUEUE
+	global report_traccar_timestamp, FAILED_QUEUE
 
-    # 首次兜底
-    try:
-        report_traccar_timestamp
-    except NameError:
-        report_traccar_timestamp = 0
+	# 首次兜底
+	try:
+		report_traccar_timestamp
+	except NameError:
+		report_traccar_timestamp = 0
 
-    # 简单的状态码是否重试的判定集合
-    RETRYABLE_HTTP = {408, 429, 500, 502, 503, 504}
+	# 简单的状态码是否重试的判定集合
+	RETRYABLE_HTTP = {408, 429, 500, 502, 503, 504}
 
-    while True:
-        try:
-            if 'current_timestamp' not in globals():
-                time.sleep(1)
-                continue
+	while True:
+		try:
+			if 'current_timestamp' not in globals():
+				time.sleep(1)
+				continue
 
-            # 1) 先处理重试队列：每轮只尝试 1 条，避免长时间阻塞
-            now = time.time()
-            if FAILED_QUEUE and FAILED_QUEUE[0].get("next_ts", 0) <= now:
-                item = FAILED_QUEUE.popleft()
-                payload_retry = item.get("payload", {})
-                attempts = int(item.get("attempts", 0)) + 1
-                try:
-                    resp = requests.post(TRACCAR_URL, data=payload_retry, timeout=3)  # 重试用短超时
-                    if 200 <= resp.status_code < 300:
-                        save_log(f"Traccar Retry OK: id={payload_retry.get('id')} "
-                                 f"lat={payload_retry.get('lat')} lon={payload_retry.get('lon')} "
-                                 f"status={resp.status_code}")
-                    elif resp.status_code in RETRYABLE_HTTP:
-                        backoff = min(600, 2 ** min(attempts, 10))
-                        FAILED_QUEUE.append({
-                            "payload": payload_retry,
-                            "attempts": attempts,
-                            "next_ts": now + backoff
-                        })
-                        save_log(f"Traccar Retry Defer: http={resp.status_code} "
-                                 f"attempts={attempts} next={int(backoff)}s "
-                                 f"queue={len(FAILED_QUEUE)}")
-                    else:
-                        save_log(f"Traccar Retry Drop: HTTP {resp.status_code} "
-                                 f"Body={str(resp.text).strip()[:200]}")
-                except Exception as e:
-                    backoff = min(600, 2 ** min(attempts, 10))
-                    FAILED_QUEUE.append({
-                        "payload": payload_retry,
-                        "attempts": attempts,
-                        "next_ts": now + backoff
-                    })
-                    save_log(f"Traccar Retry Error: {e}; "
-                             f"attempts={attempts} next={int(backoff)}s "
-                             f"queue={len(FAILED_QUEUE)}")
+			# 1) 先处理重试队列：每轮只尝试 1 条，避免长时间阻塞
+			now = time.time()
+			if FAILED_QUEUE and FAILED_QUEUE[0].get("next_ts", 0) <= now:
+				item = FAILED_QUEUE.popleft()
+				payload_retry = item.get("payload", {})
+				attempts = int(item.get("attempts", 0)) + 1
+				try:
+					resp = requests.post(TRACCAR_URL, data=payload_retry, timeout=3)  # 重试用短超时
+					if 200 <= resp.status_code < 300:
+						save_log(f"Traccar Retry OK: id={payload_retry.get('id')} "
+								 f"lat={payload_retry.get('lat')} lon={payload_retry.get('lon')} "
+								 f"status={resp.status_code}")
+					elif resp.status_code in RETRYABLE_HTTP:
+						backoff = min(600, 2 ** min(attempts, 10))
+						FAILED_QUEUE.append({
+							"payload": payload_retry,
+							"attempts": attempts,
+							"next_ts": now + backoff
+						})
+						save_log(f"Traccar Retry Defer: http={resp.status_code} "
+								 f"attempts={attempts} next={int(backoff)}s "
+								 f"queue={len(FAILED_QUEUE)}")
+					else:
+						save_log(f"Traccar Retry Drop: HTTP {resp.status_code} "
+								 f"Body={str(resp.text).strip()[:200]}")
+				except Exception as e:
+					backoff = min(600, 2 ** min(attempts, 10))
+					FAILED_QUEUE.append({
+						"payload": payload_retry,
+						"attempts": attempts,
+						"next_ts": now + backoff
+					})
+					save_log(f"Traccar Retry Error: {e}; "
+							 f"attempts={attempts} next={int(backoff)}s "
+							 f"queue={len(FAILED_QUEUE)}")
 
-            # 2) 到上报周期则发送新点
-            if current_timestamp - report_traccar_timestamp >= TRACCAR_REPORT_INTERVAL:
-                report_traccar_timestamp = current_timestamp
+			# 2) 到上报周期则发送新点
+			if current_timestamp - report_traccar_timestamp >= TRACCAR_REPORT_INTERVAL:
+				report_traccar_timestamp = current_timestamp
 
-                lat = GPSd_raw_data.get("lat")
-                lon = GPSd_raw_data.get("lon")
-                if lat is None or lon is None:
-                    time.sleep(1)
-                    continue
+				lat = GPSd_raw_data.get("lat")
+				lon = GPSd_raw_data.get("lon")
+				if lat is None or lon is None:
+					time.sleep(1)
+					continue
 
-                # 时间戳
-                ts = datetime.utcnow().replace(tzinfo=timezone.utc).isoformat().replace("+00:00", "Z")
+				# 时间戳
+				ts = datetime.utcnow().replace(tzinfo=timezone.utc).isoformat().replace("+00:00", "Z")
 
-                payload = {
-                    "id": str(SSID),
-                    "lat": f"{float(lat):.7f}",
-                    "lon": f"{float(lon):.7f}",
-                    "timestamp": ts,
-                    "deviceTemp": f"{float(get_cpu_temperature()):.1f}"
-                }
+				payload = {
+					"id": str(SSID),
+					"lat": f"{float(lat):.7f}",
+					"lon": f"{float(lon):.7f}",
+					"timestamp": ts,
+					"deviceTemp": f"{float(get_cpu_temperature()):.1f}",
+				}
 
-                # m/s -> knots
-                if GPSd_raw_data.get("speed") is not None:
-                    payload["speed"] = f"{float(GPSd_raw_data['speed']) * 3600 / 1852:.2f}"
+				# m/s -> knots
+				if GPSd_raw_data.get("speed") is not None:
+					payload["speed"] = f"{float(GPSd_raw_data['speed']) * 3600 / 1852:.2f}"
 
-                if GPSd_raw_data.get("track") is not None:
-                    payload["bearing"] = f"{float(GPSd_raw_data['track']):.1f}"
+				if GPSd_raw_data.get("track") is not None:
+					payload["bearing"] = f"{float(GPSd_raw_data['track']):.1f}"
 
-                if GPSd_raw_data.get("alt") is not None:
-                    payload["altitude"] = f"{float(GPSd_raw_data['alt']):.1f}"
+				if GPSd_raw_data.get("alt") is not None:
+					payload["altitude"] = f"{float(GPSd_raw_data['alt']):.1f}"
 
-                if GPSd_raw_data.get("eph") is not None:
-                    payload["accuracy"] = f"{float(GPSd_raw_data['eph']):.1f}"
+				if GPSd_raw_data.get("eph") is not None:
+					payload["accuracy"] = f"{float(GPSd_raw_data['eph']):.1f}"
+				print(payload)
+				try:
+					resp = requests.post(TRACCAR_URL, data=payload, timeout=3)
+					if 200 <= resp.status_code < 300:
+						print(f"Traccar Report OK: id={SSID} lat={payload['lat']} "
+							  f"lon={payload['lon']} status={resp.status_code}")
+					elif resp.status_code in RETRYABLE_HTTP:
+						FAILED_QUEUE.append({"payload": payload, "attempts": 0, "next_ts": time.time() + 1})
+						save_log(f"Traccar Report Enqueue (HTTP {resp.status_code}) queue={len(FAILED_QUEUE)}")
+					else:
+						save_log(f"Traccar Report Fail: HTTP {resp.status_code} "
+								 f"Body={str(resp.text).strip()[:200]}")
+				except Exception as req_err:
+					FAILED_QUEUE.append({"payload": payload, "attempts": 0, "next_ts": time.time() + 1})
+					save_log(f"Traccar Report Request Error: {req_err}; queued={len(FAILED_QUEUE)}")
 
-                try:
-                    resp = requests.post(TRACCAR_URL, data=payload, timeout=3)
-                    if 200 <= resp.status_code < 300:
-                        print(f"Traccar Report OK: id={SSID} lat={payload['lat']} "
-                              f"lon={payload['lon']} status={resp.status_code}")
-                    elif resp.status_code in RETRYABLE_HTTP:
-                        FAILED_QUEUE.append({"payload": payload, "attempts": 0, "next_ts": time.time() + 1})
-                        save_log(f"Traccar Report Enqueue (HTTP {resp.status_code}) queue={len(FAILED_QUEUE)}")
-                    else:
-                        save_log(f"Traccar Report Fail: HTTP {resp.status_code} "
-                                 f"Body={str(resp.text).strip()[:200]}")
-                except Exception as req_err:
-                    FAILED_QUEUE.append({"payload": payload, "attempts": 0, "next_ts": time.time() + 1})
-                    save_log(f"Traccar Report Request Error: {req_err}; queued={len(FAILED_QUEUE)}")
+			time.sleep(0.1)
 
-            time.sleep(0.1)
-
-        except Exception as loop_err:
-            save_log(f"Traccar Report Error: {loop_err}")
-            time.sleep(1)
+		except Exception as loop_err:
+			save_log(f"Traccar Report Error: {loop_err}")
+			time.sleep(1)
 
 
 if __name__ == '__main__':
