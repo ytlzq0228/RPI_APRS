@@ -94,6 +94,7 @@ def traccar_report():
 
 	# 简单的状态码是否重试的判定集合
 	RETRYABLE_HTTP = {408, 429, 500, 502, 503, 504}
+	still_wait_count=61
 
 	while True:
 		try:
@@ -137,6 +138,9 @@ def traccar_report():
 							 f"attempts={attempts} next={int(backoff)}s "
 							 f"queue={len(FAILED_QUEUE)}")
 
+
+			# 移动状态逻辑+新点上报
+			#if (float(speed) > STILL_SPEED_THRESHOLD and current_timestamp - report_traccar_timestamp >= TRACCAR_REPORT_INTERVAL) or current_timestamp - report_traccar_timestamp >= STILL_LOG_INTERVAL:
 			# 2) 到上报周期则发送新点
 			if current_timestamp - report_traccar_timestamp >= TRACCAR_REPORT_INTERVAL:
 				report_traccar_timestamp = current_timestamp
@@ -149,41 +153,46 @@ def traccar_report():
 
 				# 时间戳
 				ts = datetime.utcnow().replace(tzinfo=timezone.utc).isoformat().replace("+00:00", "Z")
-
-				payload = {
-					"id": str(SSID),
-					"lat": f"{float(lat):.7f}",
-					"lon": f"{float(lon):.7f}",
-					"timestamp": ts,
-					"deviceTemp": f"{float(get_cpu_temperature()):.1f}",
-				}
-
-				# m/s -> knots
-				if GPSd_raw_data.get("speed") is not None:
-					payload["speed"] = f"{float(GPSd_raw_data['speed']) * 3600 / 1852:.2f}"
-
-				if GPSd_raw_data.get("track") is not None:
-					payload["bearing"] = f"{float(GPSd_raw_data['track']):.1f}"
-
-				if GPSd_raw_data.get("alt") is not None:
-					payload["altitude"] = f"{float(GPSd_raw_data['alt']):.1f}"
-
-				if GPSd_raw_data.get("eph") is not None:
-					payload["accuracy"] = f"{float(GPSd_raw_data['eph']):.1f}"
+				payload={"id": str(SSID),"event":"heartbeat"}
+				still_wait_count+=1
+				if float(speed) > STILL_SPEED_THRESHOLD or still_wait_count>60:
+					still_wait_count=0
+					payload = {
+						"id": str(SSID),
+						"lat": f"{float(lat):.7f}",
+						"lon": f"{float(lon):.7f}",
+						"timestamp": ts,
+						"deviceTemp": f"{float(get_cpu_temperature()):.1f}",
+					}
+	
+					# m/s -> knots
+					if GPSd_raw_data.get("speed") is not None:
+						payload["speed"] = f"{float(GPSd_raw_data['speed']) * 3600 / 1852:.2f}"
+	
+					if GPSd_raw_data.get("track") is not None:
+						payload["bearing"] = f"{float(GPSd_raw_data['track']):.1f}"
+	
+					if GPSd_raw_data.get("alt") is not None:
+						payload["altitude"] = f"{float(GPSd_raw_data['alt']):.1f}"
+	
+					if GPSd_raw_data.get("eph") is not None:
+						payload["accuracy"] = f"{float(GPSd_raw_data['eph']):.1f}"
+	
 				print(payload)
 				try:
 					resp = requests.post(TRACCAR_URL, data=payload, timeout=3)
 					if 200 <= resp.status_code < 300:
-						print(f"Traccar Report OK: id={SSID} lat={payload['lat']} "
-							  f"lon={payload['lon']} status={resp.status_code}")
+						print(f"Traccar Report OK: id={SSID} payload: {payload}")
 					elif resp.status_code in RETRYABLE_HTTP:
-						FAILED_QUEUE.append({"payload": payload, "attempts": 0, "next_ts": time.time() + 1})
+						if "timestamp" in payload:
+							FAILED_QUEUE.append({"payload": payload, "attempts": 0, "next_ts": time.time() + 1})
 						save_log(f"Traccar Report Enqueue (HTTP {resp.status_code}) queue={len(FAILED_QUEUE)}")
 					else:
 						save_log(f"Traccar Report Fail: HTTP {resp.status_code} "
 								 f"Body={str(resp.text).strip()[:200]}")
 				except Exception as req_err:
-					FAILED_QUEUE.append({"payload": payload, "attempts": 0, "next_ts": time.time() + 1})
+					if "timestamp" in payload:
+						FAILED_QUEUE.append({"payload": payload, "attempts": 0, "next_ts": time.time() + 1})
 					save_log(f"Traccar Report Request Error: {req_err}; queued={len(FAILED_QUEUE)}")
 
 			time.sleep(0.1)
