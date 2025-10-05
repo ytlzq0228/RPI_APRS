@@ -180,7 +180,7 @@ def traccar_report():
 				try:
 					resp = requests.post(TRACCAR_URL, data=payload, timeout=3)
 					if 200 <= resp.status_code < 300:
-						print(f"Traccar Report OK: id={SSID} "payload": payload")
+						print(f"Traccar Report OK: id={SSID} payload: {payload}")
 					elif resp.status_code in RETRYABLE_HTTP:
 						FAILED_QUEUE.append({"payload": payload, "attempts": 0, "next_ts": time.time() + 1})
 						save_log(f"Traccar Report Enqueue (HTTP {resp.status_code}) queue={len(FAILED_QUEUE)}")
