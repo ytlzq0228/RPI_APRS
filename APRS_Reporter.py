@@ -153,7 +153,7 @@ def traccar_report():
 
 				# 时间戳
 				ts = datetime.utcnow().replace(tzinfo=timezone.utc).isoformat().replace("+00:00", "Z")
-				payload={"id": str(SSID),"event":"heartbeat"}
+				payload={"id": str(SSID)}
 				still_wait_count+=1
 				if float(speed) > STILL_SPEED_THRESHOLD or still_wait_count>60:
 					still_wait_count=0
