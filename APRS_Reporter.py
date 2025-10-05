@@ -94,6 +94,7 @@ def traccar_report():
 
 	# 简单的状态码是否重试的判定集合
 	RETRYABLE_HTTP = {408, 429, 500, 502, 503, 504}
+	still_wait_count=0
 
 	while True:
 		try:
@@ -142,7 +143,7 @@ def traccar_report():
 			#if (float(speed) > STILL_SPEED_THRESHOLD and current_timestamp - report_traccar_timestamp >= TRACCAR_REPORT_INTERVAL) or current_timestamp - report_traccar_timestamp >= STILL_LOG_INTERVAL:
 			# 2) 到上报周期则发送新点
 			if current_timestamp - report_traccar_timestamp >= TRACCAR_REPORT_INTERVAL:
-				
+				report_traccar_timestamp = current_timestamp
 
 				lat = GPSd_raw_data.get("lat")
 				lon = GPSd_raw_data.get("lon")
@@ -153,8 +154,9 @@ def traccar_report():
 				# 时间戳
 				ts = datetime.utcnow().replace(tzinfo=timezone.utc).isoformat().replace("+00:00", "Z")
 				payload={"id": str(SSID),"event":"heartbeat"}
-				if float(speed) > STILL_SPEED_THRESHOLD or current_timestamp - report_traccar_timestamp >= 60*TRACCAR_REPORT_INTERVAL:
-					report_traccar_timestamp = current_timestamp
+				still_wait_count+=1
+				if float(speed) > STILL_SPEED_THRESHOLD or still_wait_count>60:
+					still_wait_count=0
 					payload = {
 						"id": str(SSID),
 						"lat": f"{float(lat):.7f}",
