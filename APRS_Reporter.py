@@ -137,8 +137,11 @@ def traccar_report():
 							 f"attempts={attempts} next={int(backoff)}s "
 							 f"queue={len(FAILED_QUEUE)}")
 
+
+			# 移动状态逻辑+新点上报
+			if (float(speed) > STILL_SPEED_THRESHOLD and current_timestamp - report_traccar_timestamp >= TRACCAR_REPORT_INTERVAL) or current_timestamp - report_traccar_timestamp >= STILL_LOG_INTERVAL:
 			# 2) 到上报周期则发送新点
-			if current_timestamp - report_traccar_timestamp >= TRACCAR_REPORT_INTERVAL:
+			#if current_timestamp - report_traccar_timestamp >= TRACCAR_REPORT_INTERVAL:
 				report_traccar_timestamp = current_timestamp
 
 				lat = GPSd_raw_data.get("lat")
