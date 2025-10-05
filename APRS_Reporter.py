@@ -184,13 +184,15 @@ def traccar_report():
 					if 200 <= resp.status_code < 300:
 						print(f"Traccar Report OK: id={SSID} payload: {payload}")
 					elif resp.status_code in RETRYABLE_HTTP:
-						FAILED_QUEUE.append({"payload": payload, "attempts": 0, "next_ts": time.time() + 1})
+						if "timestamp" in payload:
+							FAILED_QUEUE.append({"payload": payload, "attempts": 0, "next_ts": time.time() + 1})
 						save_log(f"Traccar Report Enqueue (HTTP {resp.status_code}) queue={len(FAILED_QUEUE)}")
 					else:
 						save_log(f"Traccar Report Fail: HTTP {resp.status_code} "
 								 f"Body={str(resp.text).strip()[:200]}")
 				except Exception as req_err:
-					FAILED_QUEUE.append({"payload": payload, "attempts": 0, "next_ts": time.time() + 1})
+					if "timestamp" in payload:
+						FAILED_QUEUE.append({"payload": payload, "attempts": 0, "next_ts": time.time() + 1})
 					save_log(f"Traccar Report Request Error: {req_err}; queued={len(FAILED_QUEUE)}")
 
 			time.sleep(0.1)
