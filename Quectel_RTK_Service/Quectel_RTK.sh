@@ -3,9 +3,20 @@
 CONFIG_FILE='/etc/GPS_config.ini'
 # 读取配置函数
 function get_config() {
-    local section=$1
-    local key=$2
-    grep -A 10 "^\[$section\]" "$CONFIG_FILE" | grep "^$key" | awk -F '=' '{print $2}' | sed 's/^[ \t]*//;s/[ \t]*$//'
+  local section=$1 key=$2
+  awk -v s="$section" -v k="$key" '
+    $0 ~ "^[ \t]*\\[" s "\\][ \t]*$" {in=1; next}
+    in && $0 ~ "^[ \t]*\\[" {in=0}
+    in {
+      # 去掉注释
+      sub(/[;#].*$/, "", $0)
+      if ($0 ~ "^[ \t]*" k "[ \t]*=") {
+        sub("^[ \t]*" k "[ \t]*=[ \t]*", "", $0)
+        gsub(/^[ \t"]+|[ \t"]+$/, "", $0)
+        print; exit
+      }
+    }
+  ' "$CONFIG_FILE" | tr -d '\r'
 }
 
 if [ $(get_config "RTK_CONFIG" "enable") = "True" ]; then
