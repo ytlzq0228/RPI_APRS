@@ -2,10 +2,12 @@
 
 CONFIG_FILE='/etc/GPS_config.ini'
 # 读取配置函数
-function get_config() {
-    local section=$1
-    local key=$2
-    grep -A 10 "^\[$section\]" "$CONFIG_FILE" | grep "^$key" | awk -F '=' '{print $2}' | sed 's/^[ \t]*//;s/[ \t]*$//'
+get_config() {
+  local section=$1 key=$2
+  grep -A 50 "^\[$section\]" "$CONFIG_FILE" | \
+  grep -m1 "^$key" | \
+  awk -F '=' '{print $2}' | \
+  sed 's/[;#].*$//' | sed 's/^[ \t]*//;s/[ \t]*$//' | tr -d '\r'
 }
 
 if [ $(get_config "RTK_CONFIG" "enable") = "True" ]; then
