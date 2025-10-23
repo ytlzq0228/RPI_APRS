@@ -158,7 +158,7 @@ def traccar_report():
 				# 时间戳
 				ts = datetime.utcnow().replace(tzinfo=timezone.utc).isoformat().replace("+00:00", "Z")
 				
-				if float(speed) > STILL_SPEED_THRESHOLD or current_timestamp - still_report_traccar_timestamp > STILL_REPORT_INTERVALL:
+				if float(speed) > STILL_SPEED_THRESHOLD or current_timestamp - still_report_traccar_timestamp > STILL_LOG_INTERVAL:
 					still_report_traccar_timestamp = current_timestamp
 				else:
 					continue
