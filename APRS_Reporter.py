@@ -182,7 +182,8 @@ def traccar_report():
 					payload["altitude"] = f"{float(GPSd_raw_data['alt']):.1f}"
 	
 				if GPSd_raw_data.get("eph") is not None:
-					payload["accuracy"] = f"{float(GPSd_raw_data['eph']):.1f}"
+					eph_val = float(GPSd_raw_data["eph"])
+					payload["accuracy"] = f"{min(eph_val, 100):.1f}"
 	
 				#print(payload)
 				try:
