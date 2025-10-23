@@ -84,13 +84,17 @@ def aprs_report():
 			save_log(f"APRS Report Error: {err}")
 
 def traccar_report():
-	global report_traccar_timestamp, FAILED_QUEUE
+	global report_traccar_timestamp, still_report_traccar_timestamp, FAILED_QUEUE
 
 	# 首次兜底
 	try:
 		report_traccar_timestamp
 	except NameError:
 		report_traccar_timestamp = 0
+	try:
+		still_report_traccar_timestamp
+	except NameError:
+		still_report_traccar_timestamp = 0
 
 	# 简单的状态码是否重试的判定集合
 	RETRYABLE_HTTP = {408, 429, 500, 502, 503, 504}
